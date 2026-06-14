@@ -270,8 +270,8 @@
 
       const { Controller, config } = window.$scramjetController;
 
-      config.scramjetPath = location.origin + BASE_PATH + "scramjet/scramjet.js";
-      config.wasmPath = location.origin + BASE_PATH + "scramjet/scramjet.wasm";
+      config.scramjetPath = location.origin + BASE_PATH + "scj/scramjet.js";
+      config.wasmPath = location.origin + BASE_PATH + "scj/scramjet.wasm";
       config.injectPath = location.origin + BASE_PATH + "controller/controller.inject.js";
       config.prefix = BASE_PATH + "~sj/";
 
