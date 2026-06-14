@@ -321,6 +321,9 @@
     let frame = null;
 
     async function initController() {
+      controller = null;
+      frame = null;
+
       const { Controller, config } = window.$scramjetController;
       config.scramjetPath = location.origin + BASE_PATH + "scramjet/scramjet.js";
       config.wasmPath = location.origin + BASE_PATH + "scramjet/scramjet.wasm";
@@ -338,6 +341,7 @@
       await controller.wait();
 
       frame = controller.createFrame(frameElement);
+      if (!frame) throw new Error("createFrame returned null — is the iframe element in the DOM?");
     }
 
     async function navigate(url) {
