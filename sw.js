@@ -1,8 +1,9 @@
-const MERC = "https://unpkg.com/@mercuryworkshop/";
+const MERC_NPM = "https://cdn.jsdelivr.net/npm/@mercuryworkshop/";
+const MERC_UNPKG = "https://unpkg.com/@mercuryworkshop/";
 const SJ_VER = "scramjet@2.0.67-alpha.1";
 const CTRL_VER = "scramjet-controller@0.0.13";
 
-importScripts(MERC + CTRL_VER + "/dist/controller.sw.js");
+importScripts(MERC_UNPKG + CTRL_VER + "/dist/controller.sw.js");
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
@@ -12,7 +13,7 @@ addEventListener("fetch", (e) => {
 
   if (pathname === "/scramjet/scramjet.wasm") {
     e.respondWith(
-      fetch(MERC + SJ_VER + "/dist/scramjet.wasm").then(
+      fetch(MERC_NPM + SJ_VER + "/dist/scramjet.wasm").then(
         (r) =>
           new Response(r.body, {
             status: 200,
@@ -28,7 +29,7 @@ addEventListener("fetch", (e) => {
 
   if (pathname === "/controller/controller.inject.js") {
     e.respondWith(
-      fetch(MERC + CTRL_VER + "/dist/controller.inject.js").then((r) => {
+      fetch(MERC_UNPKG + CTRL_VER + "/dist/controller.inject.js").then((r) => {
         const h = new Headers(r.headers);
         h.set("Access-Control-Allow-Origin", "*");
         h.set("Content-Type", "application/javascript");
