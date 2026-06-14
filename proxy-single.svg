@@ -269,8 +269,8 @@
       const { Controller, config } = window.$scramjetController;
 
       config.scramjetPath = location.origin + BASE_PATH + "scramjet/scramjet.js";
-      config.wasmPath = "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@2.0.67-alpha.1/dist/scramjet.wasm";
-      config.injectPath = "https://unpkg.com/@mercuryworkshop/scramjet-controller@0.0.13/dist/controller.inject.js";
+      config.wasmPath = location.origin + BASE_PATH + "scramjet/scramjet.wasm";
+      config.injectPath = location.origin + BASE_PATH + "controller/controller.inject.js";
       config.prefix = BASE_PATH + "~sj/";
 
       const transport = new window.LibcurlTransport.LibcurlClient({
