@@ -321,7 +321,7 @@
 
     async function initController() {
       const { Controller, config } = window.$scramjetController;
-      config.scramjetPath = "https://unpkg.com/@mercuryworkshop/scramjet@2.0.67-alpha.1/dist/scramjet.js";
+      config.scramjetPath = "/scramjet/scramjet.js";
       config.wasmPath = "/scramjet/scramjet.wasm";
       config.injectPath = "/controller/controller.inject.js";
 
