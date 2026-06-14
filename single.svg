@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-  <title>Scramjet</title>
+  <title>idk</title>
   <style>/*<![CDATA[*/
     body {
       font-family: "Comic Sans MS", "Comic Neue", cursive;
@@ -152,13 +152,12 @@
 <body>
 
   <div class="flex-center logo-wrapper header-center">
-    <h1>Scramjet | MW</h1>
+    <h1>zaka13's education</h1>
   </div>
 
   <div class="flex-center desc left-margin">
     <p>
-      Scramjet is an experimental interception based web proxy designed to
-      bypass arbitrary web browser restrictions and innovate web proxy technologies.
+      hey.
     </p>
   </div>
 
@@ -171,7 +170,7 @@
       aria-label="Used for tracking purposes."
     />
     <input id="sj-address" type="text" placeholder="Search or enter URL" />
-    <button type="submit">Open Here</button>
+    <button type="submit">Open</button>
   </form>
 
   <div class="flex-center desc left-margin">
@@ -189,7 +188,7 @@
       <a href="https://github.com/MercuryWorkshop/Scramjet-Demo">GitHub</a>
     </div>
     <div>
-      <span>Scramjet &#169; MW 2025</span>
+      <span>Education &#169; 2026</span>
     </div>
   </footer>
 
