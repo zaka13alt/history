@@ -206,20 +206,6 @@
 
     const BASE_PATH = location.pathname.replace(/\/[^\/]*$/, "/");
 
-    const SW_CODE = `
-const CTRL_VER = "scramjet-controller@0.0.13";
-importScripts("https://unpkg.com/@mercuryworkshop/" + CTRL_VER + "/dist/controller.sw.js");
-
-self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
-
-addEventListener("fetch", (e) => {
-  if ($scramjetController.shouldRoute(e)) {
-    e.respondWith($scramjetController.route(e));
-  }
-});
-`;
-
     const swAllowedHostnames = ["localhost", "127.0.0.1"];
 
     function search(input, template) {
@@ -246,9 +232,7 @@ addEventListener("fetch", (e) => {
           throw new Error("Service workers cannot be registered without https.");
         throw new Error("Your browser doesn't support service workers.");
       }
-      const blob = new Blob([SW_CODE], { type: "application/javascript" });
-      const blobUrl = URL.createObjectURL(blob);
-      await navigator.serviceWorker.register(blobUrl, {
+      await navigator.serviceWorker.register(BASE_PATH + "sw.js", {
         scope: BASE_PATH,
         updateViaCache: "none",
       });
