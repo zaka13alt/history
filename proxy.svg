@@ -342,7 +342,7 @@
 
     async function navigate(url) {
       if (!url.startsWith("http")) url = "https://" + url;
-      if (!controller) await initController();
+      if (!frame) await initController();
       await frame.go(url);
       frameWrapper.style.display = "flex";
     }
