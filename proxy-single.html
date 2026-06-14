@@ -270,9 +270,9 @@
       const { Controller, config } = window.$scramjetController;
 
       // Full CDN URLs — the inline SW doesn't need to intercept these paths.
-      config.scramjetPath = "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@2.0.67-alpha.1/dist/scramjet.js";
-      config.wasmPath = "https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@2.0.67-alpha.1/dist/scramjet.wasm";
-      config.injectPath = "https://unpkg.com/@mercuryworkshop/scramjet-controller@0.0.13/dist/controller.inject.js";
+      config.scramjetPath = location.origin + "/scramjet/scramjet.js";
+      config.wasmPath = location.origin + "/scramjet/scramjet.wasm";
+      config.injectPath = location.origin + "/controller/controller.inject.js";
 
       // Prefix must be within the SW scope (BASE_PATH) so requests get intercepted.
       config.prefix = BASE_PATH + "~sj/";
