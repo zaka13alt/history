@@ -2,6 +2,7 @@ const MERC_NPM = "https://cdn.jsdelivr.net/npm/@mercuryworkshop/";
 const MERC_UNPKG = "https://unpkg.com/@mercuryworkshop/";
 const SJ_VER = "scramjet@2.0.67-alpha.1";
 const CTRL_VER = "scramjet-controller@0.0.13";
+const BASE_PATH = self.location.pathname.replace(/\/[^\/]*$/, "/");
 
 importScripts(MERC_UNPKG + CTRL_VER + "/dist/controller.sw.js");
 
@@ -11,7 +12,7 @@ self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
 addEventListener("fetch", (e) => {
   const { pathname } = new URL(e.request.url);
 
-  if (pathname === "/scramjet/scramjet.js") {
+  if (pathname === BASE_PATH + "scramjet/scramjet.js") {
     e.respondWith(
       fetch(MERC_NPM + SJ_VER + "/dist/scramjet.js").then((r) => {
         const h = new Headers(r.headers);
@@ -23,7 +24,7 @@ addEventListener("fetch", (e) => {
     return;
   }
 
-  if (pathname === "/scramjet/scramjet.wasm") {
+  if (pathname === BASE_PATH + "scramjet/scramjet.wasm") {
     e.respondWith(
       fetch(MERC_NPM + SJ_VER + "/dist/scramjet.wasm").then(
         (r) =>
@@ -39,7 +40,7 @@ addEventListener("fetch", (e) => {
     return;
   }
 
-  if (pathname === "/controller/controller.inject.js") {
+  if (pathname === BASE_PATH + "controller/controller.inject.js") {
     e.respondWith(
       fetch(MERC_UNPKG + CTRL_VER + "/dist/controller.inject.js").then((r) => {
         const h = new Headers(r.headers);
