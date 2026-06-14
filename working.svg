@@ -214,13 +214,13 @@
         if (url.hostname.includes(".")) return url.toString();
       } catch (err) {}
       if (
-        input.includes("strongdog") ||
-        input.includes("copchurch.org") ||
-        input.includes("venustexas.org") ||
-        input.includes("strong dog")
+        input.includes("zaka") ||
+        input.includes("zaka13") ||
+        input.includes("zaka's games") ||
+        input.includes("ign_zaka13")
       ) {
-        alert("You do know I have StrongDog, right...? It's in the 'Other Games, I guess' section.");
-        alert("If you do need a working strongdog link for your blocker, email me at bestspark687090@gmail.com or DM me on discord at BestSpark687090.");
+        alert("Why you searching my name up?");
+        alert("lmfao");
       }
       return template.replace("%s", encodeURIComponent(input));
     }
