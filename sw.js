@@ -11,6 +11,18 @@ self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
 addEventListener("fetch", (e) => {
   const { pathname } = new URL(e.request.url);
 
+  if (pathname === "/scramjet/scramjet.js") {
+    e.respondWith(
+      fetch(MERC_NPM + SJ_VER + "/dist/scramjet.js").then((r) => {
+        const h = new Headers(r.headers);
+        h.set("Access-Control-Allow-Origin", "*");
+        h.set("Content-Type", "application/javascript");
+        return new Response(r.body, { status: 200, headers: h });
+      })
+    );
+    return;
+  }
+
   if (pathname === "/scramjet/scramjet.wasm") {
     e.respondWith(
       fetch(MERC_NPM + SJ_VER + "/dist/scramjet.wasm").then(
