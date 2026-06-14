@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../gitig/scramjet-proxy"
+		},
+		{
+			"path": "../proxapp/scramjet-h"
+		},
+		{
+			"path": "../gitig/website-server-modifications"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}
