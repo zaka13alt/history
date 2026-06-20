@@ -277,7 +277,7 @@
 
       const transport = new window.LibcurlTransport.LibcurlClient({
         wisp: "wss://vps-1d0fee98.vps.ovh.us/wisp/",
-    proxy: "http://67.227.119.109:6438/"
+    proxy: "http://vldmupsu:07f645yp2d72@31.56.127.193:7684"
       });
 
       controller = new Controller({
