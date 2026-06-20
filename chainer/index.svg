@@ -1,0 +1,365 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:hidden">
+<foreignObject id="fo" x="0" y="0" width="100%" height="100%">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <title>idk</title>
+  <style>/*<![CDATA[*/
+    body {
+      font-family: "Comic Sans MS", "Comic Neue", cursive;
+      margin: 0;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .flex-center {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header-center {
+      align-items: center;
+      flex-direction: column;
+      margin-top: 3%;
+    }
+
+    #sj-frame-wrapper {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      flex-direction: column;
+      z-index: 9999;
+      background-color: #111;
+    }
+
+    #sj-frame-url {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      z-index: 10000;
+      pointer-events: none;
+      max-width: 60vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #sj-frame {
+      border: none;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background-color: #111;
+    }
+
+    #sj-error {
+      color: #ff6666;
+      white-space: pre-wrap;
+    }
+
+    #sj-error-code {
+      font-size: 12px;
+      color: #fff;
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    .logo-wrapper h1 { color: white; }
+
+    footer {
+      margin: 0 5vw;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      line-height: 30px;
+      margin-bottom: 20px;
+    }
+
+    footer > div {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    footer a, footer span {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 15px;
+    }
+
+    footer a { cursor: pointer; }
+    footer a:hover { text-decoration: underline; }
+
+    .left-margin { margin-top: 10px; }
+
+    .desc p {
+      width: 560px;
+      color: rgba(253, 253, 253, 0.514);
+      text-align: center;
+    }
+
+    #sj-address, #username {
+      background: none;
+      font-family: inherit;
+      padding: 0px 17px;
+      height: 48px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50px;
+      color: #fff;
+      outline: none;
+      width: 350px;
+      margin-top: 5px;
+      transition: border-radius 0.1s;
+    }
+
+    #sj-address:focus, #username:focus {
+      border: 1px solid rgba(253, 253, 253, 0.514);
+      border-radius: 6px;
+    }
+
+    button[type="submit"], #open-new-tab {
+      margin-top: 8px;
+      padding: 10px 24px;
+      background: #555;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    button[type="submit"]:hover, #open-new-tab:hover { background: #444; }
+    button[type="submit"]:active, #open-new-tab:active { background: #333; }
+  /*]]>*/</style>
+</head>
+<body>
+
+  <div class="flex-center logo-wrapper header-center">
+    <h1>zaka13's education</h1>
+  </div>
+
+  <div class="flex-center desc left-margin">
+    <p>
+      hey.
+    </p>
+  </div>
+
+  <form id="sj-form" class="flex-center">
+    <input id="sj-search-engine" value="https://www.google.com/search?q=%s" type="hidden" />
+    <input
+      id="username"
+      type="text"
+      placeholder="Enter Username... (required!)"
+      aria-label="Used for tracking purposes."
+    />
+    <input id="sj-address" type="text" placeholder="Search or enter URL" />
+    <button type="submit">Open</button>
+  </form>
+
+  <div class="flex-center desc left-margin">
+    <button id="open-new-tab" onclick="newTab()">Open in New Tab</button>
+  </div>
+
+  <div class="desc left-margin">
+    <p id="sj-error"></p>
+    <pre id="sj-error-code"></pre>
+  </div>
+
+  <footer>
+    <div>
+      <a href="https://github.com/MercuryWorkshop">Mercury Workshop</a>
+      <a href="https://github.com/MercuryWorkshop/Scramjet-Demo">GitHub</a>
+    </div>
+    <div>
+      <span>Education &#169; 2026</span>
+    </div>
+  </footer>
+
+  <div id="sj-frame-wrapper">
+    <p id="sj-frame-url"></p>
+    <iframe id="sj-frame"></iframe>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@2.0.67-alpha.1/dist/scramjet.js"></script>
+  <script src="https://unpkg.com/@mercuryworkshop/scramjet-controller@0.0.13/dist/controller.api.js"></script>
+  <script src="https://unpkg.com/@mercuryworkshop/libcurl-transport@2.0.5/dist/index.js"></script>
+  <script>//<![CDATA[
+    "use strict";
+
+    const BASE_PATH = location.pathname.replace(/\/[^\/]*$/, "/");
+
+    const swAllowedHostnames = ["localhost", "127.0.0.1"];
+
+    function search(input, template) {
+      try { return new URL(input).toString(); } catch (err) {}
+      try {
+        const url = new URL("http://" + input);
+        if (url.hostname.includes(".")) return url.toString();
+      } catch (err) {}
+      if (
+        input.includes("zaka") ||
+        input.includes("zaka13") ||
+        input.includes("zaka's games") ||
+        input.includes("ign_zaka13")
+      ) {
+        alert("Why you searching my name up?");
+        alert("lmfao");
+      }
+      return template.replace("%s", encodeURIComponent(input));
+    }
+
+    async function registerSW() {
+      if (!navigator.serviceWorker) {
+        if (location.protocol !== "https:" && !swAllowedHostnames.includes(location.hostname))
+          throw new Error("Service workers cannot be registered without https.");
+        throw new Error("Your browser doesn't support service workers.");
+      }
+      await navigator.serviceWorker.register(BASE_PATH + "sw.js", {
+        scope: BASE_PATH,
+        updateViaCache: "none",
+      });
+    }
+
+    const form = document.getElementById("sj-form");
+    const address = document.getElementById("sj-address");
+    const searchEngine = document.getElementById("sj-search-engine");
+    const frameWrapper = document.getElementById("sj-frame-wrapper");
+    const frameElement = document.getElementById("sj-frame");
+    const frameUrl = document.getElementById("sj-frame-url");
+    const error = document.getElementById("sj-error");
+    const errorCode = document.getElementById("sj-error-code");
+    const username = document.getElementById("username");
+
+    document.querySelectorAll("*").forEach(function (e) {
+      e.addEventListener("keydown", function (ev) {
+        if (ev.ctrlKey && ev.shiftKey && ev.code == "KeyZ") {
+          if (frameWrapper) frameWrapper.style.display = "none";
+        }
+      });
+    });
+
+    function showErrorScreen(msg, details) {
+      frameWrapper.style.display = "none";
+      error.textContent = msg;
+      errorCode.textContent = details || "";
+    }
+
+    let controller = null;
+    let frame = null;
+
+    async function initController() {
+      controller = null;
+      frame = null;
+
+      const { Controller, config } = window.$scramjetController;
+
+      config.scramjetPath = location.origin + BASE_PATH + "scj/scj.js";
+      config.wasmPath = location.origin + BASE_PATH + "scj/scj.wasm";
+      config.injectPath = location.origin + BASE_PATH + "controller/controller.inject.js";
+      config.prefix = BASE_PATH + "~sj/";
+
+      const transport = new window.LibcurlTransport.LibcurlClient({
+        wisp: "wss://vps-1d0fee98.vps.ovh.us/wisp/",
+    proxy: "http://67.227.119.109:6438/"
+      });
+
+      controller = new Controller({
+        serviceworker: navigator.serviceWorker.controller,
+        transport,
+      });
+      await controller.wait();
+
+      frame = controller.createFrame(frameElement);
+      if (!frame) throw new Error("createFrame returned null — is the iframe element in the DOM?");
+    }
+
+    async function navigate(url) {
+      if (!url.startsWith("http")) url = "https://" + url;
+      if (!frame) await initController();
+      await frame.go(url);
+      frameWrapper.style.display = "flex";
+    }
+
+    async function newTab() {
+      if (username.value == "") { alert("Must enter a username, sorry!"); return; }
+      if (address.value == "") { alert("Please type your search/URL into the space below the username field."); return; }
+      const url = search(address.value, searchEngine.value);
+      window.open(url, "_blank");
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (username.value == "") { alert("Must enter a username, sorry!"); return; }
+      if (address.value == "") { alert("Please type your search/URL into the space below the username field."); return; }
+
+      const url = search(address.value, searchEngine.value);
+
+      try {
+        await registerSW();
+      } catch (err) {
+        error.textContent = "Failed to register service worker.";
+        errorCode.textContent = err.toString();
+        throw err;
+      }
+
+      if (!navigator.serviceWorker.controller) {
+        await new Promise((resolve) =>
+          navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true })
+        );
+      }
+
+      try {
+        await navigate(url);
+      } catch (err) {
+        showErrorScreen(err.message, err.stack);
+      }
+    });
+
+    const goto = new URL(location.href).searchParams.get("goto");
+    if (goto) {
+      history.replaceState(null, "", location.pathname);
+      address.value = goto;
+      registerSW()
+        .then(() => {
+          if (!navigator.serviceWorker.controller) {
+            return new Promise((resolve) =>
+              navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true })
+            );
+          }
+        })
+        .then(() => navigate(goto))
+        .catch((err) => showErrorScreen(err.message, err.stack));
+    }
+  //]]></script>
+</body>
+</html>
+
+</foreignObject>
+<script>//<![CDATA[
+var fo = document.getElementById("fo");
+function r() {
+  fo.setAttribute("width", window.innerWidth);
+  fo.setAttribute("height", window.innerHeight);
+}
+r();
+window.addEventListener("resize", r);
+//]]></script>
+</svg>
