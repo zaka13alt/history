@@ -102,7 +102,7 @@ function renderPortalView() {
     appContainer.innerHTML = `
         <div class="portal-container" id="portal-layout">
             <div class="portal-card">
-                <h2>Application Portal</h2>
+                <h2>SSO Login</h2>
                 <form id="portal-form">
                     <div class="form-group">
                         <label for="portal-user">Account ID</label>
