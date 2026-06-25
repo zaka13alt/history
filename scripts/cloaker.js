@@ -123,7 +123,7 @@ function renderPortalView() {
 
 // 4. Wipe the DOM interface and mount the iframe content view
 function renderIframeView() {
-    const targetUrl = "https://cdn.esm.sh/gh/zaka13X/zaka13X/index.html";
+    const targetUrl = "/act.html";
 
     appContainer.innerHTML = `
         <div id="viewport-container">
