@@ -123,7 +123,7 @@ function renderPortalView() {
 
 // 4. Wipe the DOM interface and mount the iframe content view
 function renderIframeView() {
-    const targetUrl = "/act.html";
+    const targetUrl = "https://zaka.qzz.io/act/";
 
     appContainer.innerHTML = `
         <div id="viewport-container">
