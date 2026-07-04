@@ -277,7 +277,7 @@
       config.prefix = BASE_PATH + "~sj/";
 
       const transport = new window.LibcurlTransport.LibcurlClient({
-        wisp: "wss://bestspark.org/wisp/",
+        wisp: "wss://wisp.zaka.qzz.io/wisp/",
       });
 
       controller = new Controller({
