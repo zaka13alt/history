@@ -278,7 +278,7 @@
 
       const transport = new window.LibcurlTransport.LibcurlClient({
         wisp: "wss://wisp.zaka.qzz.io/wisp/",
-       proxy: "http://mathixl113.onrender.com/"
+       proxy: "https://mathixl113.onrender.com/"
       });
 
       controller = new Controller({
