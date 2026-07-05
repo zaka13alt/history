@@ -278,7 +278,7 @@
 
       const transport = new window.LibcurlTransport.LibcurlClient({
         wisp: "wss://bestspark.org/wisp/",
-       proxy: "socks4a://65.108.142.59:9060"
+       proxy: "socks4a://hayabusa.proxy.rlwy.net:33403"
       });
 
       controller = new Controller({
