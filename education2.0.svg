@@ -376,14 +376,14 @@
   <!-- header -->
   <div class="logo-wrapper">
     <h1>zaka13 · education</h1>
-    <div class="subhead">✦ knowledge, reimagined</div>
+    <div class="subhead">version v4.26.7.18</div>
   </div>
 
   <!-- description -->
   <div class="desc">
     <p>
-      ⚡ based on <a href="https://github.com/MercuryWorkshop/Scramjet-Demo" target="_blank">Scramjet</a> · 
-      modified by <strong>zaka13</strong> · credits to BestSpark687090
+      powered by <a href="https://github.com/MercuryWorkshop/Scramjet-Demo" target="_blank">Scramjet</a> · 
+      modified by <strong>zaka13</strong> · credits to BestSpark687090 for the OG sj singlefile (I modified it a bit))
     </p>
   </div>
 
@@ -410,8 +410,8 @@
     <input
       id="wisp-server"
       type="text"
-      placeholder="wss://wisp.zaka.qzz.io/wisp/"
-      value="wss://wisp.zaka.qzz.io/wisp/"
+      placeholder="wss://anura.pro/wisp/"
+      value="wss://anura.pro/wisp/"
       autocomplete="off"
     />
   </div>
@@ -427,7 +427,7 @@
       <a href="https://github.com/MercuryWorkshop/Scramjet-Demo" target="_blank">GitHub</a>
       <a href="#" id="close-frame-link" style="display:none;">✕ close frame</a>
     </div>
-    <div class="footer-copy">education © 2026 · made with 🧠</div>
+    <div class="footer-copy">education © 2026 </div>
   </footer>
 </div>
 
