@@ -669,7 +669,7 @@ var shortcutScript = function() {
     { label: 'GitHub', url: 'https://github.com', img: '' },
     { label: 'Reddit', url: 'https://www.reddit.com', img: '' },
     { label: 'Games', url: 'https://zaka13alt.github.io/Extra-assets-/games.html', img: '' }
-    { label: 'AI', url: 'not-yet!', img: '' }
+    
   ];
 
   function loadShortcuts() {
