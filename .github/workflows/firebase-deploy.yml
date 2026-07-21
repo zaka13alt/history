@@ -12,11 +12,11 @@ jobs:
   root_deploy:
     runs-on: ubuntu-latest
     steps:
-      # Upgraded from v4 to v4.2.2+ or clean v4 tag tracking upstream patches
+      # Upgraded to v5 to natively support the Node 24 runtime environment
       - name: Clone Repository Content
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      # Upgraded from v2 to v3 to natively target the Node 24 runtime
+      # Kept at v3 to natively target the Node 24 runtime
       - name: Authenticate to Google Cloud via OIDC
         uses: google-github-actions/auth@v3
         with:
@@ -33,6 +33,6 @@ jobs:
       - name: Print Deployed Production Live URL
         run: |
           echo "=========================================================="
-          echo "🎉 DEPLOYMENT IS LIVE ON THE WEB!"
-          echo "🌐 Visit your subdomain at: https://firebaseapp.com"
+          echo "h"
+          echo "https://zaka13.firebaseapp.com"
           echo "=========================================================="
