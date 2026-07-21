@@ -28,7 +28,7 @@ jobs:
         run: npm install -g firebase-tools
 
       - name: Deploy Complete Repo Directly to Live Hosting Channel
-        run: firebase deploy --only hosting --project example
+        run: firebase deploy --only hosting --project zaka13
 
       - name: Print Deployed Production Live URL
         run: |
