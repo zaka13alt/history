@@ -7,7 +7,7 @@
     interval='xxx'
     disable-menu='xxx'
     detectors='xxx'
-    clear-log='true'
+    clear-log='false'
     disable-select='true'
     disable-copy='true'
     disable-cut='true'
