@@ -1,12 +1,12 @@
-name: Secure OIDC Root Repository Deployment
+name: Secure Root Repository Deployment
 on:
   push:
     branches:
       - '**'
 
 permissions:
-  id-token: write
   contents: read
+  checks: write
 
 jobs:
   root_deploy:
@@ -15,23 +15,10 @@ jobs:
       - name: Clone Repository Content
         uses: actions/checkout@v5
 
-      - name: Authenticate to Google Cloud via OIDC
-        id: auth
-        uses: google-github-actions/auth@v3
-        with:
-          token_format: 'access_token' # Forces Google to output a clean CLI login string
-          workload_identity_provider: 'projects/183184835262/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
-          service_account: 'github-actions-deployer@zaka13.iam.gserviceaccount.com'
-
-      - name: Install Firebase CLI Engine
-        run: npm install -g firebase-tools
-
       - name: Deploy Complete Repo Directly to Live Hosting Channel
-        run: firebase deploy --only hosting --project zaka13 --token "${{ steps.auth.outputs.access_token }}"
-
-      - name: Print Deployed Production Live URL
-        run: |
-          echo "=========================================================="
-          echo "🎉 DEPLOYMENT IS LIVE ON THE WEB!"
-          echo "🌐 Visit your subdomain at: https://firebaseapp.com"
-          echo "=========================================================="
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: zaka13
