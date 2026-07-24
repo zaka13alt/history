@@ -576,8 +576,8 @@
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
     <div class="shortcut-btn" data-index="1">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FF0000' font-size='18' font-family='Arial' font-weight='bold'%3EY%3C/text%3E%3C/svg%3E" alt="YouTube" />
-      <span class="shortcut-label">YouTube</span>
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FF0000' font-size='18' font-family='Arial' font-weight='bold'%3EY%3C/text%3E%3C/svg%3E" alt="games" />
+      <span class="shortcut-label">Games</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
     <div class="shortcut-btn" data-index="2">
@@ -668,7 +668,7 @@ var shortcutScript = function() {
     { label: 'YouTube', url: 'https://www.youtube.com', img: 'https://cdn.jsdelivr.net/gh/zaka13alt/history@HEAD/images/yt.svg' },
     { label: 'GitHub', url: 'https://github.com', img: '' },
     { label: 'Reddit', url: 'https://www.reddit.com', img: '' },
-    { label: 'Games', url: 'https://zaka13alt.github.io/Extra-assets-/games.html', img: '' }
+    { label: 'Games', url: 'https://zaka.qzz.io/games.html', img: '' }
     
   ];
 
