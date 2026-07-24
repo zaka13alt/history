@@ -747,7 +747,7 @@ var quoteScript = function() {
     { text: '69 is better then 67 imo', source: 'zaka' },
     { text: '404 Quote Not Found', source: '404.html and caddy' },
     { text: 'join the discord at https://discord.gg/4MpkuhG3R', source: 'zaka' },
-    { text: 'h is better then e btw', source: 'your mom' }
+    { text: 'credits to BestSpark687090 for most of the code btw', source: 'idk' }
   ];
   var quoteIndex = 0;
 
