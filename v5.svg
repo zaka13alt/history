@@ -1,10 +1,11 @@
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:hidden;background:#000">
 <foreignObject id="fo" x="0" y="0" width="100%" height="100%">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-  <title>zaka13 · education</title>
+  <title>Home</title>
   <style>/*<![CDATA[*/
     * {
       margin: 0;
@@ -13,70 +14,94 @@
     }
 
     body {
-      background: #000;
+      background:
+        radial-gradient(circle at 18% 35%, rgba(53, 208, 127, 0.08) 0 1px, transparent 2px),
+        radial-gradient(circle at 78% 16%, rgba(255, 255, 255, 0.18) 0 1px, transparent 2px),
+        radial-gradient(circle at 88% 72%, rgba(53, 208, 127, 0.14) 0 1px, transparent 2px),
+        radial-gradient(circle at 34% 82%, rgba(255, 255, 255, 0.12) 0 1px, transparent 2px),
+        #0b0d0c;
+      background-size: 280px 220px, 360px 290px, 240px 310px, 410px 270px, auto;
       font-family: Arial, Helvetica, sans-serif;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 1.5rem 1rem 0.5rem;
+      justify-content: center;
+      padding: 2rem 1rem;
       color: #fff;
       overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      opacity: 0.2;
+      z-index: 0;
+    }
+
+    body::before {
+      width: 420px;
+      height: 260px;
+      left: 8%;
+      top: 30%;
+      background:
+        linear-gradient(25deg, transparent 49.7%, rgba(53, 208, 127, 0.28) 50%, transparent 50.3%),
+        linear-gradient(145deg, transparent 49.7%, rgba(255, 255, 255, 0.16) 50%, transparent 50.3%);
+      background-size: 180px 140px;
+      mask-image: radial-gradient(ellipse, #000 0 45%, transparent 74%);
+    }
+
+    body::after {
+      width: 360px;
+      height: 300px;
+      right: 6%;
+      bottom: 12%;
+      background:
+        radial-gradient(circle, rgba(53, 208, 127, 0.5) 0 1px, transparent 2px) 0 0 / 90px 90px;
+      mask-image: radial-gradient(ellipse, #000 0 40%, transparent 75%);
+    }
+
+    :root {
+      --accent: #35d07f;
+      --accent-hover: #72e6a4;
     }
 
     .container {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 780px;
+      max-width: 430px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      flex: 1;
     }
 
-    .logo-wrapper {
-      margin-top: 0.5rem;
-      margin-bottom: 0.3rem;
-      text-align: center;
+    .topbar {
+      position: fixed;
+      top: 1.1rem;
+      right: 1.1rem;
+      z-index: 5;
+      width: auto;
+      display: flex;
+      gap: 0.5rem;
     }
 
-    .logo-wrapper h1 {
-      font-size: 2.8rem;
-      font-weight: 400;
-      letter-spacing: 1px;
-      color: #fff;
+    #settings-button {
+      min-width: 0;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      font-size: 1.25rem;
+      background: rgba(16, 20, 18, 0.9);
+      color: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
 
-    .subhead {
-      color: rgba(255, 255, 255, 0.3);
-      font-size: 0.85rem;
-      margin-top: 0.1rem;
-      letter-spacing: 0.5px;
-    }
-
-    .desc {
-      margin: 0.5rem 0 1rem;
-      max-width: 540px;
-      text-align: center;
-    }
-
-    .desc p {
-      color: rgba(255, 255, 255, 0.3);
-      font-size: 0.85rem;
-      line-height: 1.5;
-      padding: 0.4rem 1.2rem;
-      border-radius: 60px;
-    }
-
-    .desc p a {
-      color: #4a9eff;
-      text-decoration: none;
-    }
-
-    .desc p a:hover {
-      text-decoration: underline;
+    #settings-button:hover {
+      background: #151c18;
+      color: var(--accent-hover);
     }
 
     #sj-form {
@@ -85,7 +110,46 @@
       flex-direction: column;
       align-items: center;
       gap: 0.5rem;
-      margin: 0.2rem 0 0.3rem;
+      margin: 0;
+    }
+
+    .home-logo {
+      display: block;
+      width: 132px;
+      height: auto;
+      margin: 0 auto 1.1rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .quote-list {
+      width: 100%;
+      min-height: 40px;
+      margin-bottom: 0.55rem;
+      padding: 0 0.7rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .quote-text {
+      color: rgba(255, 255, 255, 0.78);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 0.72rem;
+      font-style: italic;
+      line-height: 1.3;
+      transition: opacity 0.35s ease;
+    }
+
+    .quote-source {
+      margin-top: 0.2rem;
+      color: rgba(53, 208, 127, 0.72);
+      font-size: 0.5rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: opacity 0.35s ease;
     }
 
     .input-group {
@@ -97,16 +161,17 @@
 
     #sj-address {
       width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 0.7rem 1.5rem;
+      background: rgba(25, 28, 27, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+      padding: 0.7rem 1rem;
       font-family: Arial, Helvetica, sans-serif;
       font-size: 1rem;
       color: #fff;
       outline: none;
       transition: all 0.25s ease;
-      height: 48px;
+      height: 46px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
     }
 
     #sj-address::placeholder {
@@ -115,7 +180,7 @@
     }
 
     #sj-address:focus {
-      border-color: #4a9eff;
+      border-color: var(--accent);
       background: rgba(255, 255, 255, 0.08);
     }
 
@@ -126,14 +191,14 @@
       justify-content: center;
       gap: 0.6rem;
       width: 100%;
-      margin-top: 0.1rem;
+      margin-top: 0.25rem;
     }
 
     button {
-      background: #4a9eff;
+      background: var(--accent);
       border: none;
       padding: 0.55rem 1.8rem;
-      border-radius: 8px;
+      border-radius: 6px;
       font-family: Arial, Helvetica, sans-serif;
       font-size: 0.9rem;
       color: #000;
@@ -149,7 +214,7 @@
     }
 
     button:hover {
-      background: #6ab0ff;
+      background: var(--accent-hover);
       transform: scale(1.02);
     }
 
@@ -157,44 +222,34 @@
       transform: scale(0.97);
     }
 
-    #open-new-tab, #open-about-blank {
-      background: #4a9eff;
-    }
-
-    #open-new-tab:hover, #open-about-blank:hover {
-      background: #6ab0ff;
-    }
-
     .shortcuts {
       width: 100%;
-      margin: 0.8rem 0 0.5rem;
-      display: flex;
-      justify-content: center;
-      gap: 0.8rem;
-      flex-wrap: wrap;
+      margin: 1.25rem 0 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
     }
 
     .shortcut-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 0.5rem;
+      background: rgba(23, 26, 25, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 5px;
+      padding: 0.65rem 0.35rem 0.55rem;
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.3rem;
-      min-width: 70px;
-      max-width: 80px;
-      flex: 1;
+      gap: 0.45rem;
+      min-width: 0;
+      min-height: 76px;
       text-decoration: none;
     }
 
     .shortcut-btn:hover {
-      background: rgba(74, 158, 255, 0.15);
-      border-color: #4a9eff;
-      transform: translateY(-2px);
+      background: #202724;
+      border-color: rgba(53, 208, 127, 0.35);
+      transform: translateY(-1px);
     }
 
     .shortcut-btn:active {
@@ -202,36 +257,24 @@
     }
 
     .shortcut-btn img {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
       object-fit: cover;
       background: rgba(255, 255, 255, 0.05);
       pointer-events: none;
     }
 
     .shortcut-btn .shortcut-label {
-      font-size: 0.55rem;
-      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.72);
       text-align: center;
-      max-width: 70px;
+      max-width: 90px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       font-family: Arial, Helvetica, sans-serif;
       pointer-events: none;
-    }
-
-    .shortcut-edit-hint {
-      font-size: 0.5rem;
-      color: rgba(255, 255, 255, 0.1);
-      text-align: center;
-      margin-top: 0.1rem;
-      display: none;
-    }
-
-    .shortcut-btn:hover .shortcut-edit-hint {
-      display: block;
     }
 
     .wisp-field {
@@ -269,7 +312,7 @@
     }
 
     #wisp-server:focus {
-      border-color: #4a9eff;
+      border-color: var(--accent);
       background: rgba(255, 255, 255, 0.08);
       color: rgba(255, 255, 255, 0.7);
     }
@@ -327,7 +370,7 @@
     }
 
     .footer-links a:hover {
-      color: #4a9eff;
+      color: var(--accent);
       text-decoration: underline;
     }
 
@@ -396,13 +439,14 @@
     }
 
     .modal {
-      background: #0a0a12;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
+      background: #050606;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
       padding: 2rem;
       max-width: 420px;
       width: 90%;
       position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
     }
 
     .modal h3 {
@@ -439,7 +483,7 @@
     }
 
     .modal input:focus {
-      border-color: #4a9eff;
+      border-color: var(--accent);
     }
 
     .modal .modal-actions {
@@ -457,11 +501,11 @@
     }
 
     .modal .modal-actions .btn-save {
-      background: #4a9eff;
+      background: var(--accent);
     }
 
     .modal .modal-actions .btn-save:hover {
-      background: #6ab0ff;
+      background: var(--accent-hover);
     }
 
     .modal .modal-actions .btn-cancel {
@@ -491,13 +535,50 @@
       color: rgba(255, 255, 255, 0.6);
     }
 
+    .settings-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .settings-panel h3 {
+      margin-bottom: 0.4rem;
+    }
+
+    .settings-panel .wisp-field {
+      margin-top: 0.3rem;
+      align-items: stretch;
+      gap: 0.35rem;
+    }
+
+    .settings-panel .wisp-field label {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .settings-panel #wisp-server {
+      max-width: none;
+    }
+
+    .settings-panel > button:not(.close-modal) {
+      width: 100%;
+      background: #111513;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .settings-panel > button:not(.close-modal):hover {
+      background: #18211c;
+      border-color: rgba(53, 208, 127, 0.45);
+      color: var(--accent-hover);
+    }
+
     @media (max-width: 480px) {
-      .logo-wrapper h1 {
-        font-size: 2rem;
+      body {
+        padding: 1rem;
       }
-      .desc p {
-        font-size: 0.7rem;
-        padding: 0.3rem 0.8rem;
+      .topbar {
+        top: 0.75rem;
+        right: 0.75rem;
       }
       #sj-address {
         padding: 0.5rem 1.2rem;
@@ -516,19 +597,18 @@
         padding: 0.3rem 0.8rem;
       }
       .shortcut-btn {
-        min-width: 55px;
-        max-width: 65px;
-        padding: 0.4rem;
+        min-height: 70px;
+        padding: 0.5rem 0.2rem 0.4rem;
       }
       .shortcut-btn img {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
       }
       .shortcut-btn .shortcut-label {
-        font-size: 0.45rem;
+        font-size: 0.6rem;
       }
       .shortcuts {
-        gap: 0.4rem;
+        gap: 0.35rem;
       }
     }
 
@@ -540,16 +620,18 @@
 <body>
 
 <div class="container">
-  <div class="logo-wrapper">
-    <h1>zaka13 · education</h1>
-    <div class="subhead">knowledge, reimagined</div>
+  <div class="topbar">
+    <button type="button" id="settings-button" aria-label="Open settings" title="Settings">&#9881;</button>
   </div>
 
-  <div class="desc">
-    <p>
-      based on <a href="https://github.com/MercuryWorkshop/Scramjet-Demo" target="_blank">Scramjet</a> · 
-      modified by zaka13 · credits to BestSpark687090
-    </p>
+  <svg class="home-logo" xmlns="http://w3.org/2000/svg" viewBox="0 0 60 20" role="img" aria-label="zaka logo">
+    <rect width="100%" height="100%" fill="#000"/>
+    <text x="50%" y="55%" fill="#fff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="middle">zaka</text>
+  </svg>
+
+  <div class="quote-list" aria-live="polite">
+    <p class="quote-text" id="quote-text">The future depends on what you do today.</p>
+    <span class="quote-source" id="quote-source">Mahatma Gandhi</span>
   </div>
 
   <form id="sj-form">
@@ -563,62 +645,45 @@
     </div>
     <div class="action-row">
       <button type="submit">Open</button>
-      <button type="button" id="open-new-tab">New Tab</button>
-      <button type="button" id="open-about-blank">About:Blank</button>
     </div>
     <input id="sj-search-engine" value="https://www.google.com/search?q=%s" type="hidden" />
   </form>
 
   <div class="shortcuts" id="shortcuts-container">
     <div class="shortcut-btn" data-index="0">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%234285F4' font-size='18' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="Google" />
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='18' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="Google" />
       <span class="shortcut-label">Google</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
     <div class="shortcut-btn" data-index="1">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FF0000' font-size='18' font-family='Arial' font-weight='bold'%3EY%3C/text%3E%3C/svg%3E" alt="games" />
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='14' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="Games" />
       <span class="shortcut-label">Games</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
     <div class="shortcut-btn" data-index="2">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FF0000' font-size='18' font-family='Arial' font-weight='bold'%3EY%3C/text%3E%3C/svg%3E" alt="YouTube" />
+      <span class="shortcut-label">YouTube</span>
+      <span class="shortcut-edit-hint">click to edit</span>
+    </div>
+    <div class="shortcut-btn" data-index="3">
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FFFFFF' font-size='18' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="GitHub" />
       <span class="shortcut-label">GitHub</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
-    <div class="shortcut-btn" data-index="3">
+    <div class="shortcut-btn" data-index="4">
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FF4500' font-size='18' font-family='Arial' font-weight='bold'%3ER%3C/text%3E%3C/svg%3E" alt="Reddit" />
       <span class="shortcut-label">Reddit</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
-    <div class="shortcut-btn" data-index="4">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23666666' font-size='18' font-family='Arial' font-weight='bold'%3EW%3C/text%3E%3C/svg%3E" alt="Wikipedia" />
-      <span class="shortcut-label">Wikipedia</span>
+    <div class="shortcut-btn" data-index="5">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='18' font-family='Arial' font-weight='bold'%3EAI%3C/text%3E%3C/svg%3E" alt="AI" />
+      <span class="shortcut-label">AI</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
   </div>
 
-  <div class="wisp-field">
-    <label for="wisp-server">wisp server</label>
-    <input
-      id="wisp-server"
-      type="text"
-      placeholder="wss://wisp.zaka.qzz.io/wisp/"
-      value="wss://wisp.zaka.qzz.io/wisp/"
-      autocomplete="off"
-    />
-  </div>
-
   <div id="sj-error"></div>
   <pre id="sj-error-code"></pre>
-
-  <footer>
-    <div class="footer-links">
-      <a href="https://github.com/MercuryWorkshop" target="_blank">Mercury Workshop</a>
-      <a href="https://github.com/MercuryWorkshop/Scramjet-Demo" target="_blank">GitHub</a>
-      <a href="#" id="close-frame-link" style="display:none;">close frame</a>
-    </div>
-    <div class="footer-copy">education 2026 · made with logic</div>
-  </footer>
 </div>
 
 <div id="sj-frame-wrapper">
@@ -643,6 +708,26 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal settings-panel">
+    <button class="close-modal" id="close-settings" aria-label="Close settings">&#10005;</button>
+    <h3>Settings</h3>
+    <div class="wisp-field">
+      <label for="wisp-server">Wisp server</label>
+      <input
+        id="wisp-server"
+        type="text"
+        placeholder="wss://wisp.zaka.qzz.io/wisp/"
+        value="wss://wisp.zaka.qzz.io/wisp/"
+        autocomplete="off"
+      />
+    </div>
+    <button type="button" id="open-new-tab">Open in new tab</button>
+    <button type="button" id="open-about-blank">Open in About:Blank</button>
+    <button type="button" id="open-blob-url">Open with Blob URL cloaking</button>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@2.0.67-alpha.1/dist/scramjet.js">
 </script>
 <script src="https://unpkg.com/@mercuryworkshop/scramjet-controller@0.0.13/dist/controller.api.js">
@@ -653,6 +738,32 @@
 </script>
 
 <script>//<![CDATA[
+// Shortcuts management
+var quoteScript = function() {
+  var quoteText = document.getElementById('quote-text');
+  var quoteSource = document.getElementById('quote-source');
+  var quotes = [
+    { text: 'get better wifi bro if it doesnt load', source: 'zaka' },
+    { text: '69 is better then 67 imo', source: 'zaka' },
+    { text: '404 Quote Not Found', source: '404.html and caddy' },
+    { text: 'join the discord at https://discord.gg/4MpkuhG3R', source: 'zaka' },
+    { text: 'h is better then e btw', source: 'your mom' }
+  ];
+  var quoteIndex = 0;
+
+  window.setInterval(function() {
+    quoteText.style.opacity = '0';
+    quoteSource.style.opacity = '0';
+    window.setTimeout(function() {
+      quoteIndex = (quoteIndex + 1) % quotes.length;
+      quoteText.textContent = quotes[quoteIndex].text;
+      quoteSource.textContent = quotes[quoteIndex].source;
+      quoteText.style.opacity = '1';
+      quoteSource.style.opacity = '1';
+    }, 350);
+  }, 6000);
+};
+
 // Shortcuts management
 var shortcutScript = function() {
   var shortcuts = [];
@@ -665,10 +776,11 @@ var shortcutScript = function() {
 
   var defaultShortcuts = [
     { label: 'Google', url: 'https://www.google.com', img: 'https://cdn.jsdelivr.net/gh/zaka13alt/history@HEAD/images/google.svg' },
+    { label: 'Games', url: 'https://zaka.qzz.io/games.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EG%3C/text%3E%3C/svg%3E' },
     { label: 'YouTube', url: 'https://www.youtube.com', img: 'https://cdn.jsdelivr.net/gh/zaka13alt/history@HEAD/images/yt.svg' },
     { label: 'GitHub', url: 'https://github.com', img: '' },
     { label: 'Reddit', url: 'https://www.reddit.com', img: '' },
-    { label: 'Games', url: 'https://zaka.qzz.io/games.html', img: '' }
+    { label: 'AI', url: 'https://zaka.qzz.io/ai.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EAI%3C/text%3E%3C/svg%3E' }
     
   ];
 
@@ -677,6 +789,12 @@ var shortcutScript = function() {
       var saved = localStorage.getItem('zaka13_shortcuts');
       if (saved) {
         shortcuts = JSON.parse(saved);
+        if (shortcuts[4] && shortcuts[4].label === 'Games') {
+          shortcuts[4] = defaultShortcuts[5];
+        }
+        if (shortcuts.length === 5 && shortcuts[0] && shortcuts[0].label === 'Google' && shortcuts[1] && shortcuts[1].label === 'YouTube') {
+          shortcuts.splice(1, 0, defaultShortcuts[1]);
+        }
       } else {
         shortcuts = defaultShortcuts.map(function(s) { return { label: s.label, url: s.url, img: s.img }; });
       }
@@ -765,6 +883,10 @@ var mainScript = function() {
   var errorCode = document.getElementById("sj-error-code");
   var openNewTabBtn = document.getElementById("open-new-tab");
   var openAboutBlankBtn = document.getElementById("open-about-blank");
+  var openBlobUrlBtn = document.getElementById("open-blob-url");
+  var settingsButton = document.getElementById("settings-button");
+  var settingsModal = document.getElementById("settings-modal");
+  var closeSettings = document.getElementById("close-settings");
   var closeFrameLink = document.getElementById("close-frame-link");
   var wispInput = document.getElementById("wisp-server");
 
@@ -822,18 +944,20 @@ var mainScript = function() {
 
   var controller = null;
   var frame = null;
-  var currentWisp = wispInput.value.trim() || "wss://wisp.zaka.qzz.io/wisp/";
+  var currentWisp = wispInput ? wispInput.value.trim() : "wss://wisp.zaka.qzz.io/wisp/";
 
-  wispInput.addEventListener("change", function() {
-    var val = this.value.trim();
-    if (val) {
-      currentWisp = val;
-      if (controller) {
-        controller = null;
-        frame = null;
+  if (wispInput) {
+    wispInput.addEventListener("change", function() {
+      var val = this.value.trim();
+      if (val) {
+        currentWisp = val;
+        if (controller) {
+          controller = null;
+          frame = null;
+        }
       }
-    }
-  });
+    });
+  }
 
   async function initController() {
     controller = null;
@@ -917,6 +1041,21 @@ var mainScript = function() {
     }
   }
 
+  async function openBlobUrl() {
+    if (address.value.trim() === "") {
+      alert("Please type your search/URL");
+      return;
+    }
+    var url = search(address.value, searchEngine.value);
+    var blobDocument = '<html><head><title>' + url + '</title></head><body style="margin:0;padding:0;background:#000;overflow:hidden;"><iframe src="' + location.href + '?goto=' + encodeURIComponent(url) + '" style="width:100vw;height:100vh;border:none;"></iframe></body></html>';
+    var blobUrl = URL.createObjectURL(new Blob([blobDocument], { type: "text/html" }));
+    window.open(blobUrl, "_blank");
+  }
+
+  function closeSettingsPanel() {
+    settingsModal.classList.remove("active");
+  }
+
   form.addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -950,6 +1089,12 @@ var mainScript = function() {
 
   openNewTabBtn.addEventListener("click", newTab);
   openAboutBlankBtn.addEventListener("click", openAboutBlank);
+  openBlobUrlBtn.addEventListener("click", openBlobUrl);
+  settingsButton.addEventListener("click", function() { settingsModal.classList.add("active"); });
+  closeSettings.addEventListener("click", closeSettingsPanel);
+  settingsModal.addEventListener("click", function(event) {
+    if (event.target === settingsModal) closeSettingsPanel();
+  });
 
   var goto = new URL(location.href).searchParams.get("goto");
   if (goto) {
@@ -969,9 +1114,11 @@ var mainScript = function() {
 
   window.newTab = newTab;
   window.openAboutBlank = openAboutBlank;
+  window.openBlobUrl = openBlobUrl;
 };
 
 // Initialize all scripts
+quoteScript();
 shortcutScript();
 mainScript();
 //]]></script>
