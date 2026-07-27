@@ -727,11 +727,11 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/scramjet@2.0.67-alpha.1/dist/scramjet.js">
+<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/us/scram.js">
 </script>
-<script src="https://unpkg.com/@mercuryworkshop/scramjet-controller@0.0.13/dist/controller.api.js">
+<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/sjcontrol.js">
 </script>
-<script src="https://unpkg.com/@mercuryworkshop/libcurl-transport@2.0.5/dist/index.js">
+<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/ca/index.js">
 </script>
 <script src="https://cdn.jsdelivr.net/gh/zaka13X/sj@main/scripts/util2.js">
 </script>
