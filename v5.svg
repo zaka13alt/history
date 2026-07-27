@@ -1,11 +1,10 @@
-
 <svg xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:hidden;background:#000">
 <foreignObject id="fo" x="0" y="0" width="100%" height="100%">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-  <title>Home</title>
+  <title>Learning Portal</title>
   <style>/*<![CDATA[*/
     * {
       margin: 0;
@@ -639,12 +638,12 @@
       <input
         id="sj-address"
         type="text"
-        placeholder="search or enter URL"
+        placeholder="enter education login ID"
         autocomplete="off"
       />
     </div>
     <div class="action-row">
-      <button type="submit">Open</button>
+      <button type="submit">Access</button>
     </div>
     <input id="sj-search-engine" value="https://www.google.com/search?q=%s" type="hidden" />
   </form>
@@ -656,8 +655,8 @@
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
     <div class="shortcut-btn" data-index="1">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='14' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="Games" />
-      <span class="shortcut-label">Games</span>
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='14' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="Educational resources" />
+      <span class="shortcut-label">Educational resources</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
     <div class="shortcut-btn" data-index="2">
@@ -676,8 +675,8 @@
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
     <div class="shortcut-btn" data-index="5">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='18' font-family='Arial' font-weight='bold'%3EAI%3C/text%3E%3C/svg%3E" alt="AI" />
-      <span class="shortcut-label">AI</span>
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='18' font-family='Arial' font-weight='bold'%3EAI%3C/text%3E%3C/svg%3E" alt="Chatbot" />
+      <span class="shortcut-label">Chatbot</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
   </div>
@@ -713,7 +712,7 @@
     <button class="close-modal" id="close-settings" aria-label="Close settings">&#10005;</button>
     <h3>Settings</h3>
     <div class="wisp-field">
-      <label for="wisp-server">Wisp server</label>
+      <label for="wisp-server">education server</label>
       <input
         id="wisp-server"
         type="text"
@@ -776,11 +775,11 @@ var shortcutScript = function() {
 
   var defaultShortcuts = [
     { label: 'Google', url: 'https://www.google.com', img: 'https://cdn.jsdelivr.net/gh/zaka13alt/history@HEAD/images/google.svg' },
-    { label: 'Games', url: 'https://zaka.qzz.io/games.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EG%3C/text%3E%3C/svg%3E' },
+    { label: 'Educational resources', url: 'https://zaka.qzz.io/games.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EG%3C/text%3E%3C/svg%3E' },
     { label: 'YouTube', url: 'https://www.youtube.com', img: 'https://cdn.jsdelivr.net/gh/zaka13alt/history@HEAD/images/yt.svg' },
     { label: 'GitHub', url: 'https://github.com', img: '' },
     { label: 'Reddit', url: 'https://www.reddit.com', img: '' },
-    { label: 'AI', url: 'https://zaka.qzz.io/ai.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EAI%3C/text%3E%3C/svg%3E' }
+    { label: 'Chatbot', url: 'https://zaka.qzz.io/ai.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EAI%3C/text%3E%3C/svg%3E' }
     
   ];
 
