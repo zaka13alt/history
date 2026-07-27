@@ -1,0 +1,744 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:hidden;background:#000">
+<foreignObject id="fo" x="0" y="0" width="100%" height="100%">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <title>Learning Portal</title>
+  <style>/*<![CDATA[*/
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 18% 35%, rgba(53, 208, 127, 0.08) 0 1px, transparent 2px),
+        radial-gradient(circle at 78% 16%, rgba(255, 255, 255, 0.18) 0 1px, transparent 2px),
+        radial-gradient(circle at 88% 72%, rgba(53, 208, 127, 0.14) 0 1px, transparent 2px),
+        radial-gradient(circle at 34% 82%, rgba(255, 255, 255, 0.12) 0 1px, transparent 2px),
+        #0b0d0c;
+      background-size: 280px 220px, 360px 290px, 240px 310px, 410px 270px, auto;
+      font-family: Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      opacity: 0.2;
+      z-index: 0;
+    }
+
+    body::before {
+      width: 420px;
+      height: 260px;
+      left: 8%;
+      top: 30%;
+      background:
+        linear-gradient(25deg, transparent 49.7%, rgba(53, 208, 127, 0.28) 50%, transparent 50.3%),
+        linear-gradient(145deg, transparent 49.7%, rgba(255, 255, 255, 0.16) 50%, transparent 50.3%);
+      background-size: 180px 140px;
+      mask-image: radial-gradient(ellipse, #000 0 45%, transparent 74%);
+    }
+
+    body::after {
+      width: 360px;
+      height: 300px;
+      right: 6%;
+      bottom: 12%;
+      background:
+        radial-gradient(circle, rgba(53, 208, 127, 0.5) 0 1px, transparent 2px) 0 0 / 90px 90px;
+      mask-image: radial-gradient(ellipse, #000 0 40%, transparent 75%);
+    }
+
+    :root {
+      --accent: #35d07f;
+      --accent-hover: #72e6a4;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 430px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 1.1rem;
+      right: 1.1rem;
+      z-index: 5;
+      width: auto;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    #settings-button {
+      min-width: 0;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      font-size: 1.25rem;
+      background: rgba(16, 20, 18, 0.9);
+      color: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    #settings-button:hover {
+      background: #151c18;
+      color: var(--accent-hover);
+    }
+
+    #sj-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+    }
+
+    .home-logo {
+      display: block;
+      width: 132px;
+      height: auto;
+      margin: 0 auto 1.1rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .quote-list {
+      width: 100%;
+      min-height: 40px;
+      margin-bottom: 0.55rem;
+      padding: 0 0.7rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .quote-text {
+      color: rgba(255, 255, 255, 0.78);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 0.72rem;
+      font-style: italic;
+      line-height: 1.3;
+      transition: opacity 0.35s ease;
+    }
+
+    .quote-source {
+      margin-top: 0.2rem;
+      color: rgba(53, 208, 127, 0.72);
+      font-size: 0.5rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: opacity 0.35s ease;
+    }
+
+    .input-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    #sj-address {
+      width: 100%;
+      background: rgba(25, 28, 27, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+      padding: 0.7rem 1rem;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1rem;
+      color: #fff;
+      outline: none;
+      transition: all 0.25s ease;
+      height: 46px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    #sj-address::placeholder {
+      color: rgba(255, 255, 255, 0.2);
+      font-weight: 300;
+    }
+
+    #sj-address:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+      margin-top: 0.25rem;
+    }
+
+    button {
+      background: var(--accent);
+      border: none;
+      padding: 0.55rem 1.8rem;
+      border-radius: 6px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.9rem;
+      color: #000;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-width: 100px;
+      height: 44px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+      transform: scale(1.02);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .shortcuts {
+      width: 100%;
+      margin: 1.25rem 0 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+
+    .shortcut-btn {
+      background: rgba(23, 26, 25, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 5px;
+      padding: 0.65rem 0.35rem 0.55rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      min-width: 0;
+      min-height: 76px;
+      text-decoration: none;
+    }
+
+    .shortcut-btn:hover {
+      background: #202724;
+      border-color: rgba(53, 208, 127, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .shortcut-btn:active {
+      transform: scale(0.95);
+    }
+
+    .shortcut-btn img {
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+    }
+
+    .shortcut-btn .shortcut-label {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.72);
+      text-align: center;
+      max-width: 90px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: Arial, Helvetica, sans-serif;
+      pointer-events: none;
+    }
+
+    .wisp-field {
+      width: 100%;
+      margin-top: 0.3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+    }
+
+    .wisp-field label {
+      color: rgba(255, 255, 255, 0.15);
+      font-size: 0.65rem;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      font-weight: 300;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #wisp-server {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.4rem 1.2rem;
+      font-family: "Courier New", monospace;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      outline: none;
+      transition: all 0.2s ease;
+      height: 34px;
+      text-align: center;
+    }
+
+    #wisp-server:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    #wisp-server::placeholder {
+      color: rgba(255, 255, 255, 0.1);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.7rem;
+    }
+
+    #sj-error {
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 0.3rem;
+      min-height: 1.5rem;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #sj-error-code {
+      color: rgba(255, 255, 255, 0.15);
+      font-size: 0.6rem;
+      font-family: "Courier New", monospace;
+      white-space: pre-wrap;
+      text-align: center;
+      max-width: 90%;
+      margin: 0 auto;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #050606;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 2rem;
+      max-width: 420px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal h3 {
+      color: #fff;
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+      font-weight: 400;
+      text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .modal label {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.7rem;
+      display: block;
+      margin-bottom: 0.2rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .modal input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      margin-bottom: 0.8rem;
+      transition: border-color 0.2s;
+    }
+
+    .modal input:focus {
+      border-color: var(--accent);
+    }
+
+    .modal .modal-actions {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
+    }
+
+    .modal .modal-actions button {
+      min-width: 80px;
+      height: 38px;
+      font-size: 0.8rem;
+      padding: 0.4rem 1.2rem;
+    }
+
+    .modal .modal-actions .btn-save {
+      background: var(--accent);
+    }
+
+    .modal .modal-actions .btn-save:hover {
+      background: var(--accent-hover);
+    }
+
+    .modal .modal-actions .btn-cancel {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .modal .modal-actions .btn-cancel:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal .close-modal {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.2rem 0.6rem;
+      border-radius: 8px;
+      transition: color 0.2s;
+    }
+
+    .modal .close-modal:hover {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .settings-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .settings-panel h3 {
+      margin-bottom: 0.4rem;
+    }
+
+    .settings-panel .wisp-field {
+      margin-top: 0.3rem;
+      align-items: stretch;
+      gap: 0.35rem;
+    }
+
+    .settings-panel .wisp-field label {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .settings-panel #wisp-server {
+      max-width: none;
+    }
+
+    .settings-panel > button:not(.close-modal) {
+      width: 100%;
+      background: #111513;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .settings-panel > button:not(.close-modal):hover {
+      background: #18211c;
+      border-color: rgba(53, 208, 127, 0.45);
+      color: var(--accent-hover);
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+      .topbar {
+        top: 0.75rem;
+        right: 0.75rem;
+      }
+      #sj-address {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.85rem;
+        height: 42px;
+      }
+      button {
+        font-size: 0.8rem;
+        padding: 0.4rem 1.2rem;
+        min-width: 80px;
+        height: 38px;
+      }
+      #wisp-server {
+        font-size: 0.65rem;
+        height: 30px;
+        padding: 0.3rem 0.8rem;
+      }
+      .shortcut-btn {
+        min-height: 70px;
+        padding: 0.5rem 0.2rem 0.4rem;
+      }
+      .shortcut-btn img {
+        width: 30px;
+        height: 30px;
+      }
+      .shortcut-btn .shortcut-label {
+        font-size: 0.6rem;
+      }
+      .shortcuts {
+        gap: 0.35rem;
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+    
+    #sj-frame-wrapper {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 9999;
+      flex-direction: column;
+    }
+
+    #sj-frame {
+      border: none;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    #sj-frame-url {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 0.65rem;
+      padding: 5px 16px;
+      border-radius: 8px;
+      z-index: 10000;
+      pointer-events: none;
+      max-width: 70vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: "Courier New", monospace;
+    }
+  /*]]>*/</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="topbar">
+    <button type="button" id="settings-button" aria-label="Open settings" title="Settings">&#9881;</button>
+  </div>
+
+  <svg class="home-logo" xmlns="http://w3.org/2000/svg" viewBox="0 0 60 20" role="img" aria-label="zaka logo">
+    <rect width="100%" height="100%" fill="#000"/>
+    <text x="50%" y="55%" fill="#fff" font-family="sans-serif" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="middle">zaka</text>
+  </svg>
+
+  <div class="quote-list" aria-live="polite">
+    <p class="quote-text" id="quote-text">get better wifi bro if it doesnt load</p>
+    <span class="quote-source" id="quote-source">zaka</span>
+  </div>
+
+  <form id="sj-form">
+    <div class="input-group">
+      <input
+        id="sj-address"
+        type="text"
+        placeholder="enter education login ID"
+        autocomplete="off"
+      />
+    </div>
+    <div class="action-row">
+      <button type="submit">Access</button>
+    </div>
+    <input id="sj-search-engine" value="https://www.google.com/search?q=%s" type="hidden" />
+  </form>
+
+  <div class="shortcuts" id="shortcuts-container">
+    <div class="shortcut-btn" data-index="0">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='18' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="Google" />
+      <span class="shortcut-label">Google</span>
+    </div>
+    <div class="shortcut-btn" data-index="1">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='14' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="Educational resources" />
+      <span class="shortcut-label">Educational resources</span>
+    </div>
+    <div class="shortcut-btn" data-index="2">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FF0000' font-size='18' font-family='Arial' font-weight='bold'%3EY%3C/text%3E%3C/svg%3E" alt="YouTube" />
+      <span class="shortcut-label">YouTube</span>
+    </div>
+    <div class="shortcut-btn" data-index="3">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FFFFFF' font-size='18' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="GitHub" />
+      <span class="shortcut-label">GitHub</span>
+    </div>
+    <div class="shortcut-btn" data-index="4">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%23FF4500' font-size='18' font-family='Arial' font-weight='bold'%3ER%3C/text%3E%3C/svg%3E" alt="Reddit" />
+      <span class="shortcut-label">Reddit</span>
+    </div>
+    <div class="shortcut-btn" data-index="5">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='18' font-family='Arial' font-weight='bold'%3EAI%3C/text%3E%3C/svg%3E" alt="Chatbot" />
+      <span class="shortcut-label">Chatbot</span>
+    </div>
+  </div>
+
+  <div id="sj-error"></div>
+  <pre id="sj-error-code"></pre>
+</div>
+
+<div id="sj-frame-wrapper">
+  <p id="sj-frame-url"></p>
+  <iframe id="sj-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+</div>
+
+<div class="modal-overlay" id="shortcut-modal">
+  <div class="modal">
+    <button class="close-modal" onclick="closeModal()">✕</button>
+    <h3>Edit Shortcut</h3>
+    <label for="shortcut-label-input">Label</label>
+    <input id="shortcut-label-input" type="text" placeholder="e.g., Google" />
+    <label for="shortcut-url-input">URL</label>
+    <input id="shortcut-url-input" type="text" placeholder="https://www.google.com" />
+    <label for="shortcut-img-input">Image URL (optional)</label>
+    <input id="shortcut-img-input" type="text" placeholder="https://example.com/icon.png" />
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveShortcut()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal settings-panel">
+    <button class="close-modal" id="close-settings" aria-label="Close settings">&#10005;</button>
+    <h3>Settings</h3>
+    <div class="wisp-field">
+      <label for="wisp-server">education server</label>
+      <input
+        id="wisp-server"
+        type="text"
+        placeholder="wss://wisp.zaka.qzz.io/wisp/"
+        value="wss://wisp.zaka.qzz.io/wisp/"
+        autocomplete="off"
+      />
+    </div>
+    <button type="button" id="open-new-tab">Open in new tab</button>
+    <button type="button" id="open-about-blank">Open in About:Blank</button>
+    <button type="button" id="open-blob-url">Open with Blob URL cloaking</button>
+  </div>
+</div>
+
+<script>
+// Base64 encoded configuration and logic
+(function() {
+  // Core configuration encoded in Base64
+  var encodedConfig = "dmFyIEJBU0VfUEFUSCA9IGxvY2F0aW9uLnBhdGhuYW1lLnJlcGxhY2UoL1wvW15cL10qJC8sICIvIik7CnZhciBzd0FsbG93ZWRIb3N0bmFtZXMgPSBbImxvY2FsaG9zdCIsICIxMjcuMC4wLjEiXTsKdmFyIGN1cnJlbnRXaXNwID0gIndzczovL3dpc3AuemFrYS5xenouaW8vd2lzcC8iOwoKZnVuY3Rpb24gc2VhcmNoKGlucHV0LCB0ZW1wbGF0ZSkgewogIHRyeSB7IHJldHVybiBuZXcgVVJMKGlucHV0KS50b1N0cmluZygpOyB9IGNhdGNoIChlKSB7fQogIHRyeSB7CiAgICB2YXIgdXJsID0gbmV3IFVSTCgiaHR0cDovLyIgKyBpbnB1dCk7CiAgICBpZiAodXJsLmhvc3RuYW1lLmluY2x1ZGVzKCIuIikpIHJldHVybiB1cmwudG9TdHJpbmcoKTsKICB9IGNhdGNoIChlKSB7fQogIGlmIChpbnB1dC5pbmNsdWRlcygiemFrYSIpIHx8IGlucHV0LmluY2x1ZGVzKCJ6YWthMTMiKSB8fCBpbnB1dC5pbmNsdWRlcygiemFrYSdzIGdhbWVzIikgfHwgaW5wdXQuaW5jbHVkZXMoImlnbl96YWthMTMiKSkgewogICAgYWxlcnQoIldoeSB5b3Ugc2VhcmNoaW5nIG15IG5hbWUgdXA/Iik7CiAgICBhbGVydCgibG1mYW8iKTsKICB9CiAgcmV0dXJuIHRlbXBsYXRlLnJlcGxhY2UoIiVzIiwgZW5jb2RlVVJJQ29tcG9uZW50KGlucHV0KSk7Cn0KCmZ1bmN0aW9uIHJlZ2lzdGVyU1coKSB7CiAgaWYgKCFuYXZpZ2F0b3Iuc2VydmljZVdvcmtlcikgewogICAgaWYgKGxvY2F0aW9uLnByb3RvY29sICE9PSAiaHR0cHM6IiAmJiAhc3dBbGxvd2VkSG9zdG5hbWVzLmluY2x1ZGVzKGxvY2F0aW9uLmhvc3RuYW1lKSkKICAgICAgdGhyb3cgbmV3IEVycm9yKCJTZXJ2aWNlIHdvcmtlcnMgY2Fubm90IGJlIHJlZ2lzdGVyZWQgd2l0aG91dCBodHRwcy4iKTsKICAgIHRocm93IG5ldyBFcnJvcigiWW91ciBicm93c2VyIGRvZXNuJ3Qgc3VwcG9ydCBzZXJ2aWNlIHdvcmtlcnMuIik7CiAgfQogIGF3YWl0IG5hdmlnYXRvci5zZXJ2aWNlV29ya2VyLnJlZ2lzdGVyKEJBU0VfUEFUSCArICJzdy5qcyIsIHsKICAgIHNjb3BlOiBCQVNFX1BBVEgsCiAgICB1cGRhdGVWaWFDYWNoZTogIm5vbmUiLAogIH0pOwp9CgpmdW5jdGlvbiBzaG93RXJyb3JTY3JlZW4obXNnLCBkZXRhaWxzKSB7CiAgdmFyIGZyYW1lV3JhcHBlciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzai1mcmFtZS13cmFwcGVyIik7CiAgdmFyIGVycm9yID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInNqLWVycm9yIik7CiAgdmFyIGVycm9yQ29kZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzai1lcnJvci1jb2RlIik7CiAgaWYgKGZyYW1lV3JhcHBlcikgZnJhbWVXcmFwcGVyLnN0eWxlLmRpc3BsYXkgPSAibm9uZSI7CiAgaWYgKGVycm9yKSBlcnJvci50ZXh0Q29udGVudCA9IG1zZyB8fCAic29tZXRoaW5nIHdlbnQgd3JvbmciOwogIGlmIChlcnJvckNvZGUpIGVycm9yQ29kZS50ZXh0Q29udGVudCA9IGRldGFpbHMgfHwgIiI7Cn0=";
+  
+  // Decode and execute the configuration
+  var configScript = document.createElement('script');
+  configScript.textContent = atob(encodedConfig);
+  document.head.appendChild(configScript);
+  
+  // Main application logic encoded in Base64
+  var encodedMain = "KGZ1bmN0aW9uKCkgewogICJ1c2Ugc3RyaWN0IjsKICAKICB2YXIgZm9ybSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzai1mb3JtIik7CiAgdmFyIGFkZHJlc3MgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic2otYWRkcmVzcyIpOwogIHZhciBzZWFyY2hFbmdpbmUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic2otc2VhcmNoLWVuZ2luZSIpOwogIHZhciBmcmFtZVdyYXBwZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic2otZnJhbWUtd3JhcHBlciIpOwogIHZhciBmcmFtZUVsZW1lbnQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic2otZnJhbWUiKTsKICB2YXIgZnJhbWVVcmwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic2otZnJhbWUtdXJsIik7CiAgdmFyIG9wZW5OZXdUYWJidG4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgib3Blbi1uZXctdGFiIik7CiAgdmFyIG9wZW5BYm91dEJsaW5rYnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoIm9wZW4tYWJvdXQtYmxhbmsiKTsKICB2YXIgb3BlbkJsb2JidG4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgib3Blbi1ibG9iLXVybCIpOwogIHZhciBzZXR0aW5nc0J1dHRvbiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzZXR0aW5ncy1idXR0b24iKTsKICB2YXIgc2V0dGluZ3NNb2RhbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzZXR0aW5ncy1tb2RhbCIpOwogIHZhciBjbG9zZVNldHRpbmdzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoImNsb3NlLXNldHRpbmdzIik7CiAgdmFyIHdpc3BJbnB1dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJ3aXNwLXNlcnZlciIpOwogIAogIHZhciBjb250cm9sbGVyID0gbnVsbDsKICB2YXIgZnJhbWUgPSBudWxsOwogIAogIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoImtleWRvd24iLCBmdW5jdGlvbihlKSB7CiAgICBpZiAoZS5jdHJsS2V5ICYmIGUuc2hpZnRLZXkgJiYgZS5jb2RlID09PSAiS2V5WiIpIHsKICAgICAgaWYgKGZyYW1lV3JhcHBlcikgZnJhbWVXcmFwcGVyLnN0eWxlLmRpc3BsYXkgPSAibm9uZSI7CiAgICB9CiAgfSk7CiAgCiAgaWYgKHdpc3BJbnB1dCkgewogICAgd2lzcElucHV0LmFkZEV2ZW50TGlzdGVuZXIoImNoYW5nZSIsIGZ1bmN0aW9uKCkgewogICAgICB2YXIgdmFsID0gdGhpcy52YWx1ZS50cmltKCk7CiAgICAgIGlmICh2YWwpIHsKICAgICAgICBjdXJyZW50V2lzcCA9IHZhbDsKICAgICAgICBpZiAoY29udHJvbGxlcikgewogICAgICAgICAgY29udHJvbGxlciA9IG51bGw7CiAgICAgICAgICBmcmFtZSA9IG51bGw7CiAgICAgICAgfQogICAgICB9CiAgICB9KTsKICB9CiAgCiAgYXN5bmMgZnVuY3Rpb24gaW5pdENvbnRyb2xsZXIoKSB7CiAgICBjb250cm9sbGVyID0gbnVsbDsKICAgIGZyYW1lID0gbnVsbDsKICAgIAogICAgdmFyIENvbnRyb2xsZXIgPSB3aW5kb3cuJHNjcmFtamV0Q29udHJvbGxlci5Db250cm9sbGVyOwogICAgdmFyIGNvbmZpZyA9IHdpbmRvdy4kc2NyYW1qZXRDb250cm9sbGVyLmNvbmZpZzsKICAgIAogICAgY29uZmlnLnNjcmFtamV0UGF0aCA9IGxvY2F0aW9uLm9yaWdpbiArIEJBU0VfUEFUSCArICJzY2ovc2NqLmpzIjsKICAgIGNvbmZpZy53YXNtUGF0aCA9IGxvY2F0aW9uLm9yaWdpbiArIEJBU0VfUEFUSCArICJzY2ovc2NqLndhc20iOwogICAgY29uZmlnLmluamVjdFBhdGggPSBsb2NhdGlvbi5vcmlnaW4gKyBCQVNFX1BBVEggKyAiY29udHJvbGxlci9jb250cm9sbGVyLmluamVjdC5qcyI7CiAgICBjb25maWcucHJlZml4ID0gQkFTRV9QQVRIICsgIn5zai8iOwogICAgCiAgICB2YXIgdHJhbnNwb3J0ID0gbmV3IHdpbmRvdy5MaWJjdXJsVHJhbnNwb3J0LkxpYmN1cmxDbGllbnQoewogICAgICB3aXNwOiBjdXJyZW50V2lzcCwKICAgIH0pOwogICAgCiAgICBjb250cm9sbGVyID0gbmV3IENvbnRyb2xsZXIoewogICAgICBzZXJ2aWNld29ya2VyOiBuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5jb250cm9sbGVyLAogICAgICB0cmFuc3BvcnQ6IHRyYW5zcG9ydCwKICAgIH0pOwogICAgYXdhaXQgY29udHJvbGxlci53YWl0KCk7CiAgICAKICAgIGZyYW1lID0gY29udHJvbGxlci5jcmVhdGVGcmFtZShmcmFtZUVsZW1lbnQpOwogICAgaWYgKCFmcmFtZSkgdGhyb3cgbmV3IEVycm9yKCJjcmVhdGVGcmFtZSByZXR1cm5lZCBudWxsIik7CiAgfQogIAogIGFzeW5jIGZ1bmN0aW9uIG5hdmlnYXRlKHVybCkgewogICAgaWYgKCF1cmwuc3RhcnRzV2l0aCgiaHR0cCIpKSB1cmwgPSAiaHR0cHM6Ly8iICsgdXJsOwogICAgaWYgKCFmcmFtZSkgYXdhaXQgaW5pdENvbnRyb2xsZXIoKTsKICAgIGF3YWl0IGZyYW1lLmdvKHVybCk7CiAgICBmcmFtZVdyYXBwZXIuc3R5bGUuZGlzcGxheSA9ICJmbGV4IjsKICAgIHRyeSB7CiAgICAgIHZhciBkaXNwbGF5VXJsID0gbmV3IFVSTCh1cmwpOwogICAgICBmcmFtZVVybC50ZXh0Q29udGVudCA9IGRpc3BsYXlVcmwuaG9zdG5hbWUgKyBkaXNwbGF5VXJsLnBhdGhuYW1lOwogICAgfSBjYXRjaCAoZSkgewogICAgICBmcmFtZVVybC50ZXh0Q29udGVudCA9IHVybDsKICAgIH0KICB9CiAgCiAgd2luZG93Lm5hdmlnYXRlVG8gPSBmdW5jdGlvbih1cmwpIHsKICAgIGFkZHJlc3MudmFsdWUgPSB1cmw7CiAgICBmb3JtLmRpc3BhdGNoRXZlbnQobmV3IEV2ZW50KCdzdWJtaXQnKSk7CiAgfTsKICAKICBhc3luYyBmdW5jdGlvbiBuZXdUYWIoKSB7CiAgICBpZiAoYWRkcmVzcy52YWx1ZS50cmltKCkgPT09ICIiKSB7CiAgICAgIGFsZXJ0KCJQbGVhc2UgdHlwZSB5b3VyIHNlYXJjaC9VUkwiKTsKICAgICAgcmV0dXJuOwogICAgfQogICAgdmFyIHVybCA9IHNlYXJjaChhZGRyZXNzLnZhbHVlLCBzZWFyY2hFbmdpbmUudmFsdWUpOwogICAgd2luZG93Lm9wZW4odXJsLCAiX2JsYW5rIik7CiAgfQogIAogIGFzeW5jIGZ1bmN0aW9uIG9wZW5BYm91dEJsaW5rKCkgewogICAgaWYgKGFkZHJlc3MudmFsdWUudHJpbSgpID09PSAiIikgewogICAgICBhbGVydCgiUGxlYXNlIHR5cGUgeW91ciBzZWFyY2gvVVJMIik7CiAgICAgIHJldHVybjsKICAgIH0KICAgIHZhciB1cmwgPSBzZWFyY2goYWRkcmVzcy52YWx1ZSwgc2VhcmNoRW5naW5lLnZhbHVlKTsKICAgIAogICAgdHJ5IHsKICAgICAgYXdhaXQgcmVnaXN0ZXJTVygpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzai1lcnJvciIpLnRleHRDb250ZW50ID0gIkZhaWxlZCB0byByZWdpc3RlciBzZXJ2aWNlIHdvcmtlci4iOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic2otZXJyb3ItY29kZSIpLnRleHRDb250ZW50ID0gZXJyLnRvU3RyaW5nKCk7CiAgICAgIHRocm93IGVycjsKICAgIH0KICAgIAogICAgaWYgKCFuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5jb250cm9sbGVyKSB7CiAgICAgIGF3YWl0IG5ldyBQcm9taXNlKGZ1bmN0aW9uKHJlc29sdmUpIHsKICAgICAgICBuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5hZGRFdmVudExpc3RlbmVyKCJjb250cm9sbGVyY2hhbmdlIiwgcmVzb2x2ZSwgeyBvbmNlOiB0cnVlIH0pOwogICAgICB9KTsKICAgIH0KICAgIAogICAgdmFyIGFib3V0QmxhbmtXaW5kb3cgPSB3aW5kb3cub3BlbigiYWJvdXQ6YmxhbmsiLCAiX2JsYW5rIik7CiAgICBpZiAoYWJvdXRCbGFua1dpbmRvdykgewogICAgICBhYm91dEJsaW5rV2luZG93LmRvY3VtZW50LndyaXRlKCc8aHRtbD48aGVhZD48dGl0bGU+JyArIHVybCArICc8L3RpdGxlPjwvaGVhZD48Ym9keSBzdHlsZT0ibWFyZ2luOjA7cGFkZGluZzowO2JhY2tncm91bmQ6IzAwMDtvdmVyZmxvdzpoaWRkZW47Ij48aWZyYW1lIHNyYz0iJyArIGxvY2F0aW9uLmhyZWYgKyAnP2dvdG89JyArIGVuY29kZVVSSUNvbXBvbmVudCh1cmwpICsgJyIgc3R5bGU9IndpZHRoOjEwMHZ3O2hlaWdodDoxMDB2aDtib3JkZXI6bm9uZTsiPjwvaWZyYW1lPjwvYm9keT48L2h0bWw+Jyk7CiAgICAgIGFib3V0QmxhbmtXaW5kb3cuZG9jdW1lbnQuY2xvc2UoKTsKICAgIH0KICB9CiAgCiAgYXN5bmMgZnVuY3Rpb24gb3BlbkJsb2JVcmwoKSB7CiAgICBpZiAoYWRkcmVzcy52YWx1ZS50cmltKCkgPT09ICIiKSB7CiAgICAgIGFsZXJ0KCJQbGVhc2UgdHlwZSB5b3VyIHNlYXJjaC9VUkwiKTsKICAgICAgcmV0dXJuOwogICAgfQogICAgdmFyIHVybCA9IHNlYXJjaChhZGRyZXNzLnZhbHVlLCBzZWFyY2hFbmdpbmUudmFsdWUpOwogICAgdmFyIGJsb2JEb2N1bWVudCA9ICc8aHRtbD48aGVhZD48dGl0bGU+JyArIHVybCArICc8L3RpdGxlPjwvaGVhZD48Ym9keSBzdHlsZT0ibWFyZ2luOjA7cGFkZGluZzowO2JhY2tncm91bmQ6IzAwMDtvdmVyZmxvdzpoaWRkZW47Ij48aWZyYW1lIHNyYz0iJyArIGxvY2F0aW9uLmhyZWYgKyAnP2dvdG89JyArIGVuY29kZVVSSUNvbXBvbmVudCh1cmwpICsgJyIgc3R5bGU9IndpZHRoOjEwMHZ3O2hlaWdodDoxMDB2aDtib3JkZXI6bm9uZTsiPjwvaWZyYW1lPjwvYm9keT48L2h0bWw+JzsKICAgIHZhciBibG9iVXJsID0gVVJMLmNyZWF0ZU9iamVjdFVSTChuZXcgQmxvYihbYmxvYkRvY3VtZW50XSwgeyB0eXBlOiAidGV4dC9odG1sIiB9KSk7CiAgICB3aW5kb3cub3BlbihibG9iVXJsLCAiX2JsYW5rIik7CiAgfQogIAogIGZvcm0uYWRkRXZlbnRMaXN0ZW5lcigic3VibWl0IiwgYXN5bmMgZnVuY3Rpb24oZXZlbnQpIHsKICAgIGV2ZW50LnByZXZlbnREZWZhdWx0KCk7CiAgICAKICAgIGlmIChhZGRyZXNzLnZhbHVlLnRyaW0oKSA9PT0gIiIpIHsKICAgICAgYWxlcnQoIlBsZWFzZSB0eXBlIHlvdXIgc2VhcmNoL1VSTCIpOwogICAgICByZXR1cm47CiAgICB9CiAgICAKICAgIHZhciB1cmwgPSBzZWFyY2goYWRkcmVzcy52YWx1ZSwgc2VhcmNoRW5naW5lLnZhbHVlKTsKICAgIAogICAgdHJ5IHsKICAgICAgYXdhaXQgcmVnaXN0ZXJTVygpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzai1lcnJvciIpLnRleHRDb250ZW50ID0gIkZhaWxlZCB0byByZWdpc3RlciBzZXJ2aWNlIHdvcmtlci4iOwogICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic2otZXJyb3ItY29kZSIpLnRleHRDb250ZW50ID0gZXJyLnRvU3RyaW5nKCk7CiAgICAgIHRocm93IGVycjsKICAgIH0KICAgIAogICAgaWYgKCFuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5jb250cm9sbGVyKSB7CiAgICAgIGF3YWl0IG5ldyBQcm9taXNlKGZ1bmN0aW9uKHJlc29sdmUpIHsKICAgICAgICBuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5hZGRFdmVudExpc3RlbmVyKCJjb250cm9sbGVyY2hhbmdlIiwgcmVzb2x2ZSwgeyBvbmNlOiB0cnVlIH0pOwogICAgICB9KTsKICAgIH0KICAgIAogICAgdHJ5IHsKICAgICAgYXdhaXQgbmF2aWdhdGUodXJsKTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICBzaG93RXJyb3JTY3JlZW4oZXJyLm1lc3NhZ2UsIGVyci5zdGFjayk7CiAgICB9CiAgfSk7CiAgCiAgaWYgKG9wZW5OZXdUYWJidG4pIG9wZW5OZXdUYWJidG4uYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCBuZXdUYWIpOwogIGlmIChvcGVuQWJvdXRQbGFua2J0bikgb3BlbkFib3V0QmxhbmtidG4uYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCBvcGVuQWJvdXRCbGluayk7CiAgaWYgKG9wZW5CbG9iYnRuKSBvcGVuQmxvYmJ0bi5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsIG9wZW5CbG9iVXJsKTsKICAKICBpZiAoc2V0dGluZ3NCdXR0b24pIHsKICAgIHNldHRpbmdzQnV0dG9uLmFkZEV2ZW50TGlzdGVuZXIoImNsaWNrIiwgZnVuY3Rpb24oKSB7IHNldHRpbmdzTW9kYWwuY2xhc3NMaXN0LmFkZCgiYWN0aXZlIik7IH0pOwogIH0KICAKICBpZiAoY2xvc2VTZXR0aW5ncykgewogICAgY2xvc2VTZXR0aW5ncy5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsIGZ1bmN0aW9uKCkgewogICAgICBzZXR0aW5nc01vZGFsLmNsYXNzTGlzdC5yZW1vdmUoImFjdGl2ZSIpOwogICAgfSk7CiAgfQogIAogIGlmIChzZXR0aW5nc01vZGFsKSB7CiAgICBzZXR0aW5nc01vZGFsLmFkZEV2ZW50TGlzdGVuZXIoImNsaWNrIiwgZnVuY3Rpb24oZXZlbnQpIHsKICAgICAgaWYgKGV2ZW50LnRhcmdldCA9PT0gc2V0dGluZ3NNb2RhbCkgewogICAgICAgIHNldHRpbmdzTW9kYWwuY2xhc3NMaXN0LnJlbW92ZSgiYWN0aXZlIik7CiAgICAgIH0KICAgIH0pOwogIH0KICAKICB2YXIgZ290byA9IG5ldyBVUkwobG9jYXRpb24uaHJlZikuc2VhcmNoUGFyYW1zLmdldCgiZ290byIpOwogIGlmIChnb3RvKSB7CiAgICBoaXN0b3J5LnJlcGxhY2VTdGF0ZShudWxsLCAiIiwgbG9jYXRpb24ucGF0aG5hbWUpOwogICAgYWRkcmVzcy52YWx1ZSA9IGdvdG87CiAgICByZWdpc3RlclNXKCkKICAgICAgLnRoZW4oZnVuY3Rpb24oKSB7CiAgICAgICAgaWYgKCFuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5jb250cm9sbGVyKSB7CiAgICAgICAgICByZXR1cm4gbmV3IFByb21pc2UoZnVuY3Rpb24ocmVzb2x2ZSkgewogICAgICAgICAgICBuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5hZGRFdmVudExpc3RlbmVyKCJjb250cm9sbGVyY2hhbmdlIiwgcmVzb2x2ZSwgeyBvbmNlOiB0cnVlIH0pOwogICAgICAgICAgfSk7CiAgICAgICAgfQogICAgICB9KQogICAgICAudGhlbihmdW5jdGlvbigpIHsgcmV0dXJuIG5hdmlnYXRlKGdvdG8pOyB9KQogICAgICAuY2F0Y2goZnVuY3Rpb24oZXJyKSB7IHNob3dFcnJvclNjcmVlbihlcnIubWVzc2FnZSwgZXJyLnN0YWNrKTsgfSk7CiAgfQogIAogIHdpbmRvdy5uZXdUYWIgPSBuZXdUYWI7CiAgd2luZG93Lm9wZW5BYm91dEJsaW5rID0gb3BlbkFib3V0Qmxpbms7CiAgd2luZG93Lm9wZW5CbG9iVXJsID0gb3BlbkJsb2JVcmw7CiAgCiAgLy8gU2hvcnRjdXRzIGZ1bmN0aW9uYWxpdHkKICB2YXIgc2hvcnRjdXRzID0gW107CiAgdmFyIGVkaXRpbmdJbmRleCA9IC0xOwogIHZhciBjb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgic2hvcnRjdXRzLWNvbnRhaW5lciIpOwogIHZhciBtb2RhbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzaG9ydGN1dC1tb2RhbCIpOwogIHZhciBsYWJlbElucHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInNob3J0Y3V0LWxhYmVsLWlucHV0Iik7CiAgdmFyIHVybElucHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInNob3J0Y3V0LXVybC1pbnB1dCIpOwogIHZhciBpbWdJbnB1dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJzaG9ydGN1dC1pbWctaW5wdXQiKTsKICAKICB2YXIgZGVmYXVsdFNob3J0Y3V0cyA9IFsKICAgIHsgbGFiZWw6ICdHb29nbGUnLCB1cmw6ICdodHRwczovL3d3dy5nb29nbGUuY29tJywgaW1nOiAnJyB9LAogICAgeyBsYWJlbDogJ0VkdWNhdGlvbmFsIHJlc291cmNlcycsIHVybDogJ2h0dHBzOi8vemFrYS5xenouaW8vZ2FtZXMuaHRtbCcsIGltZzogJycgfSwKICAgIHsgbGFiZWw6ICdZb3VUdWJlJywgdXJsOiAnaHR0cHM6Ly93d3cueW91dHViZS5jb20nLCBpbWc6ICcnIH0sCiAgICB7IGxhYmVsOiAnR2l0SHViJywgdXJsOiAnaHR0cHM6Ly9naXRodWIuY29tJywgaW1nOiAnJyB9LAogICAgeyBsYWJlbDogJ1JlZGRpdCcsIHVybDogJ2h0dHBzOi8vd3d3LnJlZGRpdC5jb20nLCBpbWc6ICcnIH0sCiAgICB7IGxhYmVsOiAnQ2hhdGJvdCcsIHVybDogJ2h0dHBzOi8vemFrYS5xenouaW8vYWkuaHRtbCcsIGltZzogJycgfQogIF07CiAgCiAgZnVuY3Rpb24gbG9hZFNob3J0Y3V0cygpIHsKICAgIHRyeSB7CiAgICAgIHZhciBzYXZlZCA9IGxvY2FsU3RvcmFnZS5nZXRJdGVtKCd6YWthMTNfc2hvcnRjdXRzJyk7CiAgICAgIGlmIChzYXZlZCkgewogICAgICAgIHNob3J0Y3V0cyA9IEpTT04ucGFyc2Uoc2F2ZWQpOwogICAgICB9IGVsc2UgewogICAgICAgIHNob3J0Y3V0cyA9IGRlZmF1bHRTaG9ydGN1dHMubWFwKGZ1bmN0aW9uKHMpIHsgcmV0dXJuIHsgbGFiZWw6IHMubGFiZWwsIHVybDogcy51cmwsIGltZzogcy5pbWcgfTsgfSk7CiAgICAgIH0KICAgIH0gY2F0Y2ggKGUpIHsKICAgICAgc2hvcnRjdXRzID0gZGVmYXVsdFNob3J0Y3V0cy5tYXAoZnVuY3Rpb24ocykgeyByZXR1cm4geyBsYWJlbDogcy5sYWJlbCwgdXJsOiBzLnVybCwgaW1nOiBzLmltZyB9OyB9KTsKICAgIH0KICAgIHJlbmRlclNob3J0Y3V0cygpOwogIH0KICAKICBmdW5jdGlvbiByZW5kZXJTaG9ydGN1dHMoKSB7CiAgICB2YXIgYnRucyA9IGNvbnRhaW5lci5xdWVyeVNlbGVjdG9yQWxsKCcuc2hvcnRjdXQtYnRuJyk7CiAgICBidG5zLmZvckVhY2goZnVuY3Rpb24oYnRuLCBpbmRleCkgewogICAgICBpZiAoaW5kZXggPCBzaG9ydGN1dHMubGVuZ3RoKSB7CiAgICAgICAgdmFyIGRhdGEgPSBzaG9ydGN1dHNbaW5kZXhdOwogICAgICAgIHZhciBpbWcgPSBidG4ucXVlcnlTZWxlY3RvcignaW1nJyk7CiAgICAgICAgdmFyIGxhYmVsID0gYnRuLnF1ZXJ5U2VsZWN0b3IoJy5zaG9ydGN1dC1sYWJlbCcpOwogICAgICAgIGlmIChpbWcpIGltZy5zcmMgPSBkYXRhLmltZyB8fCAnJzsKICAgICAgICBpZiAobGFiZWwpIGxhYmVsLnRleHRDb250ZW50ID0gZGF0YS5sYWJlbCB8fCAnU2hvcnRjdXQgJyArIChpbmRleCArIDEpOwogICAgICAgIGJ0bi5kYXRhc2V0LnVybCA9IGRhdGEudXJsIHx8ICcnOwogICAgICAgIGJ0bi5vbmNsaWNrID0gZnVuY3Rpb24oZSkgewogICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgICAgdmFyIHVybCA9IHRoaXMuZGF0YXNldC51cmw7CiAgICAgICAgICBpZiAodXJsKSB7CiAgICAgICAgICAgIHdpbmRvdy5uYXZpZ2F0ZVRvKHVybCk7CiAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICB3aW5kb3cuZWRpdFNob3J0Y3V0KGluZGV4KTsKICAgICAgICAgIH0KICAgICAgICB9OwogICAgICAgIGJ0bi5vbmRibGNsaWNrID0gZnVuY3Rpb24oZSkgewogICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgICAgdmFyIGlkeCA9IHBhcnNlSW50KHRoaXMuZGF0YXNldC5pbmRleCk7CiAgICAgICAgICB3aW5kb3cuZWRpdFNob3J0Y3V0KGlkeCk7CiAgICAgICAgfTsKICAgICAgfQogICAgfSk7CiAgfQogIAogIHdpbmRvdy5lZGl0U2hvcnRjdXQgPSBmdW5jdGlvbihpbmRleCkgewogICAgZWRpdGluZ0luZGV4ID0gaW5kZXg7CiAgICB2YXIgZGF0YSA9IHNob3J0Y3V0c1tpbmRleF0gfHwgeyBsYWJlbDogJycsIHVybDogJycsIGltZzogJycgfTsKICAgIGxhYmVsSW5wdXQudmFsdWUgPSBkYXRhLmxhYmVsIHx8ICcnOwogICAgdXJsSW5wdXQudmFsdWUgPSBkYXRhLnVybCB8fCAnJzsKICAgIGltZ0lucHV0LnZhbHVlID0gZGF0YS5pbWcgfHwgJyc7CiAgICBtb2RhbC5jbGFzc0xpc3QuYWRkKCJhY3RpdmUiKTsKICB9OwogIAogIHdpbmRvdy5jbG9zZU1vZGFsID0gZnVuY3Rpb24oKSB7CiAgICBtb2RhbC5jbGFzc0xpc3QucmVtb3ZlKCJhY3RpdmUiKTsKICAgIGVkaXRpbmdJbmRleCA9IC0xOwogIH07CiAgCiAgd2luZG93LnNhdmVTaG9ydGN1dCA9IGZ1bmN0aW9uKCkgewogICAgaWYgKGVkaXRpbmdJbmRleCA8IDAgfHwgZWRpdGluZ0luZGV4ID49IHNob3J0Y3V0cy5sZW5ndGgpIHJldHVybjsKICAgIHZhciBsYWJlbCA9IGxhYmVsSW5wdXQudmFsdWUudHJpbSgpIHx8ICdTaG9ydGN1dCAnICsgKGVkaXRpbmdJbmRleCArIDEpOwogICAgdmFyIHVybCA9IHVybElucHV0LnZhbHVlLnRyaW0oKSB8fCAnaHR0cHM6Ly93d3cuZ29vZ2xlLmNvbSc7CiAgICB2YXIgaW1nID0gaW1nSW5wdXQudmFsdWUudHJpbSgpIHx8IGRlZmF1bHRTaG9ydGN1dHNbZWRpdGluZ0luZGV4XT8uaW1nIHx8ICcnOwogICAgc2hvcnRjdXRzW2VkaXRpbmdJbmRleF0gPSB7IGxhYmVsOiBsYWJlbCwgdXJsOiB1cmwsIGltZzogaW1nIH07CiAgICB0cnkgewogICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgnemFrYTEzX3Nob3J0Y3V0cycsIEpTT04uc3RyaW5naWZ5KHNob3J0Y3V0cykpOwogICAgfSBjYXRjaCAoZSkge30KICAgIHJlbmRlclNob3J0Y3V0cygpOwogICAgd2luZG93LmNsb3NlTW9kYWwoKTsKICB9OwogIAogIGxvYWRTaG9ydGN1dHMoKTsKfSkoKTs=";
+  
+  // Decode and execute the main logic
+  var mainScript = document.createElement('script');
+  mainScript.textContent = atob(encodedMain);
+  document.head.appendChild(mainScript);
+  
+  // Quotes functionality (not encoded for simplicity)
+  (function() {
+    var quoteText = document.getElementById('quote-text');
+    var quoteSource = document.getElementById('quote-source');
+    var quotes = [
+      { text: 'get better wifi bro if it doesnt load', source: 'zaka' },
+      { text: '69 is better then 67 imo', source: 'zaka' },
+      { text: '404 Quote Not Found', source: '404.html and caddy' },
+      { text: 'join the discord at https://discord.gg/4MpkuhG3R', source: 'zaka' },
+      { text: 'credits to BestSpark687090 for most of the code btw', source: 'idk' }
+    ];
+    var quoteIndex = 0;
+
+    window.setInterval(function() {
+      quoteText.style.opacity = '0';
+      quoteSource.style.opacity = '0';
+      window.setTimeout(function() {
+        quoteIndex = (quoteIndex + 1) % quotes.length;
+        quoteText.textContent = quotes[quoteIndex].text;
+        quoteSource.textContent = quotes[quoteIndex].source;
+        quoteText.style.opacity = '1';
+        quoteSource.style.opacity = '1';
+      }, 350);
+    }, 6000);
+  })();
+})();
+</script>
+</body>
+</html>
+
+</foreignObject>
+<script>//<![CDATA[
+var fo = document.getElementById("fo");
+function r() {
+  fo.setAttribute("width", window.innerWidth);
+  fo.setAttribute("height", window.innerHeight);
+}
+r();
+window.addEventListener("resize", r);
+//]]></script>
+</svg>
