@@ -742,10 +742,10 @@ var quoteScript = function() {
   var quoteText = document.getElementById('quote-text');
   var quoteSource = document.getElementById('quote-source');
   var quotes = [
-    { text: 'get better wifi bro if it doesnt load', source: 'zaka' },
+    { text: 'join the discord at https://discord.gg/zaka', source: 'zaka' },
     { text: '69 is better then 67 imo', source: 'zaka' },
     { text: '404 Quote Not Found', source: '404.html and caddy' },
-    { text: 'join the discord at https://discord.gg/4MpkuhG3R', source: 'zaka' },
+    { text: 'get better wifi bro if it doesnt load', source: 'zaka' },
     { text: 'credits to BestSpark687090 for most of the code btw', source: 'idk' }
   ];
   var quoteIndex = 0;
