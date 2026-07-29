@@ -716,8 +716,8 @@
       <input
         id="wisp-server"
         type="text"
-        placeholder="wss://wisp.zaka.qzz.io/wisp/"
-        value="wss://wisp.zaka.qzz.io/wisp/"
+        placeholder="wss://lol.zakadoesnotlarp.ccwu.cc/wisp/"
+        value="wss://lol.zakadoesnotlarp.ccwu.cc/wisp/"
         autocomplete="off"
       />
     </div>
