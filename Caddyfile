@@ -9,7 +9,7 @@
 
     # Send WebSocket traffic to Node/service on port 8080
     handle @is_upgrade {
-        reverse_proxy localhost:8080 {
+        reverse_proxy localhost:3000 {
             header_up Connection {>Connection}
             header_up Upgrade {>Upgrade}
         }
