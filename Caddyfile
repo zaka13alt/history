@@ -1,5 +1,8 @@
 {
-    on_demand_tls
+    # Check against Caddy's own local route
+    on_demand_tls {
+        ask http://localhost/internal-check
+    }
 }
 
 :443 {
@@ -23,4 +26,9 @@
     tls {
         on_demand
     }
+}
+
+# Always returns 200 to satisfy Caddy's safety requirement
+http://localhost {
+    respond /internal-check 200
 }
