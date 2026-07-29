@@ -1,11 +1,11 @@
 {
-    # Check against Caddy's own local route
     on_demand_tls {
         ask http://localhost/internal-check
     }
 }
 
-:443 {
+# Catch-all for both HTTP (port 80) and HTTPS (port 443)
+:80, :443 {
     @is_upgrade {
         path /wisp/*
         header Upgrade *
@@ -28,7 +28,7 @@
     }
 }
 
-# Always returns 200 to satisfy Caddy's safety requirement
+# Dummy check endpoint for local validation
 http://localhost {
     respond /internal-check 200
 }
