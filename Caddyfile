@@ -1,18 +1,13 @@
 {
-    # Enable On-Demand TLS globally
-    tls {
-        on_demand
-    }
+    on_demand_tls
 }
 
 :443 {
-    # Match WebSocket upgrade requests on /wisp/
     @is_upgrade {
         path /wisp/*
         header Upgrade *
     }
 
-    # Send WebSocket traffic to Node/service on port 3000
     handle @is_upgrade {
         reverse_proxy localhost:3000 {
             header_up Connection {>Connection}
@@ -20,13 +15,11 @@
         }
     }
 
-    # Serve normal website
     handle {
         root * /usr/share/caddy
         file_server
     }
 
-    # Force the site block to use On-Demand TLS
     tls {
         on_demand
     }
