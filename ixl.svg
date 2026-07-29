@@ -1,4 +1,3 @@
-
 <svg xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:hidden;background:#000">
 <foreignObject id="fo" x="0" y="0" width="100%" height="100%">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -889,16 +888,10 @@ var mainScript = function() {
   var closeFrameLink = document.getElementById("close-frame-link");
   var wispInput = document.getElementById("wisp-server");
 
-  // Set the wisp server default to current location + /wisp/
+  // Set the wisp server to wss://(window.location.host + /wisp/)
   if (wispInput) {
-    var defaultWisp = window.location.href.replace(/\/$/, '') + '/wisp/';
-    // Ensure it uses wss:// or https:// based on protocol
-    if (window.location.protocol === 'https:') {
-      defaultWisp = defaultWisp.replace(/^http:/, 'https:');
-    } else {
-      defaultWisp = defaultWisp.replace(/^https:/, 'http:');
-    }
-    // Set default value only if not previously saved
+    var defaultWisp = 'wss://' + window.location.host + '/wisp/';
+    // Check if a saved value exists, otherwise use the default
     var savedWisp = localStorage.getItem('zaka13_wisp_server');
     if (savedWisp) {
       wispInput.value = savedWisp;
@@ -962,7 +955,7 @@ var mainScript = function() {
 
   var controller = null;
   var frame = null;
-  var currentWisp = wispInput ? wispInput.value.trim() : (window.location.href.replace(/\/$/, '') + '/wisp/');
+  var currentWisp = wispInput ? wispInput.value.trim() : ('wss://' + window.location.host + '/wisp/');
 
   if (wispInput) {
     wispInput.addEventListener("change", function() {
