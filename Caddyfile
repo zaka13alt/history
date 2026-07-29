@@ -1,16 +1,11 @@
 {
-    # Enable on-demand TLS globally with no validation limits
-    on_demand_tls {
-        ask "" 
+    # Enable On-Demand TLS globally
+    tls {
+        on_demand
     }
 }
 
 :443 {
-    # Accept on-demand TLS certificates for this site
-    tls internal {
-        on_demand
-    }
-
     # Match WebSocket upgrade requests on /wisp/
     @is_upgrade {
         path /wisp/*
@@ -29,5 +24,10 @@
     handle {
         root * /usr/share/caddy
         file_server
+    }
+
+    # Force the site block to use On-Demand TLS
+    tls {
+        on_demand
     }
 }
