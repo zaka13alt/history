@@ -888,13 +888,21 @@ var mainScript = function() {
   var closeFrameLink = document.getElementById("close-frame-link");
   var wispInput = document.getElementById("wisp-server");
 
-  // Set the wisp server to wss://(window.location.host + /wisp/)
+  // Set the wisp server to wss://(window.location.host + /wisp/) - always wss:// never https://
   if (wispInput) {
+    // Always use wss:// with the hostname, regardless of current protocol
     var defaultWisp = 'wss://' + window.location.host + '/wisp/';
     // Check if a saved value exists, otherwise use the default
     var savedWisp = localStorage.getItem('zaka13_wisp_server');
     if (savedWisp) {
-      wispInput.value = savedWisp;
+      // Ensure the saved value starts with wss://, if not, force it
+      if (savedWisp.startsWith('wss://')) {
+        wispInput.value = savedWisp;
+      } else {
+        // If saved value is invalid (e.g., http:// or https://), use default
+        wispInput.value = defaultWisp;
+        localStorage.setItem('zaka13_wisp_server', defaultWisp);
+      }
     } else {
       wispInput.value = defaultWisp;
       localStorage.setItem('zaka13_wisp_server', defaultWisp);
@@ -955,14 +963,42 @@ var mainScript = function() {
 
   var controller = null;
   var frame = null;
-  var currentWisp = wispInput ? wispInput.value.trim() : ('wss://' + window.location.host + '/wisp/');
+  
+  // Get current wisp value - always ensure it starts with wss://
+  function getCurrentWisp() {
+    if (wispInput) {
+      var val = wispInput.value.trim();
+      if (val && val.startsWith('wss://')) {
+        return val;
+      } else {
+        // If invalid, reset to default
+        var defaultWisp = 'wss://' + window.location.host + '/wisp/';
+        wispInput.value = defaultWisp;
+        localStorage.setItem('zaka13_wisp_server', defaultWisp);
+        return defaultWisp;
+      }
+    }
+    return 'wss://' + window.location.host + '/wisp/';
+  }
+  
+  var currentWisp = getCurrentWisp();
 
   if (wispInput) {
     wispInput.addEventListener("change", function() {
       var val = this.value.trim();
-      if (val) {
+      if (val && val.startsWith('wss://')) {
         currentWisp = val;
         localStorage.setItem('zaka13_wisp_server', val);
+        if (controller) {
+          controller = null;
+          frame = null;
+        }
+      } else {
+        // If user enters invalid value, reset to default wss://
+        var defaultWisp = 'wss://' + window.location.host + '/wisp/';
+        this.value = defaultWisp;
+        currentWisp = defaultWisp;
+        localStorage.setItem('zaka13_wisp_server', defaultWisp);
         if (controller) {
           controller = null;
           frame = null;
