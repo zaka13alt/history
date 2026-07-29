@@ -1,5 +1,15 @@
+{
+    # Enable on-demand TLS globally with no validation limits
+    on_demand_tls {
+        ask "" 
+    }
+}
+
 :443 {
-    tls internal
+    # Accept on-demand TLS certificates for this site
+    tls internal {
+        on_demand
+    }
 
     # Match WebSocket upgrade requests on /wisp/
     @is_upgrade {
@@ -7,7 +17,7 @@
         header Upgrade *
     }
 
-    # Send WebSocket traffic to Node/service on port 8080
+    # Send WebSocket traffic to Node/service on port 3000
     handle @is_upgrade {
         reverse_proxy localhost:3000 {
             header_up Connection {>Connection}
