@@ -4,20 +4,19 @@
     }
 }
 
-# Catch-all for both HTTP (port 80) and HTTPS (port 443)
 :80, :443 {
-    @is_upgrade {
-        path /wisp/*
-        header Upgrade *
-    }
-
-    handle @is_upgrade {
+    # Match /wisp and /wisp/* to properly capture all client handshakes
+    handle /wisp* {
         reverse_proxy localhost:3000 {
-            header_up Connection {>Connection}
-            header_up Upgrade {>Upgrade}
+            header_up Host {upstream_host_port}
+            transport http {
+                read_timeout 0
+                write_timeout 0
+            }
         }
     }
 
+    # Static file fallback
     handle {
         root * /usr/share/caddy
         file_server
@@ -28,7 +27,6 @@
     }
 }
 
-# Dummy check endpoint for local validation
 http://localhost {
     respond /internal-check 200
 }
