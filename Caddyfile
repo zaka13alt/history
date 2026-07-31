@@ -4,7 +4,8 @@
     }
 }
 
-:80, :443 {
+# 1. Global HTTPS Block (Handles all valid production domains)
+:443 {
     # Match /wisp and /wisp/* to properly capture all client handshakes
     handle /wisp* {
         reverse_proxy localhost:3000 {
@@ -27,6 +28,25 @@
     }
 }
 
+# 2. HTTP Block with Conditional 301 Redirect
+:80 {
+    # Match requests that are NOT localhost or 127.0.0.1
+    @notLocalhost {
+        not header Host localhost*
+        not header Host 127.0.0.1*
+    }
+
+    # Redirect non-local traffic to HTTPS
+    redir @notLocalhost https://{host}{uri} permanent
+
+    # Local traffic fallback (avoids redirect loops for local checks)
+    handle {
+        root * /usr/share/caddy
+        file_server
+    }
+}
+
+# 3. Internal Check Block
 http://localhost {
     respond /internal-check 200
 }
