@@ -780,7 +780,7 @@ var shortcutScript = function() {
     { label: 'Educational resources', url: 'https://zaka.qzz.io/games.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EG%3C/text%3E%3C/svg%3E' },
     { label: 'YouTube', url: 'https://www.youtube.com', img: 'https://cdn.jsdelivr.net/gh/zaka13alt/history@HEAD/images/yt.svg' },
     { label: 'GitHub', url: 'https://github.com', img: '' },
-    { label: 'Reddit', url: 'https://www.reddit.com', img: '' },
+    { label: 'More Apps!', url: 'https://zaka.qzz.io/apps', img: '' },
     { label: 'Chatbot', url: 'https://zaka.qzz.io/ai.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EAI%3C/text%3E%3C/svg%3E' }
     
   ];
