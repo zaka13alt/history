@@ -629,7 +629,7 @@
   </svg>
 
   <div class="quote-list" aria-live="polite">
-    <p class="quote-text" id="quote-text">get better wifi bro if it doesnt load</p>
+    <p class="quote-text" id="quote-text">h</p>
     <span class="quote-source" id="quote-source">zaka</span>
   </div>
 
@@ -727,6 +727,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/us/scram.js">
+</script>
+ <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/nl/netherlands-learning.js">
 </script>
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/sjcontrol.js">
 </script>
