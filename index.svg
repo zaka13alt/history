@@ -687,7 +687,7 @@
 
 <div id="sj-frame-wrapper">
   <p id="sj-frame-url"></p>
-  <iframe id="sj-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+  <iframe id="sj-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals"></iframe>
 </div>
 
 <div class="modal-overlay" id="shortcut-modal">
