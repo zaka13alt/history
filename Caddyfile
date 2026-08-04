@@ -7,7 +7,7 @@
 # 1. Global HTTPS Block (Handles all valid production domains)
 :443 {
     # Match if Host is longer than 60 chars OR contains suspicious keywords
-    @suspiciousExpression `len(header('Host')) > 60 || header('Host').contains('whm') || header('Host').contains('cpanel') || header('Host').contains('login')`
+    @suspiciousExpression `len(request.host) > 60 || request.host.contains('whm') || request.host.contains('cpanel') || request.host.contains('login')`
     
     # Handle the blocked traffic immediately
     handle @suspiciousExpression {
