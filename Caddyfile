@@ -10,7 +10,11 @@
     @tooLong header_regexp Host ^.{61,}$
 
     # Match suspicious phishing strings inside the domain name
-    @hasSus header Host *whm* *cpanel* *login*
+    @hasSus {
+        header Host *whm*
+        header Host *cpanel*
+        header Host *login*
+    }
 
     # Block long subdomains instantly
     handle @tooLong {
