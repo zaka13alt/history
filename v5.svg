@@ -716,8 +716,8 @@
       <input
         id="wisp-server"
         type="text"
-        placeholder="wss://lol.zakadoesnotlarp.ccwu.cc/wisp/"
-        value="wss://lol.zakadoesnotlarp.ccwu.cc/wisp/"
+        placeholder="wss://coding.class.cthulhu.li/wisp/"
+        value="wss://coding.class.cthulhu.li/wisp/"
         autocomplete="off"
       />
     </div>
@@ -728,6 +728,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/us/scram.js">
+</script>
+  <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/1e154567.js">
 </script>
  <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/nl/netherlands-learning.js">
 </script>
