@@ -6,11 +6,20 @@
 
 # 1. Global HTTPS Block (Handles all valid production domains)
 :443 {
-    # Match if Host is longer than 60 chars OR contains suspicious keywords
-    @suspiciousExpression `len(request.host) > 60 || request.host.contains('whm') || request.host.contains('cpanel') || request.host.contains('login')`
-    
-    # Handle the blocked traffic immediately
-    handle @suspiciousExpression {
+    # Match long hosts using a regular expression boundary
+    @tooLong host_regexp ^.{61,}$
+
+    # Match suspicious fishing strings inside the domain
+    @hasSus keywords whm cpanel login
+
+    # Block long subdomains instantly
+    handle @tooLong {
+        header Content-Type "text/plain"
+        respond "this link was disabled bc you generated a malware, sus, or just down right bad subdomain, stop abusing my BYOD system, this is to generate good links, NOT WHM EXPLOITS" 493
+    }
+
+    # Block suspicious keywords instantly
+    handle @hasSus {
         header Content-Type "text/plain"
         respond "this link was disabled bc you generated a malware, sus, or just down right bad subdomain, stop abusing my BYOD system, this is to generate good links, NOT WHM EXPLOITS" 493
     }
