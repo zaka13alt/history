@@ -6,6 +6,16 @@
 
 # 1. Global HTTPS Block (Handles all valid production domains)
 :443 {
+    # regex
+    @suspiciousExpression `len(header({'Host'})) > 60 || header({'Host'}).contains('whm') || header({'Host'}).contains('cpanel') || header({'Host'}).contains('login')`
+    
+    # block handler
+    handle @suspiciousExpression {
+        respond "this link was disabled bc you generated a malware, sus, or just down right bad subdomain, stop abusing my BYOD system, this is to generate good links, NOT WHM EXPLOITS" 493 {
+            header Content-Type "text/plain"
+        }
+    }
+
     # Match /wisp and /wisp/* to properly capture all client handshakes
     handle /wisp* {
         reverse_proxy localhost:3000 {
