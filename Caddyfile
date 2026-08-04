@@ -6,14 +6,13 @@
 
 # 1. Global HTTPS Block (Handles all valid production domains)
 :443 {
-    # regex
+    # Match if Host is longer than 60 chars OR contains suspicious keywords
     @suspiciousExpression `len(header({'Host'})) > 60 || header({'Host'}).contains('whm') || header({'Host'}).contains('cpanel') || header({'Host'}).contains('login')`
     
-    # block handler
+    # Handle the blocked traffic immediately
     handle @suspiciousExpression {
-        respond "this link was disabled bc you generated a malware, sus, or just down right bad subdomain, stop abusing my BYOD system, this is to generate good links, NOT WHM EXPLOITS" 493 {
-            header Content-Type "text/plain"
-        }
+        header Content-Type "text/plain"
+        respond "this link was disabled bc you generated a malware, sus, or just down right bad subdomain, stop abusing my BYOD system, this is to generate good links, NOT WHM EXPLOITS" 493
     }
 
     # Match /wisp and /wisp/* to properly capture all client handshakes
