@@ -6,11 +6,11 @@
 
 # 1. Global HTTPS Block (Handles all valid production domains)
 :443 {
-    # Match long hosts using a regular expression boundary
-    @tooLong host_regexp ^.{61,}$
+    # Match long hosts (61+ chars) using native header regex matching
+    @tooLong header_regexp Host ^.{61,}$
 
-    # Match suspicious fishing strings inside the domain
-    @hasSus keywords whm cpanel login
+    # Match suspicious phishing strings inside the domain name
+    @hasSus header Host *whm* *cpanel* *login*
 
     # Block long subdomains instantly
     handle @tooLong {
