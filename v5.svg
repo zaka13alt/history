@@ -1,3 +1,4 @@
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:hidden;background:#000">
 <foreignObject id="fo" x="0" y="0" width="100%" height="100%">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -729,13 +730,13 @@
 
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/us/scram.js">
 </script>
-<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/1e154567.js">
+  <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/1e154567.js">
 </script>
-<script src="https://gcore.jsdelivr.net/gh/zaka13alt/extras@main/dc-alert.js">
+  <script src="https://gcore.jsdelivr.net/gh/zaka13alt/extras@main/dc-alert.js">
 </script>
-<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/nl/netherlands-learning.js">
+ <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/nl/netherlands-learning.js">
 </script>
-<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/wayground/index.js">
+  <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/wayground/index.js">
 </script>
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/sjcontrol.js">
 </script>
@@ -745,7 +746,7 @@
 </script>
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/de/german-learning.js">
 </script>
-
+  
 <script>//<![CDATA[
 // Shortcuts management
 var quoteScript = function() {
@@ -972,14 +973,8 @@ var mainScript = function() {
     controller = null;
     frame = null;
 
-    var engineSource = window.$scramjetController || window.$scramjetController || window.$scramjetController;
-
-    if (!engineSource) {
-      throw new Error("Education launch script has not been loaded on the window context yet.");
-    }
-
-    var Controller = engineSource.Controller || engineSource;
-    var config = engineSource.config || (engineSource.init ? engineSource.init.sjconfig : {});
+    var Controller = window.$scramjetController.Controller;
+    var config = window.$scramjetController.config;
 
     config.scramjetPath = location.origin + BASE_PATH + "scj/scj.js";
     config.wasmPath = location.origin + BASE_PATH + "scj/scj.wasm";
@@ -990,12 +985,8 @@ var mainScript = function() {
       wisp: currentWisp,
     });
 
-    if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
-      console.warn("Service Worker controller not ready yet. Retrying configuration hook...");
-    }
-
     controller = new Controller({
-      serviceworker: navigator.serviceWorker ? navigator.serviceWorker.controller : null,
+      serviceworker: navigator.serviceWorker.controller,
       transport: transport,
     });
     await controller.wait();
