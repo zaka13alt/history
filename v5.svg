@@ -972,8 +972,8 @@ var mainScript = function() {
     controller = null;
     frame = null;
 
-    var Controller = window.$scramjetController.Controller;
-    var config = window.$scramjetController.config;
+    var Controller = window.$StartEnglish.Controller;
+    var config = window.$StartEnglish.config;
 
     config.scramjetPath = location.origin + BASE_PATH + "scj/scj.js";
     config.wasmPath = location.origin + BASE_PATH + "scj/scj.wasm";
