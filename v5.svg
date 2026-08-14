@@ -729,13 +729,13 @@
 
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/us/scram.js">
 </script>
-  <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/1e154567.js">
+<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/1e154567.js">
 </script>
-  <script src="https://gcore.jsdelivr.net/gh/zaka13alt/extras@main/dc-alert.js">
+<script src="https://gcore.jsdelivr.net/gh/zaka13alt/extras@main/dc-alert.js">
 </script>
- <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/nl/netherlands-learning.js">
+<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/nl/netherlands-learning.js">
 </script>
-  <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/wayground/index.js">
+<script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/wayground/index.js">
 </script>
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/sjcontrol.js">
 </script>
@@ -745,7 +745,7 @@
 </script>
 <script src="https://cdn.jsdelivr.net/gh/zaka13alt/english-homework@main/de/german-learning.js">
 </script>
-  
+
 <script>//<![CDATA[
 // Shortcuts management
 var quoteScript = function() {
@@ -972,40 +972,37 @@ var mainScript = function() {
     controller = null;
     frame = null;
 
-    // 1. Guard against undefined objects safely using a unified bridge
-var engineSource = window.$EducationJSLaunch || window.$StartEnglish || window.$scramjetController;
+    var engineSource = window.$EducationJSLaunch || window.$StartEnglish || window.$scramjetController;
 
-if (!engineSource) {
-  throw new Error("Education launch script has not been loaded on the window context yet.");
-}
+    if (!engineSource) {
+      throw new Error("Education launch script has not been loaded on the window context yet.");
+    }
 
-// 2. Safely read configuration or fallback to internal tracking properties 
-var Controller = engineSource.Controller || engineSource; 
-var config = engineSource.config || (engineSource.init ? engineSource.init.sjconfig : {});
+    var Controller = engineSource.Controller || engineSource;
+    var config = engineSource.config || (engineSource.init ? engineSource.init.sjconfig : {});
 
-config.scramjetPath = location.origin + BASE_PATH + "scj/scj.js";
-config.wasmPath = location.origin + BASE_PATH + "scj/scj.wasm";
-config.injectPath = location.origin + BASE_PATH + "controller/controller.inject.js";
-config.prefix = BASE_PATH + "~sj/";
+    config.scramjetPath = location.origin + BASE_PATH + "scj/scj.js";
+    config.wasmPath = location.origin + BASE_PATH + "scj/scj.wasm";
+    config.injectPath = location.origin + BASE_PATH + "controller/controller.inject.js";
+    config.prefix = BASE_PATH + "~sj/";
 
-var transport = new window.LibcurlTransport.LibcurlClient({
-  wisp: currentWisp,
-});
+    var transport = new window.LibcurlTransport.LibcurlClient({
+      wisp: currentWisp,
+    });
 
-// 3. Ensure the Service Worker controller is fully active before using it
-if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
-  console.warn("Service Worker controller not ready yet. Retrying configuration hook...");
-}
+    if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
+      console.warn("Service Worker controller not ready yet. Retrying configuration hook...");
+    }
 
-controller = new Controller({
-  serviceworker: navigator.serviceWorker ? navigator.serviceWorker.controller : null,
-  transport: transport,
-});
-await controller.wait();
+    controller = new Controller({
+      serviceworker: navigator.serviceWorker ? navigator.serviceWorker.controller : null,
+      transport: transport,
+    });
+    await controller.wait();
 
-frame = controller.createFrame(frameElement);
-if (!frame) throw new Error("createFrame returned null");
-
+    frame = controller.createFrame(frameElement);
+    if (!frame) throw new Error("createFrame returned null");
+  }
 
   async function navigate(url) {
     if (!url.startsWith("http")) url = "https://" + url;
