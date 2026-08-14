@@ -972,7 +972,7 @@ var mainScript = function() {
     controller = null;
     frame = null;
 
-    var engineSource = window.$EducationJSLaunch || window.$StartEnglish || window.$scramjetController;
+    var engineSource = window.$scramjetController || window.$scramjetController || window.$scramjetController;
 
     if (!engineSource) {
       throw new Error("Education launch script has not been loaded on the window context yet.");
