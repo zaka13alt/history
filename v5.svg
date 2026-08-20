@@ -979,7 +979,7 @@ var mainScript = function() {
     config.scramjetPath = location.origin + BASE_PATH + "scj/scj.js";
     config.wasmPath = location.origin + BASE_PATH + "scj/scj.wasm";
     config.injectPath = location.origin + BASE_PATH + "controller/controller.inject.js";
-    config.prefix = BASE_PATH + "~sj/";
+    config.prefix = BASE_PATH + "~english-route/";
 
     var transport = new window.LibcurlTransport.LibcurlClient({
       wisp: currentWisp,
