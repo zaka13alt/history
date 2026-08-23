@@ -30,7 +30,7 @@ COPY . /usr/share/caddy/
 RUN rm -rf /usr/share/caddy/node /usr/share/caddy/Caddyfile /usr/share/caddy/Dockerfile
 
 # 
-EXPOSE 80 443
+EXPOSE 443
 
 # 
 CMD node /app/index.js & caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
