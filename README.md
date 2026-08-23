@@ -1,6 +1,4 @@
-the best UBG site. dead simple and fits in a SVG
-Features
-scramjet proxy
-wisp server selector
-games
-and more will come soon!
+[![](https://data.jsdelivr.com/v1/package/npm/@zaka13/zakasite/badge)](https://www.jsdelivr.com/package/npm/@zaka13/zakasite)
+
+
+proxy site or something i guess join https://discord.gg/zaka for more links
