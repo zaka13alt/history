@@ -717,8 +717,8 @@
       <input
         id="wisp-server"
         type="text"
-        placeholder="wss://coding.class.cthulhu.li/wisp/"
-        value="wss://coding.class.cthulhu.li/wisp/"
+        placeholder="wss://api.zaka13.com/wisp/"
+        value="wss://api.zaka13.com/wisp/"
         autocomplete="off"
       />
     </div>
