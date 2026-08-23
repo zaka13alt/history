@@ -1,10 +1,11 @@
-# 
 FROM node:20-alpine AS node-builder
 WORKDIR /app
 
 # 
 COPY node/package*.json ./
-RUN npm ci --only=production
+
+# 
+RUN npm install --omit=dev
 
 # 
 COPY node/index.js ./
@@ -20,7 +21,7 @@ WORKDIR /app
 # 
 COPY --from=node-builder /app /app
 
-#
+# 
 COPY Caddyfile /etc/caddy/Caddyfile
 
 # 
