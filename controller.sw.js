@@ -3,7 +3,7 @@ var $scramjetController;(()=> {var e={805(e,t,r){r.d(t,{C:()=>o});class o{method
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error Page</title>
+    <title>Error</title>
     <style>
         body {
             background-color: black;
