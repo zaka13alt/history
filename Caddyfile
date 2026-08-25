@@ -1,7 +1,10 @@
-# 
+# Global Options Block
 {
     email idk@zaka.qzz.io
-    cert_issuer zerossl
+    
+    # Strictly force Caddy to use ZeroSSL's ACME directory endpoint without an API key
+    acme_ca https://acme.zerossl.com/v2/DV90
+    
     on_demand_tls { 
         ask http://localhost/internal-check 
     }
