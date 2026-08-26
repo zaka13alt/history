@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Made by BestSpark687090. thanks partner for this cloak btw -zaka -->
+  <!-- Made by BestSpark687090. thanks btw -zaka -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Free study tools, flashcards, note-taking guides, and learning resources for students of all ages.">
-  <meta http-equiv="refresh" content="2;url=/index.svg">
   <title>StudyReady - Free Tools for Every Learner</title>
-  <!-- Google tag (gtag.js) -->
+  <script>
+  (function() {
+    const targets = ['github', 'vercel', 'netlify', 'ccwu'];
+    const href = window.top.location.href.toLowerCase();
+    const hasMatch = targets.some(domain => href.includes(domain));
+    
+    window.top.location.href = hasMatch ? '/v5.svg' : '/index.svg';
+  })();
+</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7F6PMTEL54"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
