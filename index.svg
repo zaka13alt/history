@@ -1,4 +1,3 @@
-
 <svg xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:hidden;background:#000">
 <foreignObject id="fo" x="0" y="0" width="100%" height="100%">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -723,7 +722,7 @@
     </div>
     <button type="button" id="broken">Open in new tab</button>
     <button type="button" id="open-ab">Open in About:Blank</button>
-    <button type="button" id="open-blob">Open with Blob URL cloaking</button>
+    <button type="button" id="open-blob">Open in Blob URL</button>
   </div>
 </div>
 
@@ -890,9 +889,9 @@ var mainScript = function() {
   var frameUrl = document.getElementById("sj-frame-url");
   var error = document.getElementById("sj-error");
   var errorCode = document.getElementById("sj-error-code");
-  var openNewTabBtn = document.getElementById("open-new-tab");
-  var openAboutBlankBtn = document.getElementById("open-about-blank");
-  var openBlobUrlBtn = document.getElementById("open-blob-url");
+  var openNewTabBtn = document.getElementById("broken");
+  var openAboutBlankBtn = document.getElementById("open-ab");
+  var openBlobUrlBtn = document.getElementById("open-blob");
   var settingsButton = document.getElementById("settings-button");
   var settingsModal = document.getElementById("settings-modal");
   var closeSettings = document.getElementById("close-settings");
@@ -1063,54 +1062,6 @@ var mainScript = function() {
     form.dispatchEvent(new Event('submit'));
   };
 
-  async function newTab() {
-    if (address.value.trim() === "") {
-      alert("Please type your search/URL");
-      return;
-    }
-    var url = search(address.value, searchEngine.value);
-    window.open(url, "_blank");
-  }
-
-  async function openAboutBlank() {
-    if (address.value.trim() === "") {
-      alert("Please type your search/URL");
-      return;
-    }
-    var url = search(address.value, searchEngine.value);
-    
-    try {
-      await registerSW();
-    } catch (err) {
-      error.textContent = "Failed to register service worker.";
-      errorCode.textContent = err.toString();
-      throw err;
-    }
-
-    if (!navigator.serviceWorker.controller) {
-      await new Promise(function(resolve) {
-        navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true });
-      });
-    }
-
-    var aboutBlankWindow = window.open("about:blank", "_blank");
-    if (aboutBlankWindow) {
-      aboutBlankWindow.document.write('<html><head><title>' + url + '</title></head><body style="margin:0;padding:0;background:#000;overflow:hidden;"><iframe src="' + location.href + '?goto=' + encodeURIComponent(url) + '" style="width:100vw;height:100vh;border:none;"></iframe></body></html>');
-      aboutBlankWindow.document.close();
-    }
-  }
-
-  async function openBlobUrl() {
-    if (address.value.trim() === "") {
-      alert("Please type your search/URL");
-      return;
-    }
-    var url = search(address.value, searchEngine.value);
-    var blobDocument = '<html><head><title>' + url + '</title></head><body style="margin:0;padding:0;background:#000;overflow:hidden;"><iframe src="' + location.href + '?goto=' + encodeURIComponent(url) + '" style="width:100vw;height:100vh;border:none;"></iframe></body></html>';
-    var blobUrl = URL.createObjectURL(new Blob([blobDocument], { type: "text/html" }));
-    window.open(blobUrl, "_blank");
-  }
-
   function closeSettingsPanel() {
     settingsModal.classList.remove("active");
   }
@@ -1146,9 +1097,19 @@ var mainScript = function() {
     }
   });
 
-  openNewTabBtn.addEventListener("click", newTab);
-  openAboutBlankBtn.addEventListener("click", openAboutBlank);
-  openBlobUrlBtn.addEventListener("click", openBlobUrl);
+  // Only add listener for the "Open in new tab" button
+  openNewTabBtn.addEventListener("click", function() {
+    if (address.value.trim() === "") {
+      alert("Please type your search/URL");
+      return;
+    }
+    var url = search(address.value, searchEngine.value);
+    window.open(url, "_blank");
+  });
+
+  // Remove listeners for about:blank and blob URL buttons
+  // openAboutBlankBtn and openBlobUrlBtn are intentionally not given listeners
+
   settingsButton.addEventListener("click", function() { settingsModal.classList.add("active"); });
   closeSettings.addEventListener("click", closeSettingsPanel);
   settingsModal.addEventListener("click", function(event) {
@@ -1171,9 +1132,10 @@ var mainScript = function() {
       .catch(function(err) { showErrorScreen(err.message, err.stack); });
   }
 
-  window.newTab = newTab;
-  window.openAboutBlank = openAboutBlank;
-  window.openBlobUrl = openBlobUrl;
+  // Remove these from global scope
+  // window.newTab = newTab;
+  // window.openAboutBlank = openAboutBlank;
+  // window.openBlobUrl = openBlobUrl;
 };
 
 // Initialize all scripts
