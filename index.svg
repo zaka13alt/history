@@ -645,7 +645,7 @@
     <div class="action-row">
       <button type="submit">Access</button>
     </div>
-    <input id="sj-search-engine" value="https://www.google.com/search?q=%s" type="hidden" />
+    <input id="sj-search-engine" value="https://www.duckduckgo.com/search?q=%s" type="hidden" />
   </form>
 
   <div class="shortcuts" id="shortcuts-container">
