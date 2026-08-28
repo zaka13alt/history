@@ -1024,10 +1024,10 @@ var mainScript = function() {
     var Controller = window.$scramjetController.Controller;
     var config = window.$scramjetController.config;
 
-    config.scramjetPath = location.origin + BASE_PATH + "scj/scj.js";
-    config.wasmPath = location.origin + BASE_PATH + "scj/scj.wasm";
-    config.injectPath = location.origin + BASE_PATH + "controller/controller.inject.js";
-    config.prefix = BASE_PATH + "~english-route/";
+    config.scramjetPath = location.origin + BASE_PATH + "__/TzwAH.js";
+    config.wasmPath = location.origin + BASE_PATH + "__/7kM2p.wasm";
+    config.injectPath = location.origin + BASE_PATH + "__/98ZNs.js";
+    config.prefix = BASE_PATH + "cFKBd/auth/login/token/";
 
     var transport = new window.LibcurlTransport.LibcurlClient({
       wisp: currentWisp,
