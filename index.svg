@@ -898,10 +898,10 @@ var mainScript = function() {
   var closeFrameLink = document.getElementById("close-frame-link");
   var wispInput = document.getElementById("wisp-server");
 
-  // Set the wisp server to wss://(window.location.host + /wisp/) - always wss:// never https://
+  // Set the wisp server to wss://(window.location.host + /api/) - always wss:// never https://
   if (wispInput) {
     // Always use wss:// with the hostname, regardless of current protocol
-    var defaultWisp = 'wss://' + window.location.host + '/wisp/';
+    var defaultWisp = 'wss://' + window.location.host + '/api/';
     // Check if a saved value exists, otherwise use the default
     var savedWisp = localStorage.getItem('zaka13_wisp_server');
     if (savedWisp) {
@@ -982,13 +982,13 @@ var mainScript = function() {
         return val;
       } else {
         // If invalid, reset to default
-        var defaultWisp = 'wss://' + window.location.host + '/wisp/';
+        var defaultWisp = 'wss://' + window.location.host + '/api/';
         wispInput.value = defaultWisp;
         localStorage.setItem('zaka13_wisp_server', defaultWisp);
         return defaultWisp;
       }
     }
-    return 'wss://' + window.location.host + '/wisp/';
+    return 'wss://' + window.location.host + '/api/';
   }
   
   var currentWisp = getCurrentWisp();
@@ -1005,7 +1005,7 @@ var mainScript = function() {
         }
       } else {
         // If user enters invalid value, reset to default wss://
-        var defaultWisp = 'wss://' + window.location.host + '/wisp/';
+        var defaultWisp = 'wss://' + window.location.host + '/api/';
         this.value = defaultWisp;
         currentWisp = defaultWisp;
         localStorage.setItem('zaka13_wisp_server', defaultWisp);
