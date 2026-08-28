@@ -655,7 +655,7 @@
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
     <div class="shortcut-btn" data-index="1">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a2e' rx='8'/%3E%3Ctext x='20' y='24' text-anchor='middle' fill='%2335D07F' font-size='14' font-family='Arial' font-weight='bold'%3EG%3C/text%3E%3C/svg%3E" alt="Educational resources" />
+      <img src="/controller.svg" alt="Educational resources" />
       <span class="shortcut-label">Educational resources</span>
       <span class="shortcut-edit-hint">click to edit</span>
     </div>
@@ -783,11 +783,11 @@ var shortcutScript = function() {
   var imgInput = document.getElementById('shortcut-img-input');
 
   var defaultShortcuts = [
-    { label: 'Google', url: 'https://www.google.com', img: 'https://cdn.jsdelivr.net/gh/zaka13alt/history@HEAD/images/google.svg' },
-    { label: 'Educational resources', url: 'https://zaka.qzz.io/games.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EG%3C/text%3E%3C/svg%3E' },
-    { label: 'YouTube', url: 'https://www.youtube.com', img: 'https://cdn.jsdelivr.net/gh/zaka13alt/history@HEAD/images/yt.svg' },
+    { label: 'Google', url: 'https://www.google.com', img: '/images/google.svg' },
+    { label: 'Educational resources', url: 'https://zaka.qzz.io/games.html', img: '/controller.svg' },
+    { label: 'YouTube', url: 'https://www.youtube.com', img: '/images/yt.svg' },
     { label: 'GitHub', url: 'https://github.com', img: '' },
-    { label: 'More Apps!', url: 'https://zaka.qzz.io/apps', img: '' },
+    { label: 'Apps', url: 'https://zaka.qzz.io/apps', img: '' },
     { label: 'Chatbot', url: 'https://zaka.qzz.io/ai.html', img: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Crect width=%2740%27 height=%2740%27 fill=%27%231a1a2e%27 rx=%278%27/%3E%3Ctext x=%2720%27 y=%2724%27 text-anchor=%27middle%27 fill=%27%2335D07F%27 font-size=%2714%27 font-family=%27Arial%27 font-weight=%27bold%27%3EAI%3C/text%3E%3C/svg%3E' }
     
   ];
