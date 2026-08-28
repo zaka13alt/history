@@ -5,7 +5,6 @@
 }
 
 # 1. Global HTTPS Block (Handles all valid production domains)
-# test 123
 :443 {
     # Match long hosts (61+ chars) using native header regex matching
     @tooLong header_regexp Host ^.{61,}$
@@ -27,6 +26,19 @@
     handle @hasSus {
         header Content-Type "text/plain"
         respond "this link was disabled bc you generated a malware, sus, or just down right bad subdomain, stop abusing my BYOD system, this is to generate good links, NOT WHM EXPLOITS" 493
+    }
+
+    # NEW: Match /api and anything after it, then proxy to localhost:3000/wisp/
+    handle /api* {
+        uri strip_prefix /api
+        rewrite * /wisp{uri}
+        reverse_proxy localhost:3000 {
+            header_up Host {upstream_host_port}
+            transport http {
+                read_timeout 0
+                write_timeout 0
+            }
+        }
     }
 
     # Match /wisp and /wisp/* to properly capture all client handshakes
