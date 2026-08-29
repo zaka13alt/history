@@ -590,6 +590,89 @@
 </head>
 <body>
 
+<!-- FIX: Override window.parent before any scripts load -->
+<script>
+  (function() {
+    // Force window.parent to be a valid object
+    try {
+      // Test if parent is accessible and not null
+      var test = window.parent;
+      if (test === null || test === undefined) {
+        // Create a dummy parent
+        var dummy = {
+          postMessage: function() { return; },
+          location: window.location,
+          addEventListener: function() {},
+          removeEventListener: function() {},
+          document: window.document,
+          frameElement: null,
+          frames: [],
+          length: 0,
+          top: window,
+          parent: window,
+          self: window,
+          window: window,
+          name: '',
+          closed: false,
+          opener: null,
+          parentWindow: window
+        };
+        
+        // Override window.parent
+        Object.defineProperty(window, 'parent', {
+          value: dummy,
+          writable: false,
+          configurable: true,
+          enumerable: true
+        });
+        
+        // Also override window.top if needed
+        if (window.top === null || window.top === undefined || window.top === window) {
+          Object.defineProperty(window, 'top', {
+            value: window,
+            writable: false,
+            configurable: true,
+            enumerable: true
+          });
+        }
+      }
+    } catch (e) {
+      // If we can't access window.parent, create it from scratch
+      var dummy2 = {
+        postMessage: function() { return; },
+        location: window.location,
+        addEventListener: function() {},
+        removeEventListener: function() {},
+        document: window.document,
+        frameElement: null,
+        frames: [],
+        length: 0,
+        top: window,
+        parent: window,
+        self: window,
+        window: window,
+        name: '',
+        closed: false,
+        opener: null,
+        parentWindow: window
+      };
+      
+      // Force override
+      try {
+        window.parent = dummy2;
+      } catch (e2) {
+        // Use defineProperty as fallback
+        Object.defineProperty(window, 'parent', {
+          value: dummy2,
+          writable: false,
+          configurable: true,
+          enumerable: true
+        });
+      }
+    }
+  })();
+</script>
+
 <div class="container">
   <div class="topbar">
     <button type="button" id="settings-button" aria-label="Open settings" title="Settings">&#9881;</button>
