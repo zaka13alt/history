@@ -726,6 +726,44 @@
   </div>
 </div>
 
+<script>
+// Fix for foreignObject context - ensure window.parent exists
+// The dGFzaw.js script expects window.parent to exist for postMessage
+(function() {
+  // Check if we're in a foreignObject or iframe context where parent is null
+  try {
+    var testParent = window.parent;
+    if (testParent === null || testParent === undefined || testParent === window) {
+      // Create a dummy parent object with postMessage
+      var dummyParent = {
+        postMessage: function(msg, origin) {
+          // Silently ignore - we're in a foreignObject context
+          return;
+        },
+        location: window.location,
+        addEventListener: function() {},
+        removeEventListener: function() {},
+        document: window.document
+      };
+      
+      // Override window.parent
+      Object.defineProperty(window, 'parent', {
+        get: function() { return dummyParent; },
+        configurable: true,
+        enumerable: true
+      });
+    }
+  } catch (e) {
+    // If we can't access window.parent, create it
+    var dummyParent = {
+      postMessage: function() {},
+      location: window.location
+    };
+    window.parent = dummyParent;
+  }
+})();
+</script>
+
 <script src="/__/2jG7q.js"></script>
 <script src="/__/wR4tN.js"></script>
 <script src="/__/xoqfE.js"></script>
@@ -863,7 +901,7 @@ var shortcutScript = function() {
   loadShortcuts();
 };
 
-// 
+// Main embed logic (replacing scramjet)
 var mainScript = function() {
   "use strict";
 
