@@ -1,10 +1,10 @@
-importScripts("/study.js");
+importScripts("./bG9scmF0aW9u/emFrYQ.js");
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
 
 addEventListener("fetch", (e) => {
-  if ($educationlaunch.shouldRoute(e)) {
-    e.respondWith($educationlaunch.route(e));
+  if (dGFzazR6MTMzNw.shouldRoute(e)) {
+    e.respondWith(dGFzazR6MTMzNw.route(e));
   }
 });
