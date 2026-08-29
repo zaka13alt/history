@@ -590,16 +590,13 @@
 </head>
 <body>
 
-<!-- FIX: Override window.parent before any scripts load -->
+<!-- FIX: Patch window.parent and MessageChannel BEFORE any scripts load -->
 <script>
   (function() {
-    // Force window.parent to be a valid object
+    // 1. Fix window.parent
     try {
-      // Test if parent is accessible and not null
-      var test = window.parent;
-      if (test === null || test === undefined) {
-        // Create a dummy parent
-        var dummy = {
+      if (window.parent === null || window.parent === undefined || window.parent === window) {
+        var dummyParent = {
           postMessage: function() { return; },
           location: window.location,
           addEventListener: function() {},
@@ -614,61 +611,100 @@
           window: window,
           name: '',
           closed: false,
-          opener: null,
-          parentWindow: window
+          opener: null
         };
         
-        // Override window.parent
         Object.defineProperty(window, 'parent', {
-          value: dummy,
+          value: dummyParent,
           writable: false,
           configurable: true,
           enumerable: true
         });
-        
-        // Also override window.top if needed
-        if (window.top === null || window.top === undefined || window.top === window) {
-          Object.defineProperty(window, 'top', {
-            value: window,
-            writable: false,
-            configurable: true,
-            enumerable: true
-          });
-        }
       }
-    } catch (e) {
-      // If we can't access window.parent, create it from scratch
-      var dummy2 = {
-        postMessage: function() { return; },
-        location: window.location,
-        addEventListener: function() {},
-        removeEventListener: function() {},
-        document: window.document,
-        frameElement: null,
-        frames: [],
-        length: 0,
-        top: window,
-        parent: window,
-        self: window,
-        window: window,
-        name: '',
-        closed: false,
-        opener: null,
-        parentWindow: window
+    } catch(e) {
+      window.parent = {
+        postMessage: function() {},
+        location: window.location
+      };
+    }
+
+    // 2. Fix MessageChannel for the controller's setupMessagePort
+    // The controller tries to create a MessageChannel and send the port2 via postMessage
+    // If parent is dummy, we need to make sure it works
+    var OrigMessageChannel = window.MessageChannel;
+    
+    window.MessageChannel = function() {
+      var channel = new OrigMessageChannel();
+      
+      // Store reference to port1 for later use
+      var port1 = channel.port1;
+      var port2 = channel.port2;
+      
+      // Override port1's postMessage to handle messages
+      var origPostMessage = port1.postMessage.bind(port1);
+      port1.postMessage = function(data, transfer) {
+        // If the message is the controller init, handle it locally
+        if (data && data.$controller$init) {
+          // We need to simulate the service worker response
+          // Create a message that the controller expects
+          var event = {
+            data: {
+              $controller$init: data.$controller$init
+            },
+            ports: [port2]
+          };
+          
+          // Trigger the service worker message handler
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            // Dispatch a fake message event
+            var messageEvent = new MessageEvent('message', {
+              data: event.data,
+              ports: event.ports
+            });
+            // The controller listens on serviceWorker controller
+            if (navigator.serviceWorker.controller) {
+              // This will trigger the controller's message handler
+              navigator.serviceWorker.controller.dispatchEvent(messageEvent);
+            }
+          }
+          return;
+        }
+        origPostMessage(data, transfer);
       };
       
-      // Force override
-      try {
-        window.parent = dummy2;
-      } catch (e2) {
-        // Use defineProperty as fallback
-        Object.defineProperty(window, 'parent', {
-          value: dummy2,
-          writable: false,
-          configurable: true,
-          enumerable: true
-        });
-      }
+      return channel;
+    };
+    
+    // Make sure MessageChannel is configurable
+    Object.defineProperty(window, 'MessageChannel', {
+      value: window.MessageChannel,
+      writable: true,
+      configurable: true
+    });
+
+    // 3. Also patch serviceWorker.controller.postMessage to work with our dummy parent
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      var origControllerPostMessage = navigator.serviceWorker.controller.postMessage.bind(navigator.serviceWorker.controller);
+      navigator.serviceWorker.controller.postMessage = function(data, transfer) {
+        // If this is a controller init message, handle it
+        if (data && data.$controller$init) {
+          // We need to respond with a ready message
+          setTimeout(function() {
+            // The controller expects a "ready" response via the MessageChannel
+            // We'll simulate it by dispatching a message event on the port
+            if (transfer && transfer[0] && transfer[0].postMessage) {
+              transfer[0].postMessage({
+                type: 'message',
+                data: {
+                  $controller$init: data.$controller$init
+                }
+              });
+            }
+          }, 100);
+          return;
+        }
+        return origControllerPostMessage(data, transfer);
+      };
     }
   })();
 </script>
@@ -953,15 +989,6 @@ var mainScript = function() {
       var url = new URL("http://" + input);
       if (url.hostname.includes(".")) return url.toString();
     } catch (e) {}
-    if (
-      input.includes("zaka") ||
-      input.includes("zaka13") ||
-      input.includes("zaka's games") ||
-      input.includes("ign_zaka13")
-    ) {
-      alert("Why you searching my name up?");
-      alert("lmfao");
-    }
     return template.replace("%s", encodeURIComponent(input));
   }
 
