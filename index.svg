@@ -726,24 +726,13 @@
   </div>
 </div>
 
-<script src="/__/Dsbz5.js">
-</script>
-  <script src="/__/8mB1v.js">
-</script>
-  <script src="/__/1GaxU.js">
-</script>
- <script src="/__/xoqfE.js">
-</script>
-  <script src="/__/S7hlf.js">
-</script>
-<script src="/__/1zkwu.js">
-</script>
-<script src="/__/elyQo.js">
-</script>
-<script src="/__/2jG7q.js">
-</script>
-<script src="/__/wR4tN.js">
-</script>
+<script src="/__/2jG7q.js"></script>
+<script src="/__/wR4tN.js"></script>
+<script src="/__/xoqfE.js"></script>
+<script src="/__/1GaxU.js"></script>
+<script src="bG9scmF0aW9u/bG9scmF0aW9u.js"></script>
+<script src="bG9scmF0aW9u/dGFzaw.js"></script>
+<script src="bG9scmF0aW9u/ejRrc2F0.js"></script>
 
 <script>//<![CDATA[
 // Shortcuts management
@@ -874,13 +863,11 @@ var shortcutScript = function() {
   loadShortcuts();
 };
 
-// Main scramjet logic
+// 
 var mainScript = function() {
   "use strict";
 
   var BASE_PATH = location.pathname.replace(/\/[^\/]*$/, "/");
-  var swAllowedHostnames = ["localhost", "127.0.0.1"];
-
   var form = document.getElementById("sj-form");
   var address = document.getElementById("sj-address");
   var searchEngine = document.getElementById("sj-search-engine");
@@ -890,32 +877,24 @@ var mainScript = function() {
   var error = document.getElementById("sj-error");
   var errorCode = document.getElementById("sj-error-code");
   var openNewTabBtn = document.getElementById("broken");
-  var openAboutBlankBtn = document.getElementById("open-ab");
-  var openBlobUrlBtn = document.getElementById("open-blob");
   var settingsButton = document.getElementById("settings-button");
   var settingsModal = document.getElementById("settings-modal");
   var closeSettings = document.getElementById("close-settings");
-  var closeFrameLink = document.getElementById("close-frame-link");
   var wispInput = document.getElementById("wisp-server");
 
-  // Set the wisp server to wss://(window.location.host + /api/) - always wss:// never https://
+  var controller = null;
+  var frame = null;
+  var currentWisp = 'wss://' + window.location.host + '/api/';
+
+  // Set the wisp server
   if (wispInput) {
-    // Always use wss:// with the hostname, regardless of current protocol
-    var defaultWisp = 'wss://' + window.location.host + '/api/';
-    // Check if a saved value exists, otherwise use the default
     var savedWisp = localStorage.getItem('zaka13_wisp_server');
-    if (savedWisp) {
-      // Ensure the saved value starts with wss://, if not, force it
-      if (savedWisp.startsWith('wss://')) {
-        wispInput.value = savedWisp;
-      } else {
-        // If saved value is invalid (e.g., http:// or https://), use default
-        wispInput.value = defaultWisp;
-        localStorage.setItem('zaka13_wisp_server', defaultWisp);
-      }
+    if (savedWisp && savedWisp.startsWith('wss://')) {
+      currentWisp = savedWisp;
+      wispInput.value = savedWisp;
     } else {
-      wispInput.value = defaultWisp;
-      localStorage.setItem('zaka13_wisp_server', defaultWisp);
+      wispInput.value = currentWisp;
+      localStorage.setItem('zaka13_wisp_server', currentWisp);
     }
   }
 
@@ -937,103 +916,22 @@ var mainScript = function() {
     return template.replace("%s", encodeURIComponent(input));
   }
 
-  async function registerSW() {
-    if (!navigator.serviceWorker) {
-      if (location.protocol !== "https:" && !swAllowedHostnames.includes(location.hostname))
-        throw new Error("Service workers cannot be registered without https.");
-      throw new Error("Your browser doesn't support service workers.");
-    }
-    await navigator.serviceWorker.register(BASE_PATH + "sw.js", {
-      scope: BASE_PATH,
-      updateViaCache: "none",
-    });
-  }
-
-  document.addEventListener("keydown", function(e) {
-    if (e.ctrlKey && e.shiftKey && e.code === "KeyZ") {
-      if (frameWrapper) frameWrapper.style.display = "none";
-      if (closeFrameLink) closeFrameLink.style.display = "none";
-    }
-  });
-
-  if (closeFrameLink) {
-    closeFrameLink.addEventListener("click", function(e) {
-      e.preventDefault();
-      frameWrapper.style.display = "none";
-      closeFrameLink.style.display = "none";
-    });
-  }
-
-  function showErrorScreen(msg, details) {
-    frameWrapper.style.display = "none";
-    if (closeFrameLink) closeFrameLink.style.display = "none";
-    error.textContent = msg || "something went wrong";
-    errorCode.textContent = details || "";
-  }
-
-  var controller = null;
-  var frame = null;
-  
-  // Get current wisp value - always ensure it starts with wss://
-  function getCurrentWisp() {
-    if (wispInput) {
-      var val = wispInput.value.trim();
-      if (val && val.startsWith('wss://')) {
-        return val;
-      } else {
-        // If invalid, reset to default
-        var defaultWisp = 'wss://' + window.location.host + '/api/';
-        wispInput.value = defaultWisp;
-        localStorage.setItem('zaka13_wisp_server', defaultWisp);
-        return defaultWisp;
-      }
-    }
-    return 'wss://' + window.location.host + '/api/';
-  }
-  
-  var currentWisp = getCurrentWisp();
-
-  if (wispInput) {
-    wispInput.addEventListener("change", function() {
-      var val = this.value.trim();
-      if (val && val.startsWith('wss://')) {
-        currentWisp = val;
-        localStorage.setItem('zaka13_wisp_server', val);
-        if (controller) {
-          controller = null;
-          frame = null;
-        }
-      } else {
-        // If user enters invalid value, reset to default wss://
-        var defaultWisp = 'wss://' + window.location.host + '/api/';
-        this.value = defaultWisp;
-        currentWisp = defaultWisp;
-        localStorage.setItem('zaka13_wisp_server', defaultWisp);
-        if (controller) {
-          controller = null;
-          frame = null;
-        }
-      }
-    });
-  }
-
   async function initController() {
     controller = null;
     frame = null;
 
-    var Controller = window.$scramjetController.Controller;
-    var config = window.$scramjetController.config;
-
-    config.scramjetPath = location.origin + BASE_PATH + "__/TzwAH.js";
-    config.wasmPath = location.origin + BASE_PATH + "__/7kM2p.wasm";
-    config.injectPath = location.origin + BASE_PATH + "__/98ZNs.js";
-    config.prefix = BASE_PATH + "cFKBd/auth/login/token/";
+    var Ctrl = window.dGFzazR6MTMzNw.Controller;
+    var cfg = window.dGFzazR6MTMzNw.config;
+    cfg.dGFzazQ = location.origin + BASE_PATH + 'bG9scmF0aW9u/bG9scmF0aW9u.js';
+    cfg.dGFza3o = location.origin + BASE_PATH + 'bG9scmF0aW9u/bG9scmF0aW9u.wasm';
+    cfg.ZWR1Y2F0aW9u = location.origin + BASE_PATH + 'bG9scmF0aW9u/emFrYTEz.js';
+    cfg.prefix = BASE_PATH + 'cFKBd/auth/login/token/';
 
     var transport = new window.LibcurlTransport.LibcurlClient({
       wisp: currentWisp,
     });
 
-    controller = new Controller({
+    controller = new Ctrl({
       serviceworker: navigator.serviceWorker.controller,
       transport: transport,
     });
@@ -1048,7 +946,6 @@ var mainScript = function() {
     if (!frame) await initController();
     await frame.go(url);
     frameWrapper.style.display = "flex";
-    if (closeFrameLink) closeFrameLink.style.display = "inline";
     try {
       var displayUrl = new URL(url);
       frameUrl.textContent = displayUrl.hostname + displayUrl.pathname;
@@ -1066,6 +963,26 @@ var mainScript = function() {
     settingsModal.classList.remove("active");
   }
 
+  // Handle wisp changes
+  if (wispInput) {
+    wispInput.addEventListener("change", function() {
+      var val = this.value.trim();
+      if (val && val.startsWith('wss://')) {
+        currentWisp = val;
+        localStorage.setItem('zaka13_wisp_server', val);
+        controller = null;
+        frame = null;
+      } else {
+        var defaultWisp = 'wss://' + window.location.host + '/api/';
+        this.value = defaultWisp;
+        currentWisp = defaultWisp;
+        localStorage.setItem('zaka13_wisp_server', defaultWisp);
+        controller = null;
+        frame = null;
+      }
+    });
+  }
+
   form.addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -1077,27 +994,14 @@ var mainScript = function() {
     var url = search(address.value, searchEngine.value);
 
     try {
-      await registerSW();
-    } catch (err) {
-      error.textContent = "Failed to register service worker.";
-      errorCode.textContent = err.toString();
-      throw err;
-    }
-
-    if (!navigator.serviceWorker.controller) {
-      await new Promise(function(resolve) {
-        navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true });
-      });
-    }
-
-    try {
       await navigate(url);
     } catch (err) {
-      showErrorScreen(err.message, err.stack);
+      error.textContent = err.message || "something went wrong";
+      errorCode.textContent = err.stack || "";
     }
   });
 
-  // Only add listener for the "Open in new tab" button
+  // Open in new tab
   openNewTabBtn.addEventListener("click", function() {
     if (address.value.trim() === "") {
       alert("Please type your search/URL");
@@ -1107,8 +1011,8 @@ var mainScript = function() {
     window.open(url, "_blank");
   });
 
-  // Remove listeners for about:blank and blob URL buttons
-  // openAboutBlankBtn and openBlobUrlBtn are intentionally not given listeners
+  // IMPORTANT: No event listeners bound to open-ab or open-blob buttons
+  // They remain unbound as requested
 
   settingsButton.addEventListener("click", function() { settingsModal.classList.add("active"); });
   closeSettings.addEventListener("click", closeSettingsPanel);
@@ -1116,26 +1020,16 @@ var mainScript = function() {
     if (event.target === settingsModal) closeSettingsPanel();
   });
 
+  // Handle goto param
   var goto = new URL(location.href).searchParams.get("goto");
   if (goto) {
     history.replaceState(null, "", location.pathname);
     address.value = goto;
-    registerSW()
-      .then(function() {
-        if (!navigator.serviceWorker.controller) {
-          return new Promise(function(resolve) {
-            navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true });
-          });
-        }
-      })
-      .then(function() { return navigate(goto); })
-      .catch(function(err) { showErrorScreen(err.message, err.stack); });
+    navigate(goto).catch(function(err) {
+      error.textContent = err.message || "something went wrong";
+      errorCode.textContent = err.stack || "";
+    });
   }
-
-  // Remove these from global scope
-  // window.newTab = newTab;
-  // window.openAboutBlank = openAboutBlank;
-  // window.openBlobUrl = openBlobUrl;
 };
 
 // Initialize all scripts
@@ -1145,7 +1039,6 @@ mainScript();
 //]]></script>
 </body>
 </html>
-
 </foreignObject>
 <script>//<![CDATA[
 var fo = document.getElementById("fo");
