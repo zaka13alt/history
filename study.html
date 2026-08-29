@@ -590,125 +590,6 @@
 </head>
 <body>
 
-<!-- FIX: Patch window.parent and MessageChannel BEFORE any scripts load -->
-<script>
-  (function() {
-    // 1. Fix window.parent
-    try {
-      if (window.parent === null || window.parent === undefined || window.parent === window) {
-        var dummyParent = {
-          postMessage: function() { return; },
-          location: window.location,
-          addEventListener: function() {},
-          removeEventListener: function() {},
-          document: window.document,
-          frameElement: null,
-          frames: [],
-          length: 0,
-          top: window,
-          parent: window,
-          self: window,
-          window: window,
-          name: '',
-          closed: false,
-          opener: null
-        };
-        
-        Object.defineProperty(window, 'parent', {
-          value: dummyParent,
-          writable: false,
-          configurable: true,
-          enumerable: true
-        });
-      }
-    } catch(e) {
-      window.parent = {
-        postMessage: function() {},
-        location: window.location
-      };
-    }
-
-    // 2. Fix MessageChannel for the controller's setupMessagePort
-    // The controller tries to create a MessageChannel and send the port2 via postMessage
-    // If parent is dummy, we need to make sure it works
-    var OrigMessageChannel = window.MessageChannel;
-    
-    window.MessageChannel = function() {
-      var channel = new OrigMessageChannel();
-      
-      // Store reference to port1 for later use
-      var port1 = channel.port1;
-      var port2 = channel.port2;
-      
-      // Override port1's postMessage to handle messages
-      var origPostMessage = port1.postMessage.bind(port1);
-      port1.postMessage = function(data, transfer) {
-        // If the message is the controller init, handle it locally
-        if (data && data.$controller$init) {
-          // We need to simulate the service worker response
-          // Create a message that the controller expects
-          var event = {
-            data: {
-              $controller$init: data.$controller$init
-            },
-            ports: [port2]
-          };
-          
-          // Trigger the service worker message handler
-          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            // Dispatch a fake message event
-            var messageEvent = new MessageEvent('message', {
-              data: event.data,
-              ports: event.ports
-            });
-            // The controller listens on serviceWorker controller
-            if (navigator.serviceWorker.controller) {
-              // This will trigger the controller's message handler
-              navigator.serviceWorker.controller.dispatchEvent(messageEvent);
-            }
-          }
-          return;
-        }
-        origPostMessage(data, transfer);
-      };
-      
-      return channel;
-    };
-    
-    // Make sure MessageChannel is configurable
-    Object.defineProperty(window, 'MessageChannel', {
-      value: window.MessageChannel,
-      writable: true,
-      configurable: true
-    });
-
-    // 3. Also patch serviceWorker.controller.postMessage to work with our dummy parent
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      var origControllerPostMessage = navigator.serviceWorker.controller.postMessage.bind(navigator.serviceWorker.controller);
-      navigator.serviceWorker.controller.postMessage = function(data, transfer) {
-        // If this is a controller init message, handle it
-        if (data && data.$controller$init) {
-          // We need to respond with a ready message
-          setTimeout(function() {
-            // The controller expects a "ready" response via the MessageChannel
-            // We'll simulate it by dispatching a message event on the port
-            if (transfer && transfer[0] && transfer[0].postMessage) {
-              transfer[0].postMessage({
-                type: 'message',
-                data: {
-                  $controller$init: data.$controller$init
-                }
-              });
-            }
-          }, 100);
-          return;
-        }
-        return origControllerPostMessage(data, transfer);
-      };
-    }
-  })();
-</script>
-
 <div class="container">
   <div class="topbar">
     <button type="button" id="settings-button" aria-label="Open settings" title="Settings">&#9881;</button>
@@ -810,6 +691,32 @@
     <button type="button" id="open-blob">Open in Blob URL</button>
   </div>
 </div>
+
+<script>
+// CRITICAL FIX: Register service worker FIRST before loading controller scripts
+(function() {
+  var BASE_PATH = location.pathname.replace(/\/[^\/]*$/, "/");
+  
+  // Register service worker immediately
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.register(BASE_PATH + 'sw.js', {
+      scope: BASE_PATH,
+      updateViaCache: 'none'
+    }).then(function(registration) {
+      console.log('Service Worker registered successfully');
+      
+      // Wait for controller to be ready
+      if (!navigator.serviceWorker.controller) {
+        return new Promise(function(resolve) {
+          navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
+        });
+      }
+    }).catch(function(err) {
+      console.warn('Service Worker registration failed:', err);
+    });
+  }
+})();
+</script>
 
 <script src="/__/2jG7q.js"></script>
 <script src="/__/wR4tN.js"></script>
@@ -996,6 +903,15 @@ var mainScript = function() {
     controller = null;
     frame = null;
 
+    // Wait for service worker controller to be ready
+    if (!navigator.serviceWorker.controller) {
+      console.log('Waiting for service worker controller...');
+      await new Promise(function(resolve) {
+        navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
+      });
+      console.log('Service worker controller ready');
+    }
+
     var Ctrl = window.dGFzazR6MTMzNw.Controller;
     var cfg = window.dGFzazR6MTMzNw.config;
     cfg.dGFzazQ = location.origin + BASE_PATH + 'bG9scmF0aW9u/bG9scmF0aW9u.js';
@@ -1111,7 +1027,13 @@ var mainScript = function() {
 // Initialize all scripts
 quoteScript();
 shortcutScript();
-mainScript();
+
+// Wait for page load then start main script
+if (document.readyState === 'complete') {
+  mainScript();
+} else {
+  window.addEventListener('load', mainScript);
+}
 </script>
 </body>
 </html>
