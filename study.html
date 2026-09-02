@@ -697,26 +697,26 @@
 </div>
 
 <script>
-// CRITICAL FIX: Register service worker FIRST before loading controller scripts
+// 
 (function() {
   var BASE_PATH = location.pathname.replace(/\/[^\/]*$/, "/");
   
-  // Register service worker immediately
+  // y
   if (navigator.serviceWorker) {
     navigator.serviceWorker.register(BASE_PATH + 'sw.js', {
       scope: BASE_PATH,
       updateViaCache: 'none'
     }).then(function(registration) {
-      console.log('Service Worker registered successfully');
+      console.log('Service Worker registered successfully!');
       
-      // Wait for controller to be ready
+      // 
       if (!navigator.serviceWorker.controller) {
         return new Promise(function(resolve) {
           navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
         });
       }
     }).catch(function(err) {
-      console.warn('Service Worker registration failed:', err);
+      console.warn('Service Worker registration failed use https:// if needed error is:', err);
     });
   }
 })();
@@ -757,7 +757,7 @@ var quoteScript = function() {
   }, 6000);
 };
 
-// Shortcuts management
+// 
 var shortcutScript = function() {
   var shortcuts = [];
   var editingIndex = -1;
@@ -859,7 +859,7 @@ var shortcutScript = function() {
   loadShortcuts();
 };
 
-// Main embed logic
+// 
 var mainScript = function() {
   "use strict";
 
@@ -882,7 +882,7 @@ var mainScript = function() {
   var frame = null;
   var currentWisp = 'wss://' + window.location.host + '/api/';
 
-  // Set the wisp server
+  // 
   if (wispInput) {
     var savedWisp = localStorage.getItem('zaka13_wisp_server');
     if (savedWisp && savedWisp.startsWith('wss://')) {
@@ -907,13 +907,13 @@ var mainScript = function() {
     controller = null;
     frame = null;
 
-    // Wait for service worker controller to be ready
+    
     if (!navigator.serviceWorker.controller) {
-      console.log('Waiting for service worker controller...');
+      console.log('Waiting.');
       await new Promise(function(resolve) {
         navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true });
       });
-      console.log('Service worker controller ready');
+      console.log('Ready!');
     }
 
     var Ctrl = window.dGFzazR6MTMzNw.Controller;
@@ -959,7 +959,7 @@ var mainScript = function() {
     settingsModal.classList.remove("active");
   }
 
-  // Handle wisp changes
+  // 
   if (wispInput) {
     wispInput.addEventListener("change", function() {
       var val = this.value.trim();
@@ -1007,8 +1007,7 @@ var mainScript = function() {
     window.open(url, "_blank");
   });
 
-  // IMPORTANT: No event listeners bound to open-ab or open-blob buttons
-  // They remain unbound as requested
+ 
 
   settingsButton.addEventListener("click", function() { settingsModal.classList.add("active"); });
   closeSettings.addEventListener("click", closeSettingsPanel);
