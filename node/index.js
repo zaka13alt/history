@@ -2,13 +2,12 @@ import { wispurr } from "wispurr";
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
 
-// 1. Read your config.json
-const userConfig = JSON.parse(readFileSync("dist/config.json", "utf8"));
+const userConfig = JSON.parse(
+  readFileSync(new URL("./config.json", import.meta.url), "utf8")
+);
 
-// 2. Pass it into the constructor (merged onto dist/config.json defaults)
 const wisp = new wispurr(userConfig);
-
-// 3. Spawn workers
+console.log(wisp.config); // sanity check: your values should show up here
 await wisp.start(4);
 
 const server = createServer();
