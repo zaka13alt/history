@@ -28,7 +28,7 @@
 	"trustedHeaders": ["CF-Connecting-IP", "X-Forwarded-For"],
 	"nonWSResponse": "404 not found",
 	"logLevel": "error",
-	"proxy": "",
+	"proxy": "socks5://127.0.0.1:35344",
 	"maxMessageSize": 1048581,
 	"staticDir": "",
 	"bandwidthLimitKbps": 0,
