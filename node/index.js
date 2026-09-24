@@ -1,8 +1,15 @@
 import { wispurr } from "wispurr";
 import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
 
-const wisp = new wispurr({ port: 6001, logLevel: "info" });
-await wisp.start(4); // spawn 4 workers, which would route to 6001, 6002, 6003, and 6004 or similar automatically
+// 1. Read your config.json
+const userConfig = JSON.parse(readFileSync("dist/config.json", "utf8"));
+
+// 2. Pass it into the constructor (merged onto dist/config.json defaults)
+const wisp = new wispurr(userConfig);
+
+// 3. Spawn workers
+await wisp.start(4);
 
 const server = createServer();
 server.on("upgrade", (req, socket, head) => wisp.route(req, socket, head));
