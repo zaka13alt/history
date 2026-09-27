@@ -65,10 +65,10 @@ const baseConfig = {
 	}
 };
 
-// Pool 1: direct, no proxy — used for /np/
-const wispDirect = new wispurr({ ...baseConfig, port: 6001 });
+// Pool 1: direct, no proxy — used when X-No-Proxy header is present
+const wispDirect = new wispurr({ ...baseConfig, port: 6001, proxy: "" });
 
-// Pool 2: everything else — goes through the SOCKS proxy
+// Pool 2: default — goes through the SOCKS proxy
 const wispProxied = new wispurr({
 	...baseConfig,
 	port: 6101, // different base port so the two pools don't collide
@@ -80,7 +80,7 @@ await wispProxied.start(4);
 
 const server = createServer();
 server.on("upgrade", (req, socket, head) => {
-	if (req.url && req.url.startsWith("/np/")) {
+	if (req.headers["x-no-proxy"]) {
 		wispDirect.route(req, socket, head);
 	} else {
 		wispProxied.route(req, socket, head);
