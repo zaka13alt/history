@@ -30,6 +30,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
     handle /np/* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
+            header_up X-No-Proxy true
             transport http {
                 read_timeout 0
                 write_timeout 0
@@ -93,6 +94,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
     handle /np/* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
+            header_up X-No-Proxy true
             transport http {
                 read_timeout 0
                 write_timeout 0
@@ -158,6 +160,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
     handle /np/* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
+            header_up X-No-Proxy true
             transport http {
                 read_timeout 0
                 write_timeout 0
@@ -213,6 +216,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
         handle /np/* {
             reverse_proxy localhost:3000 {
                 header_up Host {upstream_hostport}
+                header_up X-No-Proxy true
                 transport http {
                     read_timeout 0
                     write_timeout 0
@@ -297,6 +301,7 @@ http://:4000 {
     handle /np/* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
+            header_up X-No-Proxy true
             transport http {
                 read_timeout 0
                 write_timeout 0
