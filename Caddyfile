@@ -27,7 +27,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
         }
     }
 
-    handle /np* {
+    handle /np/* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
             transport http {
@@ -90,7 +90,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
         }
     }
 
-    handle /np* {
+    handle /np/* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
             transport http {
@@ -155,7 +155,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
         }
     }
 
-    handle /np* {
+    handle /np/* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
             transport http {
@@ -210,7 +210,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
             }
         }
 
-        handle /np* {
+        handle /np/* {
             reverse_proxy localhost:3000 {
                 header_up Host {upstream_hostport}
                 transport http {
@@ -294,7 +294,7 @@ http://:4000 {
         }
     }
 
-    handle /np* {
+    handle /np/* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
             transport http {
