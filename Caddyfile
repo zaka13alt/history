@@ -27,6 +27,16 @@ http://d1vajlb5xnngpm.cloudfront.net {
         }
     }
 
+    handle /np* {
+        reverse_proxy localhost:3000 {
+            header_up Host {upstream_hostport}
+            transport http {
+                read_timeout 0
+                write_timeout 0
+            }
+        }
+    }
+
     handle / {
         rewrite * /index.html
         root * /usr/share/caddy
@@ -71,6 +81,16 @@ http://d1vajlb5xnngpm.cloudfront.net {
     }
 
     handle /wisp* {
+        reverse_proxy localhost:3000 {
+            header_up Host {upstream_hostport}
+            transport http {
+                read_timeout 0
+                write_timeout 0
+            }
+        }
+    }
+
+    handle /np* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
             transport http {
@@ -135,6 +155,16 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
         }
     }
 
+    handle /np* {
+        reverse_proxy localhost:3000 {
+            header_up Host {upstream_hostport}
+            transport http {
+                read_timeout 0
+                write_timeout 0
+            }
+        }
+    }
+
     handle / {
         rewrite * /index.html
         root * /usr/share/caddy
@@ -171,6 +201,16 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
         }
 
         handle /wisp* {
+            reverse_proxy localhost:3000 {
+                header_up Host {upstream_hostport}
+                transport http {
+                    read_timeout 0
+                    write_timeout 0
+                }
+            }
+        }
+
+        handle /np* {
             reverse_proxy localhost:3000 {
                 header_up Host {upstream_hostport}
                 transport http {
@@ -245,6 +285,16 @@ http://:4000 {
     }
 
     handle /wisp* {
+        reverse_proxy localhost:3000 {
+            header_up Host {upstream_hostport}
+            transport http {
+                read_timeout 0
+                write_timeout 0
+            }
+        }
+    }
+
+    handle /np* {
         reverse_proxy localhost:3000 {
             header_up Host {upstream_hostport}
             transport http {
