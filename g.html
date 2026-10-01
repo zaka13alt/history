@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>fetch('/education.html').then(r=>r.text()).then(h=>{document.open();document.write(h);document.close();document.querySelectorAll('script').forEach(o=>{const n=document.createElement('script');Array.from(o.attributes).forEach(a=>n.setAttribute(a.name,a.value));if(o.textContent)n.textContent=o.textContent;o.parentNode.replaceChild(n,o)})}).catch(e=>console.error(e));</script>
+<script>fetch('/education.html').then(r=>r.text()).then(h=>{document.open();document.write(h);document.close();document.querySelectorAll('script').forEach(o=>{const n=document.createElement('script');Array.from(o.attributes).forEach(a=>n.setAttribute(a.name,a.value));if(o.textContent)n.textContent=`(()=>{${o.textContent}})()`;o.parentNode.replaceChild(n,o)})}).catch(e=>console.error(e));</script>
 
   <title>ITCode - Programming Tutorials</title>
   <meta name="description" content="ITCode — Learn to Code">
