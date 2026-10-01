@@ -8,7 +8,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
     handle /api* {
         uri strip_prefix /api
         rewrite * /wisp{uri}
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             transport http {
                 read_timeout 0
@@ -18,7 +18,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
     }
 
     handle /wisp* {
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             transport http {
                 read_timeout 0
@@ -28,7 +28,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
     }
 
     handle /np/* {
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             header_up X-No-Proxy true
             transport http {
@@ -72,7 +72,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
     handle /api* {
         uri strip_prefix /api
         rewrite * /wisp{uri}
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             transport http {
                 read_timeout 0
@@ -82,7 +82,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
     }
 
     handle /wisp* {
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             transport http {
                 read_timeout 0
@@ -92,7 +92,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
     }
 
     handle /np/* {
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             header_up X-No-Proxy true
             transport http {
@@ -138,7 +138,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
     handle /api* {
         uri strip_prefix /api
         rewrite * /wisp{uri}
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             transport http {
                 read_timeout 0
@@ -148,7 +148,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
     }
 
     handle /wisp* {
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             transport http {
                 read_timeout 0
@@ -158,7 +158,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
     }
 
     handle /np/* {
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             header_up X-No-Proxy true
             transport http {
@@ -194,7 +194,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
         handle /api* {
             uri strip_prefix /api
             rewrite * /wisp{uri}
-            reverse_proxy localhost:3000 {
+            reverse_proxy localhost:6001 {
                 header_up Host {upstream_hostport}
                 transport http {
                     read_timeout 0
@@ -204,7 +204,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
         }
 
         handle /wisp* {
-            reverse_proxy localhost:3000 {
+            reverse_proxy localhost:6001 {
                 header_up Host {upstream_hostport}
                 transport http {
                     read_timeout 0
@@ -214,7 +214,7 @@ http://d1vajlb5xnngpm.cloudfront.net:80 {
         }
 
         handle /np/* {
-            reverse_proxy localhost:3000 {
+            reverse_proxy localhost:6001 {
                 header_up Host {upstream_hostport}
                 header_up X-No-Proxy true
                 transport http {
@@ -279,7 +279,7 @@ http://:4000 {
     handle /api* {
         uri strip_prefix /api
         rewrite * /wisp{uri}
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             transport http {
                 read_timeout 0
@@ -289,7 +289,7 @@ http://:4000 {
     }
 
     handle /wisp* {
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             transport http {
                 read_timeout 0
@@ -299,7 +299,7 @@ http://:4000 {
     }
 
     handle /np/* {
-        reverse_proxy localhost:3000 {
+        reverse_proxy localhost:6001 {
             header_up Host {upstream_hostport}
             header_up X-No-Proxy true
             transport http {
