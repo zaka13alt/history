@@ -1,284 +1,387 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <style>
-        :root {
-            --bg-color: #121212;
-            --crd7-bg: #1e1e1e;
-            --text-color: #ffffff;
-            --text-secondary: #aaaaaa;
-            --input-bg: #2a2a2a;
-            --accent: #4dadff;
-        }
 
+```
+<style>
+    :root {
+        --bg-color: #121212;
+        --crd7-bg: #1e1e1e;
+        --text-color: #ffffff;
+        --text-secondary: #aaaaaa;
+        --input-bg: #2a2a2a;
+        --accent: #4dadff;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 20px;
+    }
+
+    /* Search Header */
+    .header-container {
+        max-width: 1200px;
+        margin: 0 auto 30px auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    .search-box {
+        width: 100%;
+        max-width: 500px;
+        padding: 12px 20px;
+        font-size: 1rem;
+        color: var(--text-color);
+        background-color: var(--input-bg);
+        border: 2px solid transparent;
+        border-radius: 25px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-box:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 8px rgba(77, 173, 255, 0.4);
+    }
+
+    .search-box::placeholder {
+        color: var(--text-secondary);
+    }
+
+    /* Study Grid */
+    .hdfr {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 18px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Study Card */
+    .crd7 {
+        background: var(--crd7-bg);
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        min-width: 0;
+    }
+
+    .crd7:hover {
+        transform: translateY(-5px);
+    }
+
+    .crd7 img {
+        display: block;
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        background: #333;
+    }
+
+    .info {
+        padding: 12px;
+    }
+
+    .title {
+        font-size: 1rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .author {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .author a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .author a:hover {
+        text-decoration: underline;
+    }
+
+    /* Overlay */
+    .overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+    }
+
+    .overlay iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .close-hint {
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        pointer-events: none;
+        z-index: 1001;
+    }
+
+    /* Close Button */
+    .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background-color: #000000;
+        color: #ffffff;
+        border: 2px solid #333333;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s, transform 0.1s;
+        z-index: 1001;
+    }
+
+    .close-btn:hover {
+        background-color: #1a1a1a;
+        transform: scale(1.05);
+    }
+
+    .close-btn:active {
+        transform: scale(0.95);
+    }
+
+    .no-results {
+        text-align: center;
+        grid-column: 1 / -1;
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        padding: 40px;
+    }
+
+    /* Smaller screens */
+    @media (max-width: 600px) {
         body {
-            font-family: sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
+            padding: 12px;
         }
 
-        /* Search Header Styles */
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto 30px auto;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-box {
-            width: 100%;
-            max-width: 500px;
-            padding: 12px 20px;
-            font-size: 1rem;
-            color: var(--text-color);
-            background-color: var(--input-bg);
-            border: 2px solid transparent;
-            border-radius: 25px;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .search-box:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 8px rgba(77, 173, 255, 0.4);
-        }
-
-        .search-box::placeholder {
-            color: var(--text-secondary);
-        }
-
-        /* hdfr Styles */
         .hdfr {
-            display: hdfr;
-            hdfr-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .crd7 {
-            background: var(--crd7-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
-        .crd7:hover {
-            transform: translateY(-5px);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
         }
 
         .crd7 img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            background: #333;
+            height: 100px;
         }
 
         .info {
-            padding: 15px;
+            padding: 10px;
         }
 
         .title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 0.9rem;
         }
 
         .author {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
+            font-size: 0.75rem;
         }
+    }
+</style>
+```
 
-        .author a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        .author a:hover {
-            text-decoration: underline;
-        }
-
-        /* Overlay Styles */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-        }
-
-        .overlay iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .close-hint {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            background: rgba(0,0,0,0.6);
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            pointer-events: none;
-        }
-
-        /* Black Round Close Button */
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: #000000;
-            color: #ffffff;
-            border: 2px solid #333333;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            line-height: 1;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s, transform 0.1s;
-            z-index: 1001;
-        }
-
-        .close-btn:hover {
-            background-color: #1a1a1a;
-            transform: scale(1.05);
-        }
-
-        .close-btn:active {
-            transform: scale(0.95);
-        }
-
-        .no-results {
-            text-align: center;
-            hdfr-column: 1 / -1;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            padding: 40px;
-        }
-    </style>
 </head>
+
 <body>
 
-    <div class="header-container">
-        <input type="text" id="search-input" class="search-box" placeholder="Search studys or authors...">
-    </div>
+```
+<div class="header-container">
+    <input
+        type="text"
+        id="search-input"
+        class="search-box"
+        placeholder="Search studies or authors..."
+    >
+</div>
 
-    <div class="hdfr" id="study-hdfr"></div>
+<div class="hdfr" id="study-hdfr"></div>
 
-    <div class="overlay" id="study-overlay">
-        <div class="close-hint">Press ESC to exit</div>
-        <button class="close-btn" id="close-btn" aria-label="Close study">✕</button>
-        <iframe id="study-frame" src=""></iframe>
-    </div>
+<div class="overlay" id="study-overlay">
+    <div class="close-hint">Press ESC to exit</div>
 
-    <script>
-        const COVER_BASE = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/";
-        const HTML_BASE = "/english/";
+    <button
+        class="close-btn"
+        id="close-btn"
+        aria-label="Close study"
+    >✕</button>
 
-        const hdfr = document.getElementById('study-hdfr');
-        const overlay = document.getElementById('study-overlay');
-        const iframe = document.getElementById('study-frame');
-        const searchInput = document.getElementById('search-input');
-        const closeBtn = document.getElementById('close-btn');
+    <iframe id="study-frame" src=""></iframe>
+</div>
 
-        let allstudys = [];
+<script>
+    const COVER_BASE =
+        "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/";
 
-        async function loadstudys() {
-            try {
-                const response = await fetch('/index.json');
-                allstudys = await response.json();
-                t702crd7s(allstudys);
-            } catch (error) {
-                console.error("Error loading studys:", error);
+    const HTML_BASE = "/english/";
+
+    const hdfr = document.getElementById("study-hdfr");
+    const overlay = document.getElementById("study-overlay");
+    const iframe = document.getElementById("study-frame");
+    const searchInput = document.getElementById("search-input");
+    const closeBtn = document.getElementById("close-btn");
+
+    let allstudys = [];
+
+    async function loadstudys() {
+        try {
+            const response = await fetch("/index.json");
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
             }
+
+            allstudys = await response.json();
+            t702crd7s(allstudys);
+        } catch (error) {
+            console.error("Error loading studies:", error);
+
+            hdfr.innerHTML =
+                '<div class="no-results">Unable to load studies.</div>';
+        }
+    }
+
+    function t702crd7s(studys) {
+        hdfr.innerHTML = "";
+
+        if (studys.length === 0) {
+            hdfr.innerHTML =
+                '<div class="no-results">No studies found matching your search.</div>';
+            return;
         }
 
-        function t702crd7s(studys) {
-            hdfr.innerHTML = '';
-            
-            if (studys.length === 0) {
-                hdfr.innerHTML = '<div class="no-results">No studys found matching your search.</div>';
-                return;
-            }
+        studys.forEach(study => {
+            const imgUrl = study.cover
+                ? study.cover.replace("{COVER_URL}", COVER_BASE)
+                : "";
 
-            studys.forEach(study => {
-                const imgUrl = study.cover ? study.cover.replace('{COVER_URL}', COVER_BASE) : '';
-                const studyUrl = study.url ? study.url.replace('{HTML_URL}', HTML_BASE) : '#';
-                const studyName = study.name || 'Untitled study';
-                const studyAuthor = study.author || 'Unknown Author';
-                const authorLink = study.authorLink || '#';
+            const studyUrl = study.url
+                ? study.url.replace("{HTML_URL}", HTML_BASE)
+                : "#";
 
-                const crd7 = document.createElement('div');
-                crd7.className = 'crd7';
-                
-                crd7.innerHTML = `
-                    <img src="${imgUrl}" alt="${studyName}" loading="lazy">
-                    <div class="info">
-                        <div class="title">${studyName}</div>
-                        <div class="author">By: <a href="${authorLink}" target="_blank" rel="noopener">${studyAuthor}</a></div>
+            const studyName = study.name || "Untitled study";
+            const studyAuthor = study.author || "Unknown Author";
+            const authorLink = study.authorLink || "#";
+
+            const crd7 = document.createElement("div");
+            crd7.className = "crd7";
+
+            crd7.innerHTML = `
+                <img
+                    src="${imgUrl}"
+                    alt="${studyName}"
+                    loading="lazy"
+                >
+
+                <div class="info">
+                    <div class="title">${studyName}</div>
+
+                    <div class="author">
+                        By:
+                        <a
+                            href="${authorLink}"
+                            target="_blank"
+                            rel="noopener"
+                        >${studyAuthor}</a>
                     </div>
-                `;
+                </div>
+            `;
 
-                crd7.addEventListener('click', (e) => {
-                    if (e.target.tagName !== 'A' && studyUrl !== '#') {
-                        openstudy(studyUrl);
-                    }
-                });
-
-                hdfr.appendChild(crd7);
-            });
-        }
-
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase().trim();
-            
-            const filteredstudys = allstudys.filter(study => {
-                const matchName = (study?.name || '').toLowerCase().includes(searchTerm);
-                const matchAuthor = (study?.author || '').toLowerCase().includes(searchTerm);
-                return matchName || matchAuthor;
+            crd7.addEventListener("click", e => {
+                if (
+                    e.target.tagName !== "A" &&
+                    studyUrl !== "#"
+                ) {
+                    openstudy(studyUrl);
+                }
             });
 
-            t702crd7s(filteredstudys);
+            hdfr.appendChild(crd7);
+        });
+    }
+
+    searchInput.addEventListener("input", e => {
+        const searchTerm =
+            e.target.value.toLowerCase().trim();
+
+        const filteredstudys = allstudys.filter(study => {
+            const matchName =
+                (study?.name || "")
+                    .toLowerCase()
+                    .includes(searchTerm);
+
+            const matchAuthor =
+                (study?.author || "")
+                    .toLowerCase()
+                    .includes(searchTerm);
+
+            return matchName || matchAuthor;
         });
 
-        function openstudy(url) {
-            iframe.src = url;
-            overlay.style.display = 'block';
-            window.focus(); 
+        t702crd7s(filteredstudys);
+    });
+
+    function openstudy(url) {
+        iframe.src = url;
+        overlay.style.display = "block";
+        window.focus();
+    }
+
+    function closestudy() {
+        overlay.style.display = "none";
+        iframe.src = "";
+    }
+
+    closeBtn.addEventListener("click", closestudy);
+
+    window.addEventListener("keydown", e => {
+        if (
+            e.key === "Escape" &&
+            overlay.style.display === "block"
+        ) {
+            closestudy();
         }
+    });
 
-        function closestudy() {
-            overlay.style.display = 'none';
-            iframe.src = '';
-        }
+    loadstudys();
+</script>
+```
 
-        // Close on button click
-        closeBtn.addEventListener('click', closestudy);
-
-        // Close on ESC key press
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && overlay.style.display === 'block') {
-                closestudy();
-            }
-        });
-        
-        loadstudys();
-    </script>
 </body>
 </html>
