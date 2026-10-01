@@ -189,7 +189,7 @@
 
     <script>
         const COVER_BASE = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main/";
-        const HTML_BASE = "https://raw.esm.sh/gh/freebuisness/html";
+        const HTML_BASE = "/english/";
 
         const hdfr = document.getElementById('study-hdfr');
         const overlay = document.getElementById('study-overlay');
@@ -201,7 +201,7 @@
 
         async function loadstudys() {
             try {
-                const response = await fetch('https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json');
+                const response = await fetch('/index.json');
                 allstudys = await response.json();
                 t702crd7s(allstudys);
             } catch (error) {
