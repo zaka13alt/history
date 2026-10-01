@@ -1,2 +1,1 @@
-
-const o=document.title,a="Google",e=document.querySelector("link[rel~='icon']"),t=e?e.href:"",n="https://google.com/favicon.ico";document.addEventListener("visibilitychange",()=>{document.title=document.hidden?a:o,e&&(e.href=document.hidden?n:t)});
+const o=document.title,t=document.querySelector("link[rel~='icon']")?.href||"/favicon.ico",e=document.querySelector("link[rel~='icon']")||Object.assign(document.head.appendChild(document.createElement("link")),{rel:"icon"});document.addEventListener("visibilitychange",()=>{document.hidden?(document.title="Google",e.href="https://google.com/favicon.ico"):(document.title=o,e.href=t)});
