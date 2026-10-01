@@ -23,7 +23,7 @@
   /*]]>*/</style>
 </head>
 <body>
-<iframe id="pf" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads"></iframe>
+<iframe id="pf" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-downloads allow-pointer-lock"></iframe>
 
 <script>//<![CDATA[
 var EFFECTIVE_LOC=(function(){
