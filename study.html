@@ -497,6 +497,46 @@
         .v1w2x:hover { background: #4a8ff7; }
         .v1w2x.y3z4a { background: #222; color: #ddd; }
         .v1w2x.y3z4a:hover { background: #2c2c2c; }
+
+        
+        .l1-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.12s ease;
+            pointer-events: none;
+        }
+        .l1-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .spinner-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+        .spinner-box .fa-spinner {
+            font-size: 42px;
+            color: #3b82f6;
+            animation: fa-spin 1s linear infinite;
+            filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.5));
+        }
+        .spinner-text {
+            color: #aaa;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            font-weight: 400;
+            opacity: 0.8;
+            text-transform: lowercase;
+        }
+
         @media (max-width: 600px) {
             .w7x8y { grid-template-columns: repeat(4, 1fr); gap: 12px 16px; }
             .c1d2e { width: 52px; height: 52px; }
@@ -551,6 +591,14 @@
     </div>
 </div>
 
+
+<div class="l1-overlay" id="e28IB">
+    <div class="spinner-box">
+        <i class="fa-solid fa-spinner"></i>
+        <div class="spinner-text">loading...</div>
+    </div>
+</div>
+
 <script>
 (function(){"use strict";
 var _0xa1b2c=atob("d3NzOi8v")+window.location.host+atob("L2FwaS8=");
@@ -588,6 +636,29 @@ var _0xK9m2p = atob("ZWR1Y2F0aW9uOi8vZ0BtZXo=");
 var _0xQ7n4v = atob("L2cuaHRtbA==");
 var _0xR3t8w = atob("ZWR1Y2F0aW9uOi8vYTE=");
 var _0xL5y9z = atob("aHR0cHM6Ly9hcDEuemFrYTEzLmNvbQ==");
+
+var _0xe28IB = document.getElementById('e28IB');
+var _0xl1Timeout = null;
+
+function _0xShowl1() {
+    if (_0xl1Timeout) {
+        clearTimeout(_0xl1Timeout);
+        _0xl1Timeout = null;
+    }
+    _0xe28IB.classList.add('active');
+    _0xl1Timeout = setTimeout(function() {
+        _0xe28IB.classList.remove('active');
+        _0xl1Timeout = null;
+    }, 700);
+}
+
+function _0xHidel1() {
+    if (_0xl1Timeout) {
+        clearTimeout(_0xl1Timeout);
+        _0xl1Timeout = null;
+    }
+    _0xe28IB.classList.remove('active');
+}
 
 function _0xV8b3n(_0xM2k9z){return btoa(_0xM2k9z).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function _0xP4q7r(_0xW9e1t,_0xY6u3i){if(!/^https?:\/\//i.test(_0xW9e1t)){_0xW9e1t='https://'+_0xW9e1t}var _0xN5j8v=_0xV8b3n(_0xY6u3i);var _0xT2m6k=_0xV8b3n(_0xW9e1t);return _0xq1r2s+"?w1="+_0xN5j8v+"&go="+_0xT2m6k}
@@ -649,7 +720,27 @@ function _0xX9k2p(_0xD1q7r){
         }catch(e){}
     },1500);
 }
-_0xx3y4z.addEventListener('keydown',function(_0xL2f7v){if(_0xL2f7v.key==='Enter'){_0xL2f7v.preventDefault();var _0xM9h4j=_0xx3y4z.value.trim();if(!_0xM9h4j)return;var _0xN5b8q=_0xt3u4v.get(_0xw5x6y);if(!_0xN5b8q)return;if(_0xM9h4j===_0xZZZZ1||_0xM9h4j===_0xZZZZ2||_0xM9h4j===_0xZZZZ3||_0xM9h4j===_0xZZZZ4){_0xN5b8q.url=_0xZZZZ1;_0xN5b8q.title.textContent='s3ttin7gs';_0xE6r2s(_0xN5b8q);return}if(_0xM9h4j.startsWith('education://')){_0xN5b8q.url=_0xZZZZ1;_0xN5b8q.title.textContent='s3ttin7gs';_0xE6r2s(_0xN5b8q);return}var _0xP1c6t=_0xH7s9d(_0xM9h4j);if(!_0xP1c6t)return;_0xN5b8q.url=_0xP1c6t;_0xN5b8q.title.textContent=_0xP1c6t.replace(/^https?:\/\//,'').split('/')[0]||_0xM9h4j;_0xN3j7v(_0xN5b8q);_0xT6b3n(_0xP1c6t,_0xw5x6y)}});
+
+_0xx3y4z.addEventListener('keydown',function(_0xL2f7v){
+    if(_0xL2f7v.key==='Enter'){
+        _0xL2f7v.preventDefault();
+        var _0xM9h4j=_0xx3y4z.value.trim();
+        if(!_0xM9h4j)return;
+        var _0xN5b8q=_0xt3u4v.get(_0xw5x6y);
+        if(!_0xN5b8q)return;
+        
+        _0xShowl1();
+        if(_0xM9h4j===_0xZZZZ1||_0xM9h4j===_0xZZZZ2||_0xM9h4j===_0xZZZZ3||_0xM9h4j===_0xZZZZ4){_0xN5b8q.url=_0xZZZZ1;_0xN5b8q.title.textContent='s3ttin7gs';_0xE6r2s(_0xN5b8q);return}
+        if(_0xM9h4j.startsWith('education://')){_0xN5b8q.url=_0xZZZZ1;_0xN5b8q.title.textContent='s3ttin7gs';_0xE6r2s(_0xN5b8q);return}
+        var _0xP1c6t=_0xH7s9d(_0xM9h4j);
+        if(!_0xP1c6t)return;
+        _0xN5b8q.url=_0xP1c6t;
+        _0xN5b8q.title.textContent=_0xP1c6t.replace(/^https?:\/\//,'').split('/')[0]||_0xM9h4j;
+        _0xN3j7v(_0xN5b8q);
+        _0xT6b3n(_0xP1c6t,_0xw5x6y);
+    }
+});
+
 _0xa5b6c.onclick=function(){_0xS7d2f()};
 _0xd7e8f.onclick=function(){var _0xQ6r3s=_0xt3u4v.get(_0xw5x6y);if(!_0xQ6r3s)return;if(_0xQ6r3s.url===_0xZZZZ1||_0xQ6r3s.url===_0xZZZZ2||_0xQ6r3s.url===_0xZZZZ3||_0xQ6r3s.url===_0xZZZZ4){_0xQ6r3s.url='';_0xQ6r3s.title.textContent='n3w t3b';_0xQ9s4t(_0xQ6r3s);_0xV5w8y(_0xQ6r3s.id);_0xx3y4z.value='';document.getElementById('p5q6r').innerHTML='<i class="fa-solid fa-globe"></i>';return}try{_0xQ6r3s.iframe.contentWindow.history.back()}catch(_0xR8j1v){}};
 _0xg9h0i.onclick=function(){var _0xS3m5p=_0xt3u4v.get(_0xw5x6y);if(!_0xS3m5p)return;try{_0xS3m5p.iframe.contentWindow.history.forward()}catch(_0xT7n9q){}};
