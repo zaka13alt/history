@@ -54,11 +54,11 @@ async function handleRequest(event) {
 		}
 	}
 
-	return $dGFzazR6MTMzNw.route(event);
+	return dGFzazR6MTMzNw.route(event);
 }
 
 self.addEventListener("fetch", (event) => {
-	if ($dGFzazR6MTMzNw.shouldRoute(event)) {
+	if (dGFzazR6MTMzNw.shouldRoute(event)) {
 		event.respondWith(handleRequest(event));
 	}
 });
