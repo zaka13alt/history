@@ -143,7 +143,9 @@ window.addEventListener('message',function(e){
     if(!value)return null;
     try{value=decodeURIComponent(value);}catch(e){}
     try{
-      var decoded=atob(value);
+      var b64=value.replace(/-/g,'+').replace(/_/g,'/');
+      b64+='==='.slice((b64.length+3)%4);
+      var decoded=atob(b64);
       if(decoded&&decoded.trim())value=decoded;
     }catch(e){}
     return value;
