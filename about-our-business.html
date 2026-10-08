@@ -238,144 +238,137 @@
 		
 		<script>
 		"use strict";
-		
-		const stocku2t = "/pLBYQ.js";
 
-		
+		const stocku2t = "/pLBYQ.js";
 		const u2tAllowedHostnames = ["localhost", "127.0.0.1"];
 
-		// ------------------------------------------------------------------
-		// Enhanced service worker registration with auto-reregistration
-		// if the service worker becomes unregistered (or is not active).
-		// ------------------------------------------------------------------
+
+		const expectedSwUrl = new URL(stocku2t, location.href).href;
+		const expectedScope = new URL("/", location.href).href;
+
+
+		function isOurRegistration(reg) {
+		    if (!reg) return false;
+
+		    
+		    const regScope = reg.scope.endsWith("/") ? reg.scope : reg.scope + "/";
+		    const wantScope = expectedScope.endsWith("/") ? expectedScope : expectedScope + "/";
+		    if (regScope !== wantScope) return false;
+
+		    
+		    if (reg.active && reg.active.scriptURL === expectedSwUrl) return true;
+
+		    
+		    const pending = reg.installing || reg.waiting;
+		    if (pending && pending.scriptURL === expectedSwUrl) return true;
+
+		    return false;
+		}
+
+
+		async function getOurRegistration() {
+		    const registrations = await navigator.serviceWorker.getRegistrations();
+		    for (const reg of registrations) {
+		        if (isOurRegistration(reg)) return reg;
+		    }
+		    return null;
+		}
+
+
+		function waitForActivation(reg) {
+		    return new Promise((resolve) => {
+		        if (reg.active) return resolve(reg);
+
+		        const worker = reg.installing || reg.waiting;
+		        if (!worker) return resolve(reg);
+
+		        worker.addEventListener("statechange", function handler() {
+		            if (worker.state === "activated" || worker.state === "redundant") {
+		                worker.removeEventListener("statechange", handler);
+		                resolve(reg);
+		            }
+		        });
+		    });
+		}
+
+
 		async function registeru2t() {
-			if (!navigator.serviceWorker) {
-				if (
-					location.protocol !== "https:" &&
-					!u2tAllowedHostnames.includes(location.hostname)
-				)
-					throw new Error("Service workers cannot be registered without https.");
+		    if (!navigator.serviceWorker) {
+		        if (
+		            location.protocol !== "https:" &&
+		            !u2tAllowedHostnames.includes(location.hostname)
+		        ) {
+		            throw new Error("Service workers cannot be registered without https.");
+		        }
+		        throw new Error("Your browser doesn't support service workers.");
+		    }
 
-				throw new Error("Your browser doesn't support service workers.");
-			}
+		    try {
+		        // 
+		        const existing = await getOurRegistration();
 
-			try {
-				// Try to get existing registration(s)
-				const registrations = await navigator.serviceWorker.getRegistrations();
-				let hasActiveWorker = false;
+		        if (existing) {
+		            // 
+		            if (!existing.active) {
+		                await waitForActivation(existing);
+		            }
+		            console.log("SW already exists - holdup something is super wrong here");
+		            return existing;
+		        }
 
-				for (const reg of registrations) {
-					// Check if this registration's scriptURL matches our stocku2t (or contains it)
-					// Using includes to handle full path variations.
-					if (reg.active && reg.active.scriptURL.includes(stocku2t)) {
-						hasActiveWorker = true;
-						break;
-					}
-					// Also check installing/waiting if active is not present but we have a worker in progress
-					if (reg.installing || reg.waiting) {
-						// If we have an installing/waiting worker for our script, we might be in the middle of registration
-						// but we still want to ensure it becomes active. We'll consider it as "pending" but not fully active.
-						// However to avoid multiple registrations, we can check if the scriptURL matches.
-						const workerScript = (reg.installing || reg.waiting).scriptURL;
-						if (workerScript && workerScript.includes(stocku2t)) {
-							// There is a pending worker; we don't need to register again, but we'll await its activation later.
-							// For simplicity, we consider it as existing and let the browser handle activation.
-							hasActiveWorker = true;
-							break;
-						}
-					}
-				}
+		        //
+		        console.log("SW not found, reregistering..");
+		        const reg = await navigator.serviceWorker.register(stocku2t, {
+		            scope: "/"
+		        });
 
-				// If no active or pending worker for our script, register it.
-				if (!hasActiveWorker) {
-					console.log("Service worker not registered (or unregistered). Registering now...");
-					await navigator.serviceWorker.register(stocku2t);
-					console.log("Service worker registered successfully.");
-				} else {
-					// Even if we have an active worker, we might want to ensure it's up-to-date,
-					// but the original code only registers once. For re-registration purposes,
-					// we optionally update the registration to keep it fresh.
-					// However, to avoid unnecessary updates, we'll do nothing if active exists.
-					console.log("Service worker already registered and active.");
-				}
-
-				// Additional check: if there is a registration but it's not active (e.g., redundant),
-				// we can attempt to update it.
-				// This is a fallback for cases where the registration exists but is not active.
-				const regs = await navigator.serviceWorker.getRegistrations();
-				for (const reg of regs) {
-					if (reg.active && reg.active.scriptURL.includes(stocku2t)) {
-						// We have an active worker, good.
-						return;
-					}
-				}
-
-				// If we reach here, no active worker found after registration attempt.
-				// Try to register again explicitly (though the above should have covered it).
-				await navigator.serviceWorker.register(stocku2t);
-			} catch (err) {
-				console.error("Service worker registration error:", err);
-				// Re-throw so the caller can handle it.
-				throw err;
-			}
+		        // 
+		        await waitForActivation(reg);
+		        console.log("activated");
+		        return reg;
+		    } catch (err) {
+		        console.error("SW error:", err);
+		        throw err;
+		    }
 		}
 
-		
+
 		function startServiceWorkerr() {
-			
-			const CHECK_INTERVAL = 10000; // 
+		    const CHECK_INTERVAL = 10000; // 
 
-			async function checkAndReregister() {
-				if (!navigator.serviceWorker) return; //
+		    async function checkAndReregister() {
+		        if (!navigator.serviceWorker) return;
 
-				try {
-					const registrations = await navigator.serviceWorker.getRegistrations();
-					let foundActive = false;
+		        try {
+		            const reg = await getOurRegistration();
 
-					for (const reg of registrations) {
-						//
-						if (reg.active && reg.active.scriptURL.includes(stocku2t)) {
-							foundActive = true;
-							break;
-						}
-						// 
-						if (reg.installing || reg.waiting) {
-							const worker = reg.installing || reg.waiting;
-							if (worker.scriptURL && worker.scriptURL.includes(stocku2t)) {
-								foundActive = true; 
-								break;
-							}
-						}
-					}
+		            if (!reg) {
+		                console.warn("registering...");
+		                await registeru2t();
+		                console.log("fixed");
+		            }
+		        } catch (err) {
+		            console.error("error.", err);
+		            try {
+		                await registeru2t();
+		            } catch (reErr) {
+		                console.error("failed:", reErr);
+		            }
+		        }
+		    }
 
-					if (!foundActive) {
-						console.warn("registering sw");
-						await registeru2t();
-						console.log("registered.");
-					}
-				} catch (err) {
-					console.error("couldnt register:", err);
-					// 
-					try {
-						await registeru2t();
-					} catch (reErr) {
-						console.error("failed:", reErr);
-					}
-				}
-			}
-
-			// 
-			setTimeout(checkAndReregister, 3000);
-			setInterval(checkAndReregister, CHECK_INTERVAL);
+		    
+		    setTimeout(checkAndReregister, 3000);
+		    setInterval(checkAndReregister, CHECK_INTERVAL);
 		}
 
-		// 
+
 		if (document.readyState === "loading") {
-			document.addEventListener("DOMContentLoaded", () => {
-				startServiceWorkerr();
-			});
+		    document.addEventListener("DOMContentLoaded", () => {
+		        startServiceWorkerr();
+		    });
 		} else {
-			startServiceWorkerr();
+		    startServiceWorkerr();
 		}
 		</script>
 
@@ -415,7 +408,7 @@
 		}
 		</script>
 
-		<!-- main logic + query parameter handling (was index.js) -->
+		<!--idk hi -->
 		<script>
 		"use strict";
 
@@ -467,7 +460,7 @@
 		    await openW1I41(url);
 		});
 
-		/* ---- query parameter handling ---- */
+		
 		(function () {
 		    const params = new URLSearchParams(location.search);
 		    let action = null, goUrl = null, w1Url = null;
@@ -489,7 +482,7 @@
 
 		    if (!action && !goUrl && !w1Url) return;
 
-		    // Override the hardcoded 41 URL if one was supplied.
+		    
 		    if (w1Url) {
 		        n4L9b = w1Url;
 		    }
@@ -512,7 +505,7 @@
 		        fire();
 		    }
 		})();
-		/* ---- end query parameter handling ---- */
+		
 		</script>
 	</body>
 </html>
