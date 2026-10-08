@@ -19,10 +19,12 @@ function isBlocked(host, fullUrl) {
 async function handleRequest(event) {
 	const url = event.request.url;
 
-	// URL format:
-	// /bootstrap/{controllerId}/{frameId}/{encodedUrl}
+	// format
+	// /bootstrap/{controllerId}/{frameId}/encodeuricompentedurl
+	//
 	// Example:
 	// /bootstrap/assetswcptnsl0/25ei521o/https%3A%2F%2Fexample.com
+
 	const match = new URL(url).pathname.match(
 		/^\/bootstrap\/[a-z0-9]+\/[a-z0-9]+\/(.*)$/i
 	);
@@ -37,7 +39,7 @@ async function handleRequest(event) {
 
 			if (isBlocked(host, href)) {
 				return new Response(
-					"gooner detected bro get a life and touch some grass and if you go to my school deadass i might tell the teacher but idk...",
+					`<!doctype html><html lang="en"><meta charset="UTF-8"><meta content="width=device-width,initial-scale=1" name="viewport"><title>bro...</title><style>body{background-color:#000;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;font-family:sans-serif}h1{color:#fff;margin:0;font-size:2rem}</style><h1>gooner detected bro get a life and touch some grass and if you go to my school deadass i might tell the teacher but idk...</h1>`,
 					{
 						status: 403,
 						headers: {
@@ -52,11 +54,11 @@ async function handleRequest(event) {
 		}
 	}
 
-	return dGFzazR6MTMzNw.route(event);
+	return $dGFzazR6MTMzNw.route(event);
 }
 
 self.addEventListener("fetch", (event) => {
-	if (dGFzazR6MTMzNw.shouldRoute(event)) {
+	if ($dGFzazR6MTMzNw.shouldRoute(event)) {
 		event.respondWith(handleRequest(event));
 	}
 });
