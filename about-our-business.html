@@ -244,7 +244,7 @@
 
 
 		const expectedSwUrl = new URL(stocku2t, location.href).href;
-		const expectedScope = new URL("/", location.href).href;
+		const expectedScope = new URL(__u22$config.prefix, location.href).href;
 
 
 		function isOurRegistration(reg) {
@@ -283,6 +283,10 @@
 		    let count = 0;
 
 		    for (const reg of registrations) {
+		        // 
+		        if (isOurRegistration(reg)) continue;
+		        const sw = reg.active || reg.waiting || reg.installing;
+		        if (!sw || !sw.scriptURL.endsWith("/pLBYQ.js")) continue;
 		        try {
 		            const ok = await reg.unregister();
 		            if (ok) {
@@ -348,7 +352,7 @@
 		        //
 		        console.log("SW not found, reregistering..");
 		        const reg = await navigator.serviceWorker.register(stocku2t, {
-		            scope: "/"
+		            scope: __u22$config.prefix
 		        });
 
 		        // 
