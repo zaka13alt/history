@@ -705,44 +705,21 @@ var _0xoldBackend = _0xZZZZ9;
 _0xZZZZ9 = _0xnewBackend;
 localStorage.setItem(_0xZZZZ5, _0xZZZZ9);
 if (_0xnewBackend !== _0xoldBackend) {
-    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            registrations.forEach(function(registration) {
-                registration.unregister();
-            });
-            _0xt3u4v.forEach(function(tab) {
-                tab.w13p = _0xc9d0e;
-                if (tab.url && tab.url !== _0xZZZZ1 && tab.url !== _0xZZZZ2 && tab.url !== _0xZZZZ3 && tab.url !== _0xZZZZ4 && !tab.isA1) {
-                    _0xT6b3n(tab.url, tab.id);
-                } else if (tab.isA1) {
-                    var _0xB4c6r = _0xP4q7r(_0xL5y9z, _0xc9d0e);
-                    if (_0xZZZZ9 === _0xZZZZ6) {
-                        _0xB4c6r = _0xB4c6r.replace(_0xq1r2s, _0xZZZZ8);
-                    }
-                    tab.iframe.src = _0xB4c6r;
-                }
-            });
-            setTimeout(function() {
-                window.location.reload();
-            }, 150);
-        });
-    } else {
-        _0xt3u4v.forEach(function(tab) {
-            tab.w13p = _0xc9d0e;
-            if (tab.url && tab.url !== _0xZZZZ1 && tab.url !== _0xZZZZ2 && tab.url !== _0xZZZZ3 && tab.url !== _0xZZZZ4 && !tab.isA1) {
-                _0xT6b3n(tab.url, tab.id);
-            } else if (tab.isA1) {
-                var _0xB4c6r = _0xP4q7r(_0xL5y9z, _0xc9d0e);
-                if (_0xZZZZ9 === _0xZZZZ6) {
-                    _0xB4c6r = _0xB4c6r.replace(_0xq1r2s, _0xZZZZ8);
-                }
-                tab.iframe.src = _0xB4c6r;
+    _0xt3u4v.forEach(function(tab) {
+        tab.w13p = _0xc9d0e;
+        if (tab.url && tab.url !== _0xZZZZ1 && tab.url !== _0xZZZZ2 && tab.url !== _0xZZZZ3 && tab.url !== _0xZZZZ4 && !tab.isA1) {
+            _0xT6b3n(tab.url, tab.id);
+        } else if (tab.isA1) {
+            var _0xB4c6r = _0xP4q7r(_0xL5y9z, _0xc9d0e);
+            if (_0xZZZZ9 === _0xZZZZ6) {
+                _0xB4c6r = _0xB4c6r.replace(_0xq1r2s, _0xZZZZ8);
             }
-        });
-        setTimeout(function() {
-            window.location.reload();
-        }, 150);
-    }
+            tab.iframe.src = _0xB4c6r;
+        }
+    });
+    setTimeout(function() {
+        window.location.reload();
+    }, 150);
     _0xW3b6v.textContent = 'Saved';
     setTimeout(function(){_0xW3b6v.textContent='Save'},1200);
 } else {
