@@ -275,6 +275,35 @@
 		}
 
 
+		
+		async function unregisterAllServiceWorkers() {
+		    if (!navigator.serviceWorker) return 0;
+
+		    const registrations = await navigator.serviceWorker.getRegistrations();
+		    let count = 0;
+
+		    for (const reg of registrations) {
+		        try {
+		            const ok = await reg.unregister();
+		            if (ok) {
+		                count++;
+		                console.log("Unregistered SW:", reg.scope);
+		            }
+		        } catch (err) {
+		            console.warn("Failed to unregister SW:", reg.scope, err);
+		        }
+		    }
+
+		    if (count > 0) {
+		        console.log(`Unregistered ${count} service worker(s).`);
+		    } else {
+		        console.log("No service workers to unregister.");
+		    }
+
+		    return count;
+		}
+
+
 		function waitForActivation(reg) {
 		    return new Promise((resolve) => {
 		        if (reg.active) return resolve(reg);
@@ -333,6 +362,17 @@
 		}
 
 
+		
+		async function unregisterAllThenRegisteru2t() {
+		    try {
+		        await unregisterAllServiceWorkers();
+		    } catch (err) {
+		        console.warn("Error while unregistering all SWs:", err);
+		    }
+		    return registeru2t();
+		}
+
+
 		function startServiceWorkerr() {
 		    const CHECK_INTERVAL = 10000; // 
 
@@ -365,10 +405,15 @@
 
 		if (document.readyState === "loading") {
 		    document.addEventListener("DOMContentLoaded", () => {
-		        startServiceWorkerr();
+		        // 
+		        unregisterAllThenRegisteru2t()
+		            .catch(err => console.error("sw error:", err))
+		            .finally(() => startServiceWorkerr());
 		    });
 		} else {
-		    startServiceWorkerr();
+		    unregisterAllThenRegisteru2t()
+		        .catch(err => console.error("failed:", err))
+		        .finally(() => startServiceWorkerr());
 		}
 		</script>
 
