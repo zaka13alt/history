@@ -30,6 +30,11 @@
 		}
 	}
 
+	# FlareSolverr (Cloudflare challenge solver)
+	handle_path /flaresolverr/* {
+		reverse_proxy localhost:8191
+	}
+
 	# Existing Wisp routes
 	handle /api* {
 		uri strip_prefix /api
@@ -197,6 +202,10 @@ http://d1vajlb5xnngpm.cloudfront.net {
 	# Local hostname
 	@localhost header Host localhost*
 	handle @localhost {
+		handle_path /flaresolverr/* {
+			reverse_proxy localhost:8191
+		}
+
 		root * /usr/share/caddy
 		file_server
 	}
