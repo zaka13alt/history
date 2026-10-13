@@ -797,7 +797,20 @@ var _0xc9d0e=localStorage.getItem(_0xj7k8l)||_0xa1b2c;
 var _0xf1g2h=localStorage.getItem(_0xm9n0p)||_0xd3e4f;if(_0xf1g2h.indexOf('%s')<0)_0xf1g2h=_0xd3e4f;
 var _0xZZZZ9=localStorage.getItem(_0xZZZZ5)||_0xZZZZ7;
 var _0xi3j4k=[];
-try{var _0xl5m6n=localStorage.getItem(_0xg5h6i);if(_0xl5m6n)_0xi3j4k=JSON.parse(_0xl5m6n);else throw new Error()}catch(_0xo7p8q){_0xi3j4k=[{name:atob("WW91VHViZQ=="),url:atob("aHR0cHM6Ly95b3V0dWJlLmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("R2l0SHVi"),url:atob("aHR0cHM6Ly9naXRodWIuY29t"),icon:"fa-solid fa-globe"},{name:atob("RGlzY29yZA=="),url:atob("aHR0cHM6Ly9kaXNjb3JkLmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("VHdpdHRlcg=="),url:atob("aHR0cHM6Ly90d2l0dGVyLmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("UmVkZGl0"),url:atob("aHR0cHM6Ly9yZWRkaXQuY29t"),icon:"fa-solid fa-globe"},{name:atob("U3BvdGlmeQ=="),url:atob("aHR0cHM6Ly9zcG90aWZ5LmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("TmV0ZmxpeA=="),url:atob("aHR0cHM6Ly9uZXRmbGl4LmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("VHdpdGNo"),url:atob("aHR0cHM6Ly90d2l0Y2gudHY="),icon:"fa-solid fa-globe"},{name:atob("R21haWw="),url:atob("aHR0cHM6Ly9tYWlsLmdvb2dsZS5jb20="),icon:"fa-solid fa-globe"}]}
+try{var _0xl5m6n=localStorage.getItem(_0xg5h6i);if(_0xl5m6n)_0xi3j4k=JSON.parse(_0xl5m6n);else throw new Error()}catch(_0xo7p8q){_0xi3j4k=[{name:atob("WW91VHViZQ=="),url:atob("aHR0cHM6Ly95b3V0dWJlLmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("RGlzY29yZA=="),url:atob("aHR0cHM6Ly9kaXNjb3JkLmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("VHdpdHRlcg=="),url:atob("aHR0cHM6Ly90d2l0dGVyLmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("UmVkZGl0"),url:atob("aHR0cHM6Ly9yZWRkaXQuY29t"),icon:"fa-solid fa-globe"},{name:atob("U3BvdGlmeQ=="),url:atob("aHR0cHM6Ly9zcG90aWZ5LmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("TmV0ZmxpeA=="),url:atob("aHR0cHM6Ly9uZXRmbGl4LmNvbQ=="),icon:"fa-solid fa-globe"},{name:atob("VHdpdGNo"),url:atob("aHR0cHM6Ly90d2l0Y2gudHY="),icon:"fa-solid fa-globe"},{name:atob("R21haWw="),url:atob("aHR0cHM6Ly9tYWlsLmdvb2dsZS5jb20="),icon:"fa-solid fa-globe"}]}
+(function(){
+  var _0xRb={name:"Roblox",url:"https://nowgg.fun/apps/a/19900/b.html",icon:"fa-solid fa-gamepad"};
+  var _0xFlag="zaka13_roblox_shortcut_added";
+  if(localStorage.getItem(_0xFlag))return;
+  if(!_0xi3j4k.some(function(_0xS){return _0xS.url===_0xRb.url}))_0xi3j4k.push(_0xRb);
+  try{localStorage.setItem(_0xg5h6i,JSON.stringify(_0xi3j4k));localStorage.setItem(_0xFlag,"1")}catch(_0xE){}
+})();
+(function(){
+  var _0xFlag="zaka13_github_shortcut_removed";
+  if(localStorage.getItem(_0xFlag))return;
+  _0xi3j4k=_0xi3j4k.filter(function(_0xS){return !/^https?:\/\/(www\.)?github\.com\/?$/i.test(_0xS.url)});
+  try{localStorage.setItem(_0xg5h6i,JSON.stringify(_0xi3j4k));localStorage.setItem(_0xFlag,"1")}catch(_0xE){}
+})();
 var _0xr9s0t=document.getElementById("c9d0e");
 var _0xu1v2w=document.getElementById("h7i8j");
 var _0xx3y4z=document.getElementById("t3u4v");
@@ -840,28 +853,52 @@ function _0xHidel1() {
 }
 
 
-function _0xFaviconUrl(_0xPageUrl) {
+
+function _0xFaviconCandidates(_0xPageUrl) {
     try {
-        var _0xClean = _0xPageUrl.replace(/^https?:\/\//i, '').replace(/\/.*$/, '');
-        if (!_0xClean) return null;
-        return 'https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://' + encodeURIComponent(_0xClean) + '&size=64';
+        if (!/^https?:\/\//i.test(_0xPageUrl)) return [];
+        var _0xH = new URL(_0xPageUrl).host;
+        if (!_0xH) return [];
+        var _0xHosts = [_0xH];
+        if (_0xH.indexOf('www.') !== 0 && _0xH.split('.').length <= 2) _0xHosts.unshift('www.' + _0xH);
+        var _0xOut = [];
+        ['ico', 'png'].forEach(function (_0xExt) {
+            _0xHosts.forEach(function (_0xHost) {
+                _0xOut.push('/np/https://' + _0xHost + '/favicon.' + _0xExt);
+            });
+        });
+        return _0xOut;
     } catch (_) {
-        return null;
+        return [];
     }
+}
+
+function _0xLoadFavicon(_0xImg, _0xPageUrl, _0xOnFail) {
+    var _0xList = _0xFaviconCandidates(_0xPageUrl);
+    var _0xIdx = 0;
+    function _0xNext() {
+        if (_0xIdx >= _0xList.length) {
+            _0xImg.onerror = null;
+            if (_0xOnFail) _0xOnFail();
+            return;
+        }
+        _0xImg.src = _0xList[_0xIdx++];
+    }
+    _0xImg.onerror = _0xNext;
+    _0xNext();
 }
 
 function _0xApplyFavicon(_0xTab, _0xUrl) {
     if (!_0xTab || !_0xTab.faviconImg) return;
-    var _0xFavUrl = _0xFaviconUrl(_0xUrl);
-    if (_0xFavUrl) {
-        _0xTab.faviconImg.src = _0xFavUrl;
-        _0xTab.faviconImg.style.display = 'block';
-        _0xTab.faviconImg.onerror = function () {
-            this.style.display = 'none';
-        };
-    } else {
-        _0xTab.faviconImg.style.display = 'none';
+    var _0xImg = _0xTab.faviconImg;
+    if (!_0xFaviconCandidates(_0xUrl).length) {
+        _0xImg.style.display = 'none';
+        return;
     }
+    _0xImg.style.display = 'block';
+    _0xLoadFavicon(_0xImg, _0xUrl, function () {
+        _0xImg.style.display = 'none';
+    });
 }
 
 function _0xClearFavicon(_0xTab) {
@@ -900,7 +937,7 @@ if (_0xnewBackend !== _0xoldBackend) {
     _0xW3b6v.textContent='Saved';setTimeout(function(){_0xW3b6v.textContent='Save'},1200);
 }
 });_0xR5h1i.appendChild(_0xT9m4n);_0xR5h1i.appendChild(_0xW3b6v);_0xS2k8q.appendChild(_0xF7c3d);_0xS2k8q.appendChild(_0xR5h1i);_0xF9g1h.appendChild(_0xJ3k6l);_0xF9g1h.appendChild(_0xW2e9i);_0xF9g1h.appendChild(_0xK3l7m);_0xF9g1h.appendChild(_0xU3o7p);_0xF9g1h.appendChild(_0xS2k8q);_0xD6e8f.appendChild(_0xF9g1h);_0xD6e8f._w13pInput=_0xG9h2j;_0xD6e8f._searchSelect=_0xV7y1z;_0xD6e8f._b3ck3ndSelect=_0xM6n1p;return _0xD6e8f}
-function _0xK4v9w(_0xJ2r7t,_0xB8d5f){_0xJ2r7t.innerHTML='';_0xi3j4k.forEach(function(_0xE1g4h,_0xN6p3q){var _0xC9m2x=document.createElement('div');_0xC9m2x.className='z9a0b';_0xC9m2x.title=_0xE1g4h.url;var _0xH5t8v=document.createElement('div');_0xH5t8v.className='c1d2e';var _0xA7j1k=document.createElement('i');_0xA7j1k.className=_0xE1g4h.icon||'fa-solid fa-globe';_0xH5t8v.appendChild(_0xA7j1k);var _0xL9o4p=document.createElement('div');_0xL9o4p.className='f3g4h';_0xL9o4p.textContent=_0xE1g4h.name;_0xC9m2x.appendChild(_0xH5t8v);_0xC9m2x.appendChild(_0xL9o4p);_0xC9m2x.addEventListener('click',function(){if(!_0xB8d5f)return;_0xB8d5f.url=_0xE1g4h.url;_0xB8d5f.title.textContent=_0xE1g4h.name;_0xN3j7v(_0xB8d5f);_0xT6b3n(_0xE1g4h.url,_0xB8d5f.id)});_0xJ2r7t.appendChild(_0xC9m2x)});var _0xDC1=document.createElement('a');_0xDC1.className='discord-link';_0xDC1.href='https://discord.gg/Y26EUssP3';_0xDC1.target='_blank';_0xDC1.rel='noopener noreferrer';var _0xDC2=document.createElement('img');_0xDC2.src='/dc.svg';_0xDC2.alt='discord';_0xDC1.appendChild(_0xDC2);var _0xDC3=document.createElement('span');_0xDC3.textContent='join the discord';_0xDC1.appendChild(_0xDC3);_0xJ2r7t.appendChild(_0xDC1)}
+function _0xK4v9w(_0xJ2r7t,_0xB8d5f){_0xJ2r7t.innerHTML='';_0xi3j4k.forEach(function(_0xE1g4h,_0xN6p3q){var _0xC9m2x=document.createElement('div');_0xC9m2x.className='z9a0b';_0xC9m2x.title=_0xE1g4h.url;var _0xH5t8v=document.createElement('div');_0xH5t8v.className='c1d2e';var _0xA7j1k=document.createElement('i');_0xA7j1k.className=_0xE1g4h.icon||'fa-solid fa-globe';var _0xTileImg=document.createElement('img');_0xTileImg.alt='';_0xTileImg.draggable=false;_0xTileImg.style.cssText='width:32px;height:32px;object-fit:contain;display:block';_0xH5t8v.appendChild(_0xA7j1k);if(_0xFaviconCandidates(_0xE1g4h.url).length){_0xTileImg.onload=function(){if(_0xA7j1k.parentNode===_0xH5t8v)_0xH5t8v.replaceChild(_0xTileImg,_0xA7j1k)};_0xLoadFavicon(_0xTileImg,_0xE1g4h.url,null)}var _0xL9o4p=document.createElement('div');_0xL9o4p.className='f3g4h';_0xL9o4p.textContent=_0xE1g4h.name;_0xC9m2x.appendChild(_0xH5t8v);_0xC9m2x.appendChild(_0xL9o4p);_0xC9m2x.addEventListener('click',function(){if(!_0xB8d5f)return;_0xB8d5f.url=_0xE1g4h.url;_0xB8d5f.title.textContent=_0xE1g4h.name;_0xN3j7v(_0xB8d5f);_0xT6b3n(_0xE1g4h.url,_0xB8d5f.id)});_0xJ2r7t.appendChild(_0xC9m2x)});var _0xDC1=document.createElement('a');_0xDC1.className='discord-link';_0xDC1.href='https://discord.gg/Y26EUssP3';_0xDC1.target='_blank';_0xDC1.rel='noopener noreferrer';var _0xDC2=document.createElement('img');_0xDC2.src='/dc.svg';_0xDC2.alt='discord';_0xDC1.appendChild(_0xDC2);var _0xDC3=document.createElement('span');_0xDC3.textContent='join the discord';_0xDC1.appendChild(_0xDC3);_0xJ2r7t.appendChild(_0xDC1)}
 function _0xS7d2f(_0xG4h9j){var _0xW1k5m=++_0xz7a8b;var _0xO3n8p=document.createElement('div');_0xO3n8p.className='f1g2h';_0xO3n8p.draggable=true;_0xO3n8p.dataset.tabId=_0xW1k5m;
 // favicon img
 var _0xFavImg=document.createElement('img');_0xFavImg.className='tab-favicon';_0xFavImg.alt='';_0xFavImg.style.display='none';_0xFavImg.draggable=false;_0xFavImg.width=64;_0xFavImg.height=64;
