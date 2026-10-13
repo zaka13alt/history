@@ -7,19 +7,77 @@
 
 (proxy_routes) {
 	
-	@proxy_request {
+	# Upstream placeholders can't be combined with a scheme, so each scheme and
+	# port form gets its own handler with an explicit dial address.
+	@np_https {
 		method GET
-		path_regexp dest ^/np/https?:/+(?P<domain>[^/]+)(?P<uri>/.*\.(?i:avif|apng|bmp|gif|ico|jfif|jpe?g|png|svg|tif?f|webp))$
+		path_regexp dest ^/np/https:/+(?P<domain>[^/:]+)(?P<uri>/.*\.(?i:avif|apng|bmp|gif|ico|jfif|jpe?g|png|svg|tif?f|webp))$
 	}
 
-	handle @proxy_request {
+	handle @np_https {
 		request_header -X-Forwarded-For
 		request_header -X-Real-IP
 
 		# Rewrite the path before proxying to the destination
 		rewrite * {re.dest.uri}
 
-		reverse_proxy {re.dest.domain} {
+		reverse_proxy {re.dest.domain}:443 {
+			header_up Host {re.dest.domain}
+			header_up -X-Forwarded-For
+			header_up -X-Real-IP
+
+			header_down Access-Control-Allow-Origin "*"
+			header_down Access-Control-Allow-Methods "GET"
+			header_down Access-Control-Allow-Headers "Content-Type"
+
+			transport http {
+				tls
+				tls_server_name {re.dest.domain}
+			}
+		}
+	}
+
+	@np_https_port {
+		method GET
+		path_regexp dest ^/np/https:/+(?P<host>[^/:]+):(?P<port>[0-9]+)(?P<uri>/.*\.(?i:avif|apng|bmp|gif|ico|jfif|jpe?g|png|svg|tif?f|webp))$
+	}
+
+	handle @np_https_port {
+		request_header -X-Forwarded-For
+		request_header -X-Real-IP
+
+		# Rewrite the path before proxying to the destination
+		rewrite * {re.dest.uri}
+
+		reverse_proxy {re.dest.host}:{re.dest.port} {
+			header_up Host {re.dest.host}:{re.dest.port}
+			header_up -X-Forwarded-For
+			header_up -X-Real-IP
+
+			header_down Access-Control-Allow-Origin "*"
+			header_down Access-Control-Allow-Methods "GET"
+			header_down Access-Control-Allow-Headers "Content-Type"
+
+			transport http {
+				tls
+				tls_server_name {re.dest.host}
+			}
+		}
+	}
+
+	@np_http {
+		method GET
+		path_regexp dest ^/np/http:/+(?P<domain>[^/:]+)(?P<uri>/.*\.(?i:avif|apng|bmp|gif|ico|jfif|jpe?g|png|svg|tif?f|webp))$
+	}
+
+	handle @np_http {
+		request_header -X-Forwarded-For
+		request_header -X-Real-IP
+
+		# Rewrite the path before proxying to the destination
+		rewrite * {re.dest.uri}
+
+		reverse_proxy {re.dest.domain}:80 {
 			header_up Host {re.dest.domain}
 			header_up -X-Forwarded-For
 			header_up -X-Real-IP
@@ -30,9 +88,27 @@
 		}
 	}
 
-	# FlareSolverr (Cloudflare challenge solver)
-	handle_path /flaresolverr/* {
-		reverse_proxy localhost:8191
+	@np_http_port {
+		method GET
+		path_regexp dest ^/np/http:/+(?P<host>[^/:]+):(?P<port>[0-9]+)(?P<uri>/.*\.(?i:avif|apng|bmp|gif|ico|jfif|jpe?g|png|svg|tif?f|webp))$
+	}
+
+	handle @np_http_port {
+		request_header -X-Forwarded-For
+		request_header -X-Real-IP
+
+		# Rewrite the path before proxying to the destination
+		rewrite * {re.dest.uri}
+
+		reverse_proxy {re.dest.host}:{re.dest.port} {
+			header_up Host {re.dest.host}:{re.dest.port}
+			header_up -X-Forwarded-For
+			header_up -X-Real-IP
+
+			header_down Access-Control-Allow-Origin "*"
+			header_down Access-Control-Allow-Methods "GET"
+			header_down Access-Control-Allow-Headers "Content-Type"
+		}
 	}
 
 	# Existing Wisp routes
