@@ -4,9 +4,41 @@
 	}
 }
 
+# FlareSolverr. It only serves /v1 (no trailing slash), so drop one if present.
+(flaresolverr) {
+	handle_path /flaresolverr/* {
+		@fsTrailingSlash path_regexp fstrail ^(.+)/$
+		rewrite @fsTrailingSlash {re.fstrail.1}
+
+		reverse_proxy localhost:8191
+	}
+}
+
+# Host-based denials. These are handle blocks (not bare respond) so they run
+# before every other handle; a bare respond is ordered after handle and never fired.
+(deny_hosts) {
+	@tooLong header_regexp Host ^.{61,}$
+	@whm header Host *whm*
+	@cpanel header Host *cpanel*
+	@login header Host *login*
+
+	handle @tooLong {
+		respond "Request denied" 493
+	}
+	handle @whm {
+		respond "Request denied" 493
+	}
+	handle @cpanel {
+		respond "Request denied" 493
+	}
+	handle @login {
+		respond "Request denied" 493
+	}
+}
 
 (proxy_routes) {
-	
+	import flaresolverr
+
 	# Upstream placeholders can't be combined with a scheme, so each scheme and
 	# port form gets its own handler with an explicit dial address.
 	@np_https {
@@ -176,16 +208,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
 
 # HTTPS and on-demand TLS
 :443 {
-	@tooLong header_regexp Host ^.{61,}$
-	@whm header Host *whm*
-	@cpanel header Host *cpanel*
-	@login header Host *login*
-
-	respond @tooLong "Request denied" 493
-	respond @whm "Request denied" 493
-	respond @cpanel "Request denied" 493
-	respond @login "Request denied" 493
-
+	import deny_hosts
 	import proxy_routes
 
 	# Special bot hostname
@@ -231,15 +254,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
 
 # HTTP listener: X-Origin: cloudfront bypasses HTTPS redirects
 :80 {
-	@tooLong header_regexp Host ^.{61,}$
-	@whm header Host *whm*
-	@cpanel header Host *cpanel*
-	@login header Host *login*
-
-	respond @tooLong "Request denied" 493
-	respond @whm "Request denied" 493
-	respond @cpanel "Request denied" 493
-	respond @login "Request denied" 493
+	import deny_hosts
 
 	# Requests with this header remain on raw HTTP
 	@cloudfrontOrigin header X-Origin cloudfront
@@ -275,53 +290,48 @@ http://d1vajlb5xnngpm.cloudfront.net {
 		}
 	}
 
-	# Local hostname
-	@localhost header Host localhost*
-	handle @localhost {
-		handle_path /flaresolverr/* {
-			reverse_proxy localhost:8191
-		}
-
-		root * /usr/share/caddy
-		file_server
-	}
-
 	# Private IP hosts stay on HTTP
 	@private10 header Host 10.*
 	@private192 header Host 192.168.*
 	@private172 header_regexp Host ^172\.(1[6-9]|2[0-9]|3[0-1])\.
 
 	handle @private10 {
-		root * /usr/share/caddy
-		file_server
+		import flaresolverr
+
+		handle {
+			root * /usr/share/caddy
+			file_server
+		}
 	}
 
 	handle @private192 {
-		root * /usr/share/caddy
-		file_server
+		import flaresolverr
+
+		handle {
+			root * /usr/share/caddy
+			file_server
+		}
 	}
 
 	handle @private172 {
-		root * /usr/share/caddy
-		file_server
+		import flaresolverr
+
+		handle {
+			root * /usr/share/caddy
+			file_server
+		}
 	}
 
-	# All other HTTP requests redirect to HTTPS
-	redir https://{host}{uri} permanent
+	# All other HTTP requests redirect to HTTPS. Wrapped in handle so it runs
+	# last; a bare redir is ordered before handle and redirected everything.
+	handle {
+		redir https://{host}{uri} permanent
+	}
 }
 
 # Existing alternate HTTP port
 http://:4000 {
-	@tooLong header_regexp Host ^.{61,}$
-	@whm header Host *whm*
-	@cpanel header Host *cpanel*
-	@login header Host *login*
-
-	respond @tooLong "Request denied" 493
-	respond @whm "Request denied" 493
-	respond @cpanel "Request denied" 493
-	respond @login "Request denied" 493
-
+	import deny_hosts
 	import proxy_routes
 
 	@botHost host zaka.is-a.bot
@@ -359,7 +369,17 @@ http://:4000 {
 	}
 }
 
-# Internal endpoint for the on-demand TLS ask check
-http://localhost {
-	respond /internal-check 200
+# localhost: on-demand TLS ask check, FlareSolverr, and static files.
+# This site wins over :80 for Host: localhost, so localhost routes must live here.
+http://localhost, http://127.0.0.1 {
+	handle /internal-check {
+		respond 200
+	}
+
+	import flaresolverr
+
+	handle {
+		root * /usr/share/caddy
+		file_server
+	}
 }
