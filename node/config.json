@@ -15,7 +15,7 @@
 	"websocketPermessageDeflate": false,
 	"dnsServers": [],
 	"dnsMethod": "resolve",
-	"dnsResultOrder": "ipv4first",
+	"dnsResultOrder": "ipv6first",
 	"enableTwisp": false,
 	"enableV2": true,
 	"handshakeTimeoutSeconds": 10,
