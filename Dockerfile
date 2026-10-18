@@ -9,7 +9,7 @@ COPY node/package*.json ./
 
 RUN npm install --omit=dev --include=optional
 
-COPY node/index.js ./
+COPY node/index.js node/use.js node/password.js node/config.json ./
 
 
 # =========================
@@ -26,6 +26,7 @@ RUN apt-get update \
         npm \
         curl \
         ca-certificates \
+        musl \
     && rm -rf /var/lib/apt/lists/*
 
 

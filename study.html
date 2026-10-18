@@ -408,6 +408,24 @@
             height: 18px;
             display: block;
         }
+        .use-count {
+            position: fixed;
+            right: 14px;
+            bottom: 12px;
+            z-index: 50;
+            display: none;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 11px;
+            border-radius: 9px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #999;
+            font-size: 12px;
+            pointer-events: none;
+            user-select: none;
+        }
+        .use-count.on { display: inline-flex; }
         .i5j6k {
             width: 100%;
             height: 100%;
@@ -630,6 +648,8 @@
         <div class="spinner-text">loading...</div>
     </div>
 </div>
+
+<div class="use-count" id="use-count" title="users online"><span id="use-count-n">0</span> online</div>
 
 <script src="/x9K2m.js"></script>
 <script src="/8b3rt.js"></script>
@@ -1076,6 +1096,31 @@ document.getElementById('sidebar-a1').addEventListener('click', function() {
 });
 
 _0xS7d2f()})();
+</script>
+<script>
+(function(){"use strict";
+var el=document.getElementById('use-count'),n=document.getElementById('use-count-n');
+var id;
+try{id=localStorage.getItem('use_id')}catch(e){}
+if(!id||!/^[A-Za-z0-9_-]{16,64}$/.test(id)){
+  var b=crypto.getRandomValues(new Uint8Array(16));
+  id=Array.prototype.map.call(b,function(x){return ('0'+x.toString(16)).slice(-2)}).join('');
+  try{localStorage.setItem('use_id',id)}catch(e){}
+}
+var delay=1000;
+function connect(){
+  var ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/use/?id='+id);
+  ws.onmessage=function(e){
+    try{n.textContent=JSON.parse(e.data).online;el.classList.add('on');delay=1000}catch(_){}
+  };
+  ws.onclose=function(){
+    el.classList.remove('on');
+    setTimeout(connect,delay);
+    delay=Math.min(delay*2,30000);
+  };
+}
+connect();
+})();
 </script>
 </body>
 </html>

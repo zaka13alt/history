@@ -36,8 +36,32 @@
 	}
 }
 
+# Online users counter: a WebSocket on the Node app (node/use.js) that pushes
+# {"online":N}. Caddy only proxies it; it needs no timeouts since sockets stay open.
+(use_counter) {
+	@use path /use /use/*
+	handle @use {
+		reverse_proxy localhost:3000 {
+			transport http {
+				read_timeout 0
+				write_timeout 0
+			}
+		}
+	}
+}
+
+# ITCode lesson login: the Node app on 3000 checks the posted password.
+(password_verify) {
+	@password_verify path /password/verify
+	handle @password_verify {
+		reverse_proxy localhost:3000
+	}
+}
+
 (proxy_routes) {
 	import flaresolverr
+	import use_counter
+	import password_verify
 
 	# Upstream placeholders can't be combined with a scheme, so each scheme and
 	# port form gets its own handler with an explicit dial address.
@@ -183,6 +207,36 @@
 	}
 }
 
+# ITCode lesson page (itcode.html): served at the root of itcode.vip and at /itcode/
+# on every other host. Its assets and the study.html it swaps to use absolute paths.
+(itcode_site) {
+	@itcodeHost host itcode.vip www.itcode.vip
+	handle @itcodeHost {
+		@itcodeRoot path /
+		handle @itcodeRoot {
+			rewrite * /itcode.html
+			root * /usr/share/caddy
+			file_server
+		}
+
+		handle {
+			root * /usr/share/caddy
+			file_server
+		}
+	}
+
+	# The page uses relative links, so it must live under a trailing slash
+	handle /itcode {
+		redir * /itcode/ permanent
+	}
+
+	handle /itcode/ {
+		rewrite * /itcode.html
+		root * /usr/share/caddy
+		file_server
+	}
+}
+
 # CloudFront HTTP: serve raw HTTP without redirecting
 http://d1vajlb5xnngpm.cloudfront.net {
 	import proxy_routes
@@ -210,6 +264,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
 :443 {
 	import deny_hosts
 	import proxy_routes
+	import itcode_site
 
 	# Special bot hostname
 	@botHost host zaka.is-a.bot
@@ -333,6 +388,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
 http://:4000 {
 	import deny_hosts
 	import proxy_routes
+	import itcode_site
 
 	@botHost host zaka.is-a.bot
 	handle @botHost {
