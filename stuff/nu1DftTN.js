@@ -14,39 +14,32 @@ function flagOverrides() {
     }
     return flags;
 }
-// everything is derived from where this page is served, so it works from /K4q9p2Xv/ or from inside the folder
+
 const BASE = new URL('./', location.href).pathname;
 const PREFIX = BASE + 'nZ970vr4/';
 
-// WORKAROUND (YouTube only): a proxied YouTube watch page crashes the renderer (ERR_STATUS_BREAKPOINT / "Aw, Snap") as soon as
-// the video buffers when the iframe's CSS layout width reaches ~1000px. The iframe's layout width is therefore
-// capped and the iframe is scaled up to fill the window. Only applied while the page shown in the iframe is on youtube.com.
-// ?maxwidth=0 turns the cap off.
 const MAX_LAYOUT_WIDTH = Number(new URLSearchParams(location.search).get('maxwidth') ?? 980);
 const FRAME_TOP = 48;
 let currentUrl = '';
 
-// the proxied iframe is same-origin, so its real URL can be decoded from its location (covers links and
-// pushState navigations made inside the page, not just the address bar)
+
 function readFrameUrl() {
     try {
         const href = frameElement.contentWindow.location.href;
         const start = location.origin + PREFIX;
         if (!href.startsWith(start)) return null;
-        // the proxy path has extra frame-id segments before the real URL, and its own params after it
         const real = decodeURIComponent(href.slice(start.length)).match(/https?:\/\/.*$/);
         if (real) {
             const url = new URL(real[0]);
             return url.origin + url.pathname;
         }
     } catch (e) {
-        // frame not navigated yet or not readable
+        // 
     }
     return null;
 }
 
-// only reacts to the frame's own URL changing, so a stale URL from the page being navigated away from
-// can't overwrite the one we already know we're heading to
+
 let lastFrameUrl = null;
 function syncFrameUrl() {
     const url = readFrameUrl();
@@ -57,8 +50,7 @@ function syncFrameUrl() {
     }
 }
 
-// Shrink the layout *before* a YouTube page starts loading (clicked links, redirects, address bar) by tapping the
-// proxy's fetch hook; resizing after the page has already laid out wide is too late to prevent the crash.
+
 function watchNavigations(frame) {
     try {
         const hook = frame.hooks.fetch.request;
