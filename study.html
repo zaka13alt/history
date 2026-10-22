@@ -423,7 +423,9 @@ function renderShortcuts(container, tab) {
         ic.className = 'c1d2e';
         if (s.img) {
             var iconImg = document.createElement('img');
-            iconImg.src = s.img;
+            // Absolute http(s) image URLs go through the /np/ image proxy (same as
+            // tab favicons); relative paths are used as-is.
+            iconImg.src = /^https?:\/\//i.test(s.img) ? '/np/' + s.img : s.img;
             iconImg.alt = s.name;
             ic.appendChild(iconImg);
         } else {
