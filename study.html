@@ -77,10 +77,10 @@
 <script>
 (function(){"use strict";
 
-var defaultWisp = "wss://" + window.location.host + "/api/";
+var defaultw1sp = "wss://" + window.location.host + "/api/";
 var defaultSearch = "https://duckduckgo.com/search?q=%s";
 var storageShortcuts = "zaka13_shortcuts_v3";
-var storageWisp = "zaka13_wisp_server";
+var storagew1sp = "zaka13_w1sp_server";
 var storageSearch = "zaka13_search_engine";
 var storageBackend = "zaka13_backend";
 
@@ -88,7 +88,7 @@ var tabs = new Map();
 var activeTabId = null;
 var tabCounter = 0;
 
-var wispServer = localStorage.getItem(storageWisp) || defaultWisp;
+var w1spServer = localStorage.getItem(storagew1sp) || defaultw1sp;
 var searchEngine = localStorage.getItem(storageSearch) || defaultSearch;
 if(searchEngine.indexOf('%s') < 0) searchEngine = defaultSearch;
 var backendMode = localStorage.getItem(storageBackend) || "default";
@@ -207,8 +207,8 @@ function clearFavicon(tab) {
 // Core Controller Initialization
 var controllerState = { controller: null, initPromise: null, transport: null };
 
-async function initScramjet(wisp) {
-    var transportClient = new window.L1bcTransport.L1bcClient({w1p: wisp});
+async function inits(w1sp) {
+    var transportClient = new window.L1bcTransport.L1bcClient({w1p: w1sp});
     await transportClient.init();
     var wrappedTransport = window.cfSolver.wrap(transportClient);
     
@@ -234,17 +234,17 @@ async function initScramjet(wisp) {
     return ctrl;
 }
 
-async function ensureController(wisp) {
-    if (controllerState.transport === wisp && controllerState.controller) return controllerState.controller;
-    if (controllerState.initPromise && controllerState.transport === wisp) return controllerState.initPromise;
+async function ensureController(w1sp) {
+    if (controllerState.transport === w1sp && controllerState.controller) return controllerState.controller;
+    if (controllerState.initPromise && controllerState.transport === w1sp) return controllerState.initPromise;
     
-    controllerState.transport = wisp;
-    controllerState.initPromise = initScramjet(wisp).then(function(ctrl) {
+    controllerState.transport = w1sp;
+    controllerState.initPromise = inits(w1sp).then(function(ctrl) {
         controllerState.controller = ctrl;
     });
     
     controllerState.initPromise.catch(function() {
-        if (controllerState.transport === wisp) {
+        if (controllerState.transport === w1sp) {
             controllerState.controller = null;
             controllerState.initPromise = null;
         }
@@ -279,8 +279,8 @@ function createFrame(tab) {
     return frame;
 }
 
-async function navigateFrame(tab, url, wisp) {
-    await ensureController(wisp);
+async function navigateFrame(tab, url, w1sp) {
+    await ensureController(w1sp);
     var frame = createFrame(tab);
     tab.isYT = true;
     tab.lastUrl = url;
@@ -341,7 +341,7 @@ function createTab(startUrl) {
     viewRoot.appendChild(iframe);
     viewRoot.appendChild(newTabPage);
 
-    var tab = { id: id, tab: tabEl, iframe: iframe, title: title, url: startUrl || '', newTabPage: newTabPage, settingsPage: null, shortcutsContainer: grid, frame: null, wisp: wispServer, isA1: false, faviconImg: favImg };
+    var tab = { id: id, tab: tabEl, iframe: iframe, title: title, url: startUrl || '', newTabPage: newTabPage, settingsPage: null, shortcutsContainer: grid, frame: null, w1sp: w1spServer, isA1: false, faviconImg: favImg };
     tabs.set(id, tab);
     renderShortcuts(grid, tab);
     activateTab(id);
@@ -475,11 +475,11 @@ function navigateTab(url, tabId) {
         try {
             if (backendMode === "ultrev") {
                 // Fallback to Ultravi0let mode if configured
-                await ensureController(wispServer);
+                await ensureController(w1spServer);
                 if (!tab.frame) tab.frame = controllerState.controller.createFrame(tab.iframe);
                 tab.frame.go(url);
             } else {
-                await navigateFrame(tab, url, wispServer);
+                await navigateFrame(tab, url, w1spServer);
             }
             tab.url = url;
             addrInput.value = url;
@@ -530,7 +530,7 @@ function openSettings(tab) {
         var lNet = document.createElement('div');
         lNet.className = 'g1h2i'; lNet.innerHTML = '<div class="j3k4l">w13p</div><div class="m5n6o">self explanitory</div>';
         var inpNet = document.createElement('input');
-        inpNet.className = 'p7q8r'; inpNet.type = 'text'; inpNet.value = wispServer; inpNet.placeholder = 'wss://w13p.example.com/api/';
+        inpNet.className = 'p7q8r'; inpNet.type = 'text'; inpNet.value = w1spServer; inpNet.placeholder = 'wss://w13p.example.com/api/';
         rNet.appendChild(lNet); rNet.appendChild(inpNet); secNet.appendChild(hNet); secNet.appendChild(rNet);
 
         var secSrch = document.createElement('div');
@@ -564,7 +564,7 @@ function openSettings(tab) {
         saveBtn.className = 'v1w2x'; saveBtn.textContent = 'Save';
         saveBtn.onclick = function() {
             var v = inpNet.value.trim();
-            if (v && v.startsWith('wss://')) { wispServer = v; localStorage.setItem(storageWisp, v); }
+            if (v && v.startsWith('wss://')) { w1spServer = v; localStorage.setItem(storagew1sp, v); }
             searchEngine = selSrch.value;
             localStorage.setItem(storageSearch, searchEngine);
             saveBtn.textContent = 'Saved';
