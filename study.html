@@ -106,8 +106,7 @@ try {
         {name:"Reddit", url:"https://reddit.com", icon:"fa-solid fa-globe"},
         {name:"Spotify", url:"https://spotify.com", icon:"fa-solid fa-globe"},
         {name:"Netflix", url:"https://netflix.com", icon:"fa-solid fa-globe"},
-        {name:"Twitch", url:"https://twitch.tv", icon:"fa-solid fa-globe"},
-        {name:"Gmail", url:"https://mail.google.com", icon:"fa-solid fa-globe"}
+        {name:"Twitch", url:"https://twitch.tv", icon:"fa-solid fa-globe"}
     ];
 }
 
@@ -123,6 +122,13 @@ try {
     var flag = "zaka13_github_shortcut_removed";
     if(localStorage.getItem(flag)) return;
     shortcuts = shortcuts.filter(function(s){return !/^https?:\/\/(www\.)?github\.com\/?$/i.test(s.url)});
+    try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
+})();
+
+(function() {
+    var flag = "zaka13_gmail_shortcut_removed";
+    if(localStorage.getItem(flag)) return;
+    shortcuts = shortcuts.filter(function(s){return !/^https?:\/\/mail\.google\.com\/?$/i.test(s.url)});
     try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
 })();
 
@@ -415,9 +421,16 @@ function renderShortcuts(container, tab) {
         t.title = s.url;
         var ic = document.createElement('div');
         ic.className = 'c1d2e';
-        var icon = document.createElement('i');
-        icon.className = s.icon || 'fa-solid fa-globe';
-        ic.appendChild(icon);
+        if (s.img) {
+            var iconImg = document.createElement('img');
+            iconImg.src = s.img;
+            iconImg.alt = s.name;
+            ic.appendChild(iconImg);
+        } else {
+            var icon = document.createElement('i');
+            icon.className = s.icon || 'fa-solid fa-globe';
+            ic.appendChild(icon);
+        }
         var name = document.createElement('div');
         name.className = 'f3g4h';
         name.textContent = s.name;
