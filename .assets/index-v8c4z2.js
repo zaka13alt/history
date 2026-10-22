@@ -120,15 +120,12 @@ function storeSolution(url,solution){
   saveSessions(all);
 }
 
-// Fallback when the replayed request is still challenged: serve what FlareSolverr fetched.
+//
 function responseFromSolution(solution){
-  // Drop the origin's content-type too: FlareSolverr often returns an empty headers
-  // object, and without a text/html content-type scramjet won't run its HTML rewriter,
-  // so the page would be served raw with origin-pointing URLs instead of being proxied.
+  
   const skip=new Set(["content-encoding","content-length","transfer-encoding","connection","content-type"]);
   const headers=Object.entries(solution.headers||{}).filter(([k])=>!skip.has(k.toLowerCase()));
-  // solution.response is the fully-rendered page as HTML text, so force the type that
-  // makes scramjet rewrite it and inject its client.
+  
   headers.push(["content-type","text/html; charset=utf-8"]);
   return {
     body:new Response(solution.response||"").body,
