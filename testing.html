@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zaka</title>
+    <link rel="preload" href="/stuff/LyzaHBeO/jCC9IUDB.wasm" as="wasm" type="application/wasm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta property="og:image" content="/screenshot-of-site.png">
+    <link rel="preload" href="/styles.css" as="style" />
+    <link rel="stylesheet" href="/styles.css">
+    <meta property="og:description" content="zaka v2">
+    <meta name="author" content="zaka">
+    <link rel="canonical" href="https://zakaon.top">
+    <meta property="og:title" content="zaka">
+    <meta property="og:url" content="https://zakaon.top">
+    <meta property="og:site_name" content="zaka v2">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7F6PMTEL54"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-7F6PMTEL54');
+    </script>
+</head>
+<body>
+<div id="app">
+    <aside id="sidebar">
+        <button class="sidebar-btn" id="sidebar-game" title="g@mez" aria-label="g@mez">
+            <img src="/16zx3U.svg" alt="g@mez">
+        </button>
+        <button class="sidebar-btn" id="sidebar-a1" title="A1" aria-label="A1">
+            <img src="/7262146-200.png" alt="A1">
+        </button>
+        <div class="sidebar-sep"></div>
+        <button class="sidebar-btn" id="sidebar-settings" title="s3ttin7gs" aria-label="s3ttin7gs">
+            <i class="fa-solid fa-gear" style="font-size:20px;"></i>
+        </button>
+    </aside>
+
+    <div id="br0">
+        <div id="c9d0e">
+            <button id="u1v2w" type="button" title="k4m9p"><i class="fa-solid fa-plus"></i></button>
+        </div>
+        <form id="x3y4z">
+            <button type="button" id="d7e8f" class="a5b6c" aria-label="z3x7q"><i class="fa-solid fa-chevron-left"></i></button>
+            <button type="button" id="g9h0i" class="a5b6c" aria-label="v8n2r"><i class="fa-solid fa-chevron-right"></i></button>
+            <button type="button" id="q1r2s" class="a5b6c" aria-label="j5w4t"><i class="fa-solid fa-rotate-right"></i></button>
+            <div class="j1k2l">
+                <span id="p5q6r"><i class="fa-solid fa-globe"></i></span>
+                <input id="t3u4v" type="text" class="m3n4o" placeholder="s3arc7 or u3l" autocomplete="off" spellcheck="false">
+            </div>
+            <div id="s7t8u">
+                <button type="button" class="v9w0x" id="w5x6y" title="b6h1s"><i class="fa-regular fa-star"></i></button>
+            </div>
+            <select id="q1r2s2"></select>
+        </form>
+        <div id="h7i8j"></div>
+    </div>
+</div>
+
+<div class="l1-overlay" id="e28IB">
+    <div class="spinner-box">
+        <img src="/.assets/spinner.svg" alt="loading">
+        <div class="spinner-text">loading...</div>
+    </div>
+</div>
+
+<div class="use-count" id="use-count"><span id="use-count-n">0</span> online</div>
+
+<script src="/x9K2m.js"></script>
+<script src="/8b3rt.js"></script>
+<script src="/pGJxh.js"></script>
+<script src="/stuff/LyzaHBeO/hdr6ZzzC.js"></script>
+<script src="/stuff/LyzaHBeO/msJpa98j.js"></script>
+<script src="/.assets/index-v8c4z2.js"></script>
+
+<script>
+(function(){"use strict";
+
+var defaultw1sp = "wss://" + window.location.host + "/api/";
+var defaultSearch = "https://duckduckgo.com/search?q=%s";
+var storageShortcuts = "zaka13_shortcuts_v3";
+var storagew1sp = "zaka13_w1sp_server";
+var storageSearch = "zaka13_search_engine";
+var storageBackend = "zaka13_backend";
+
+var tabs = new Map();
+var activeTabId = null;
+var tabCounter = 0;
+
+var w1spServer = localStorage.getItem(storagew1sp) || defaultw1sp;
+var searchEngine = localStorage.getItem(storageSearch) || defaultSearch;
+if(searchEngine.indexOf('%s') < 0) searchEngine = defaultSearch;
+var backendMode = localStorage.getItem(storageBackend) || "default";
+
+var shortcuts = [];
+try {
+    var savedShortcuts = localStorage.getItem(storageShortcuts);
+    if(savedShortcuts) shortcuts = JSON.parse(savedShortcuts);
+    else throw new Error();
+} catch(e) {
+   shortcuts = [
+        {name:"YouTube", url:"https://youtube.com", img:"https://storage.itcode.vip/icos/youtube.png"},
+        {name:"Discord", url:"https://discord.com", img:"https://storage.itcode.vip/icos/discord.png"},
+        {name:"TikTok", url:"https://tiktok.com", img:"https://storage.itcode.vip/icos/tiktok.ico"},
+        {name:"Reddit", url:"https://reddit.com", img:"https://storage.itcode.vip/icos/reddit.jpg"},
+        {name:"Spotify", url:"https://spotify.com", img:"https://storage.itcode.vip/icos/spotify.webp"},
+        {name:"Netflix", url:"https://netflix.com", img:"https://storage.itcode.vip/icos/netflix.png"},
+        {name:"Twitch", url:"https://twitch.tv", img:"https://storage.itcode.vip/icos/twitch.ico"}
+    ];
+}
+
+(function() {
+    var roblox = {name:"Roblox", url:"https://nowgg.fun/apps/a/19900/b.html", icon:"fa-solid fa-gamepad"};
+    var flag = "zaka13_roblox_shortcut_added";
+    if(localStorage.getItem(flag)) return;
+    if(!shortcuts.some(function(s){return s.url === roblox.url})) shortcuts.push(roblox);
+    try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
+})();
+
+(function() {
+    var flag = "zaka13_github_shortcut_removed";
+    if(localStorage.getItem(flag)) return;
+    shortcuts = shortcuts.filter(function(s){return !/^https?:\/\/(www\.)?github\.com\/?$/i.test(s.url)});
+    try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
+})();
+
+(function() {
+    var flag = "zaka13_gmail_shortcut_removed";
+    if(localStorage.getItem(flag)) return;
+    shortcuts = shortcuts.filter(function(s){return !/^https?:\/\/mail\.google\.com\/?$/i.test(s.url)});
+    try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
+})();
+
+var tabBar = document.getElementById("c9d0e");
+var viewRoot = document.getElementById("h7i8j");
+var addrInput = document.getElementById("t3u4v");
+var plusBtn = document.getElementById("u1v2w");
+var backBtn = document.getElementById("d7e8f");
+var fwdBtn = document.getElementById("g9h0i");
+var reloadBtn = document.getElementById("q1r2s");
+var starBtn = document.getElementById("w5x6y");
+var settingsBtn = document.getElementById("sidebar-settings");
+var overlay = document.getElementById('e28IB');
+var overlayTimer = null;
+
+var settingsUrl = "education://settings";
+var page50000 = "50000";
+var page50001 = "50001";
+var page50002 = "50002";
+var gamesPath = "/g";
+var gamesUrl = "/g.html";
+var a1Url = "education://a1";
+var a1ActualUrl = "https://ap1.zaka13.com";
+
+function showLoad() {
+    if (overlayTimer) { clearTimeout(overlayTimer); overlayTimer = null; }
+    overlay.classList.add('active');
+    overlayTimer = setTimeout(function() { overlay.classList.remove('active'); overlayTimer = null; }, 700);
+}
+
+function faviconCandidates(pageUrl) {
+    try {
+        if (!/^https?:\/\//i.test(pageUrl)) return [];
+        var host = new URL(pageUrl).host;
+        if (!host) return [];
+        var hosts = [host];
+        if (host.indexOf('www.') !== 0 && host.split('.').length <= 2) hosts.unshift('www.' + host);
+        var out = [];
+        ['ico', 'png'].forEach(function (ext) {
+            hosts.forEach(function (h) { out.push('/np/https://' + h + '/favicon.' + ext); });
+        });
+        return out;
+    } catch (_) { return []; }
+}
+
+function loadFavicon(img, pageUrl, onFail) {
+    var list = faviconCandidates(pageUrl);
+    var idx = 0;
+    function next() {
+        if (idx >= list.length) { img.onerror = null; if (onFail) onFail(); return; }
+        img.src = list[idx++];
+    }
+    img.onerror = next;
+    next();
+}
+
+function applyFavicon(tab, url) {
+    if (!tab || !tab.faviconImg) return;
+    var img = tab.faviconImg;
+    if (!faviconCandidates(url).length) { img.style.display = 'none'; return; }
+    img.style.display = 'block';
+    loadFavicon(img, url, function () { img.style.display = 'none'; });
+}
+
+function updateLockIcon(url) {
+    var icon = /^http:\/\//i.test(url) ? 'fa-lock-open' : 'fa-lock';
+    document.getElementById('p5q6r').innerHTML = '<i class="fa-solid ' + icon + '"></i>';
+}
+
+function clearFavicon(tab) {
+    if (!tab || !tab.faviconImg) return;
+    tab.faviconImg.src = '';
+    tab.faviconImg.style.display = 'none';
+}
+
+// Core Controller Initialization
+var controllerState = { controller: null, initPromise: null, transport: null };
+
+async function inits(w1sp) {
+    var Ep082Transport = (await import('/stuff/LyzaHBeO/Oab32X7.js')).Ep082Transport;
+    var transportClient = new Ep082Transport({wisp: w1sp});
+    await transportClient.init();
+    var wrappedTransport = window.cfSolver.wrap(transportClient);
+    
+    var swReg = await navigator.serviceWorker.register('/k3Vq8.js', {scope: '/', updateViaCache: 'none'});
+    var activeWorker = swReg.active || await new Promise(function(resolve) {
+        var worker = swReg.installing || swReg.waiting;
+        worker.addEventListener('statechange', function() {
+            if (worker.state === 'activated') resolve(worker);
+        });
+    });
+
+    var ctrl = new window.$K4q9p2XvController.Controller({
+        serviceworker: activeWorker,
+        transport: wrappedTransport,
+        config: {
+            prefix: '/nZ970vr4/',
+            K4q9p2XvPath: '/stuff/LyzaHBeO/hdr6ZzzC.js',
+            injectPath: '/stuff/LyzaHBeO/jtqxcoHL.js',
+            wasmPath: '/stuff/LyzaHBeO/jCC9IUDB.wasm'
+        }
+    });
+    await ctrl.wait();
+    return ctrl;
+}
+
+async function ensureController(w1sp) {
+    if (controllerState.transport === w1sp && controllerState.controller) return controllerState.controller;
+    if (controllerState.initPromise && controllerState.transport === w1sp) return controllerState.initPromise;
+    
+    controllerState.transport = w1sp;
+    controllerState.initPromise = inits(w1sp).then(function(ctrl) {
+        controllerState.controller = ctrl;
+    });
+    
+    controllerState.initPromise.catch(function() {
+        if (controllerState.transport === w1sp) {
+            controllerState.controller = null;
+            controllerState.initPromise = null;
+        }
+    });
+    return controllerState.initPromise;
+}
+
+// YouTube Layout Hook
+var ytTabs = new Set();
+function isYouTube(url) { try { return /(^|\.)youtube\.com$/.test(new URL(url).hostname); } catch(e) { return false; } }
+function resizeYT(tab) {
+    var iframe = tab.iframe, parent = iframe.parentNode;
+    if (!parent) return;
+    var w = parent.clientWidth, h = parent.clientHeight;
+    var scale = tab.frame && tab.isYT && isYouTube(tab.lastUrl) && w > 980 ? w / 980 : 1;
+    if (scale === 1) { iframe.style.width = ''; iframe.style.height = ''; iframe.style.transform = ''; return; }
+    iframe.style.width = (w / scale) + 'px';
+    iframe.style.height = (h / scale) + 'px';
+    iframe.style.transformOrigin = '0 0';
+    iframe.style.transform = 'scale(' + scale + ')';
+}
+window.addEventListener('resize', function() { ytTabs.forEach(resizeYT); });
+
+// Tab Creation
+function createFrame(tab) {
+    if (tab.frame && tab.controller === controllerState.controller) return tab.frame;
+    var frame = controllerState.controller.createFrame(tab.iframe);
+    if (!frame) throw new Error('createFrame returned null');
+    tab.frame = frame;
+    tab.controller = controllerState.controller;
+    ytTabs.add(tab);
+    return frame;
+}
+
+async function navigateFrame(tab, url, w1sp) {
+    await ensureController(w1sp);
+    var frame = createFrame(tab);
+    tab.isYT = true;
+    tab.lastUrl = url;
+    resizeYT(tab);
+    frame.go(url);
+}
+
+function createTab(startUrl) {
+    var id = ++tabCounter;
+    var tabEl = document.createElement('div');
+    tabEl.className = 'f1g2h';
+    tabEl.draggable = true;
+    tabEl.dataset.tabId = id;
+
+    var favImg = document.createElement('img');
+    favImg.className = 'tab-favicon';
+    favImg.style.display = 'none';
+    tabEl.appendChild(favImg);
+
+    var title = document.createElement('span');
+    title.className = 'o7p8q';
+    title.textContent = startUrl || 'n3w t3b';
+    tabEl.appendChild(title);
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'r9s0t';
+    closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    closeBtn.onclick = function(e) { e.stopPropagation(); closeTab(id); };
+    tabEl.appendChild(closeBtn);
+    tabEl.onclick = function() { activateTab(id); };
+
+    var iframe = document.createElement('iframe');
+    iframe.className = 'k9l0m';
+    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock');
+
+    var newTabPage = document.createElement('div');
+    newTabPage.className = 'q3r4s';
+    var svgNS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("class", "t5u6v");
+    svg.setAttribute("viewBox", "0 0 60 20");
+    var rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("width", "100%"); rect.setAttribute("height", "100%"); rect.setAttribute("fill", "#000"); rect.setAttribute("rx", "4");
+    var text = document.createElementNS(svgNS, "text");
+    text.setAttribute("x", "50%"); text.setAttribute("y", "55%"); text.setAttribute("fill", "#fff");
+    text.setAttribute("font-family", "system-ui,sans-serif"); text.setAttribute("font-size", "12");
+    text.setAttribute("font-weight", "600"); text.setAttribute("text-anchor", "middle");
+    text.setAttribute("dominant-baseline", "middle"); text.setAttribute("letter-spacing", "0.5");
+    text.textContent = "zaka";
+    svg.appendChild(rect); svg.appendChild(text);
+    
+    var grid = document.createElement('div');
+    grid.className = 'w7x8y';
+    newTabPage.appendChild(svg);
+    newTabPage.appendChild(grid);
+
+    tabBar.insertBefore(tabEl, plusBtn);
+    viewRoot.appendChild(iframe);
+    viewRoot.appendChild(newTabPage);
+
+    var tab = { id: id, tab: tabEl, iframe: iframe, title: title, url: startUrl || '', newTabPage: newTabPage, settingsPage: null, shortcutsContainer: grid, frame: null, w1sp: w1spServer, isA1: false, faviconImg: favImg };
+    tabs.set(id, tab);
+    renderShortcuts(grid, tab);
+    activateTab(id);
+
+    if (startUrl) {
+        if (startUrl === settingsUrl || startUrl === page50000 || startUrl === page50001 || startUrl === page50002) {
+            openSettings(tab);
+        } else {
+            navigateTab(startUrl, id);
+        }
+    }
+    return id;
+}
+
+function closeTab(id) {
+    var tab = tabs.get(id);
+    if (!tab) return;
+    var wasActive = activeTabId === id;
+    tab.tab.remove();
+    tab.iframe.remove();
+    if (tab.newTabPage) tab.newTabPage.remove();
+    if (tab.settingsPage) tab.settingsPage.remove();
+    tabs.delete(id);
+    if (tabs.size === 0) { createTab(); return; }
+    if (wasActive) {
+        var keys = Array.from(tabs.keys());
+        var idx = keys.indexOf(id);
+        activateTab(keys[Math.max(0, idx - 1)]);
+    }
+}
+
+function activateTab(id) {
+    var tab = tabs.get(id);
+    if (!tab) return;
+    tabs.forEach(function(t) {
+        t.tab.classList.remove('i3j4k');
+        t.iframe.classList.remove('n1o2p');
+        if (t.newTabPage) t.newTabPage.style.display = 'none';
+        if (t.settingsPage) t.settingsPage.classList.remove('n1o2p');
+    });
+    tab.tab.classList.add('i3j4k');
+    activeTabId = id;
+    
+    if (tab.url === settingsUrl || tab.url === page50000 || tab.url === page50001 || tab.url === page50002) {
+        openSettings(tab);
+    } else if (tab.isA1) {
+        tab.iframe.classList.add('n1o2p');
+        addrInput.value = a1Url;
+        document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-lock"></i>';
+    } else if (tab.url) {
+        tab.iframe.classList.add('n1o2p');
+        addrInput.value = tab.url;
+        updateLockIcon(tab.url);
+    } else {
+        if (tab.newTabPage) tab.newTabPage.style.display = 'flex';
+        addrInput.value = '';
+        document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-globe"></i>';
+    }
+}
+
+function hideNewTab(tab) {
+    if (tab.newTabPage) tab.newTabPage.style.display = 'none';
+    tab.iframe.classList.remove('n1o2p');
+    if (tab.settingsPage) tab.settingsPage.classList.remove('n1o2p');
+}
+
+function showNewTab(tab) {
+    if (tab.newTabPage) tab.newTabPage.style.display = 'flex';
+    if (tab.settingsPage) tab.settingsPage.classList.remove('n1o2p');
+}
+
+function renderShortcuts(container, tab) {
+    container.innerHTML = '';
+    shortcuts.forEach(function(s) {
+        var t = document.createElement('div');
+        t.className = 'z9a0b';
+        t.title = s.url;
+        var ic = document.createElement('div');
+        ic.className = 'c1d2e';
+        if (s.img) {
+            var iconImg = document.createElement('img');
+            // Absolute http(s) image URLs go through the /np/ image proxy (same as
+            // tab favicons); relative paths are used as-is.
+            iconImg.src = /^https?:\/\//i.test(s.img) ? '/np/' + s.img : s.img;
+            iconImg.alt = s.name;
+            ic.appendChild(iconImg);
+        } else {
+            var icon = document.createElement('i');
+            icon.className = s.icon || 'fa-solid fa-globe';
+            ic.appendChild(icon);
+        }
+        var name = document.createElement('div');
+        name.className = 'f3g4h';
+        name.textContent = s.name;
+        t.appendChild(ic); t.appendChild(name);
+        t.addEventListener('click', function() {
+            if (!tab) return;
+            tab.url = s.url;
+            tab.title.textContent = s.name;
+            hideNewTab(tab);
+            navigateTab(s.url, tab.id);
+        });
+        container.appendChild(t);
+    });
+    var dc = document.createElement('a');
+    dc.className = 'discord-link';
+    dc.href = 'https://discord.gg/Y26EUssP3';
+    dc.target = '_blank';
+    var dci = document.createElement('img');
+    dci.src = '/dc.svg';
+    dci.alt = 'discord';
+    var dcs = document.createElement('span');
+    dcs.textContent = 'join the discord';
+    dc.appendChild(dci); dc.appendChild(dcs);
+    container.appendChild(dc);
+}
+
+function parseInput(input) {
+    var val = input.trim();
+    if (!val) return null;
+    if (/^https?:\/\/\S+$/i.test(val)) return val;
+    return searchEngine.replace('%s', encodeURIComponent(val));
+}
+
+function navigateTab(url, tabId) {
+    var tab = tabs.get(tabId);
+    if (!tab) return;
+    hideNewTab(tab);
+    
+    var executeNav = async function() {
+        try {
+            if (backendMode === "ultrev") {
+                // Fallback to Ultravi0let mode if configured
+                await ensureController(w1spServer);
+                if (!tab.frame) tab.frame = controllerState.controller.createFrame(tab.iframe);
+                tab.frame.go(url);
+            } else {
+                await navigateFrame(tab, url, w1spServer);
+            }
+            tab.url = url;
+            addrInput.value = url;
+            updateLockIcon(url);
+            try { tab.title.textContent = new URL(url).hostname; } catch(e) { tab.title.textContent = url; }
+            tab.iframe.classList.add('n1o2p');
+            applyFavicon(tab, url);
+        } catch(err) {
+            console.error(err);
+        }
+    };
+    executeNav();
+}
+
+function openSettings(tab) {
+    if (!tab.settingsPage) {
+        tab.settingsPage = document.createElement('div');
+        tab.settingsPage.className = 'i5j6k';
+        
+        var wrap = document.createElement('div');
+        wrap.className = 'l7m8n';
+
+        var hd = document.createElement('div');
+        hd.className = 'o9p0q';
+        var backBtn = document.createElement('button');
+        backBtn.className = 'r1s2t';
+        backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
+        backBtn.onclick = function() {
+            tab.url = '';
+            tab.title.textContent = 'n3w t3b';
+            showNewTab(tab);
+            activateTab(tab.id);
+            addrInput.value = '';
+            document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-globe"></i>';
+            clearFavicon(tab);
+        };
+        var tt = document.createElement('div');
+        tt.className = 'u3v4w';
+        tt.textContent = 's3ttin7gs';
+        hd.appendChild(backBtn); hd.appendChild(tt);
+        
+        var secNet = document.createElement('div');
+        secNet.className = 'x5y6z';
+        var hNet = document.createElement('div');
+        hNet.className = 'a7b8c'; hNet.textContent = 'Network';
+        var rNet = document.createElement('div');
+        rNet.className = 'd9e0f';
+        var lNet = document.createElement('div');
+        lNet.className = 'g1h2i'; lNet.innerHTML = '<div class="j3k4l">w13p</div><div class="m5n6o">self explanitory</div>';
+        var inpNet = document.createElement('input');
+        inpNet.className = 'p7q8r'; inpNet.type = 'text'; inpNet.value = w1spServer; inpNet.placeholder = 'wss://w13p.example.com/api/';
+        rNet.appendChild(lNet); rNet.appendChild(inpNet); secNet.appendChild(hNet); secNet.appendChild(rNet);
+
+        var secSrch = document.createElement('div');
+        secSrch.className = 'x5y6z';
+        var hSrch = document.createElement('div');
+        hSrch.className = 'a7b8c'; hSrch.textContent = 'Search';
+        var rSrch = document.createElement('div');
+        rSrch.className = 'd9e0f';
+        var lSrch = document.createElement('div');
+        lSrch.className = 'g1h2i'; lSrch.innerHTML = '<div class="j3k4l">search engine</div><div class="m5n6o"></div>';
+        var selSrch = document.createElement('select');
+        selSrch.className = 's9t0u';
+        var engines = [{v:"https://duckduckgo.com/search?q=%s",n:'DuckDuckGo'},{v:"https://www.google.com/search?q=%s",n:'Google'},{v:"https://www.bing.com/search?q=%s",n:'Bing'},{v:"https://search.brave.com/search?q=%s",n:'Brave'}];
+        engines.forEach(function(o) {
+            var op = document.createElement('option');
+            op.value = o.v; op.textContent = o.n;
+            if (o.v === searchEngine) op.selected = true;
+            selSrch.appendChild(op);
+        });
+        rSrch.appendChild(lSrch); rSrch.appendChild(selSrch); secSrch.appendChild(hSrch); secSrch.appendChild(rSrch);
+
+        var secAct = document.createElement('div');
+        secAct.className = 'x5y6z';
+        var hAct = document.createElement('div');
+        hAct.className = 'a7b8c'; hAct.textContent = 'Actions';
+        var rAct = document.createElement('div');
+        rAct.className = 'd9e0f';
+        var lAct = document.createElement('div');
+        lAct.className = 'g1h2i'; lAct.innerHTML = '<div class="j3k4l">Save settings</div><div class="m5n6o">apply + refresh stuff + save changes</div>';
+        var saveBtn = document.createElement('button');
+        saveBtn.className = 'v1w2x'; saveBtn.textContent = 'Save';
+        saveBtn.onclick = function() {
+            var v = inpNet.value.trim();
+            if (v && v.startsWith('wss://')) { w1spServer = v; localStorage.setItem(storagew1sp, v); }
+            searchEngine = selSrch.value;
+            localStorage.setItem(storageSearch, searchEngine);
+            saveBtn.textContent = 'Saved';
+            setTimeout(function() { saveBtn.textContent = 'Save'; }, 1200);
+        };
+        rAct.appendChild(lAct); rAct.appendChild(saveBtn); secAct.appendChild(hAct); secAct.appendChild(rAct);
+
+        wrap.appendChild(hd); wrap.appendChild(secNet); wrap.appendChild(secSrch); wrap.appendChild(secAct);
+        tab.settingsPage.appendChild(wrap);
+        viewRoot.appendChild(tab.settingsPage);
+    }
+    
+    tabs.forEach(function(t) {
+        t.iframe.classList.remove('n1o2p');
+        if (t.newTabPage) t.newTabPage.style.display = 'none';
+        if (t.settingsPage) t.settingsPage.classList.remove('n1o2p');
+    });
+    tab.settingsPage.classList.add('n1o2p');
+    tab.iframe.classList.remove('n1o2p');
+    if (tab.newTabPage) tab.newTabPage.style.display = 'none';
+    addrInput.value = settingsUrl;
+    tab.url = settingsUrl;
+    tab.title.textContent = 's3ttin7gs';
+    document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-gear"></i>';
+    activeTabId = tab.id;
+    clearFavicon(tab);
+}
+
+// Event Listeners
+addrInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        var val = addrInput.value.trim();
+        var tab = tabs.get(activeTabId);
+        if (!val || !tab) return;
+        showLoad();
+        if (val === settingsUrl || val === page50000 || val === page50001 || val === page50002 || val.startsWith('education://')) {
+            tab.url = settingsUrl; tab.title.textContent = 's3ttin7gs'; openSettings(tab); return;
+        }
+        var parsed = parseInput(val);
+        if (!parsed) return;
+        tab.url = parsed;
+        tab.title.textContent = parsed.replace(/^https?:\/\//,'').split('/')[0] || val;
+        hideNewTab(tab);
+        navigateTab(parsed, activeTabId);
+    }
+});
+
+plusBtn.onclick = function() { createTab(); };
+backBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && t.frame && t.frame.go) { try { t.iframe.contentWindow.history.back(); } catch(e){} } };
+fwdBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && t.frame && t.frame.go) { try { t.iframe.contentWindow.history.forward(); } catch(e){} } };
+reloadBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && t.url) navigateTab(t.url, activeTabId); };
+starBtn.onclick = function() { var i = starBtn.querySelector('i'); i.classList.toggle('fa-regular'); i.classList.toggle('fa-solid'); };
+settingsBtn.onclick = function() { var t = tabs.get(activeTabId); if (t) { t.url = settingsUrl; t.title.textContent = 's3ttin7gs'; openSettings(t); } };
+
+document.getElementById('sidebar-game').onclick = function() {
+    var id = createTab();
+    var t = tabs.get(id);
+    if (t) { t.iframe.src = gamesUrl; t.url = gamesPath; t.title.textContent = 'g@mez'; addrInput.value = gamesPath; document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTab(t); t.iframe.classList.add('n1o2p'); clearFavicon(t); }
+};
+
+document.getElementById('sidebar-a1').onclick = function() {
+    var id = createTab(a1Url);
+    var t = tabs.get(id);
+    if (t) { t.isA1 = true; navigateTab(a1ActualUrl, id); t.url = a1Url; t.title.textContent = 'A1'; addrInput.value = a1Url; document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-lock"></i>'; clearFavicon(t); }
+};
+
+// Online Counter
+(function() {
+    var el = document.getElementById('use-count'), n = document.getElementById('use-count-n');
+    var id;
+    try { id = localStorage.getItem('use_id'); } catch(e) {}
+    if (!id || !/^[A-Za-z0-9_-]{16,64}$/.test(id)) {
+        var b = crypto.getRandomValues(new Uint8Array(16));
+        id = Array.prototype.map.call(b, function(x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+        try { localStorage.setItem('use_id', id); } catch(e) {}
+    }
+    var delay = 1000;
+    function connect() {
+        var ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/use/?id=' + id);
+        ws.onmessage = function(e) { try { n.textContent = JSON.parse(e.data).online; el.classList.add('on'); delay = 1000; } catch(_) {} };
+        ws.onclose = function() { el.classList.remove('on'); setTimeout(connect, delay); delay = Math.min(delay * 2, 30000); };
+    }
+    connect();
+})();
+
+createTab();
+})();
+</script>
+</body>
+</html>
