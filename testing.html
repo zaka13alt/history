@@ -496,6 +496,41 @@ function navigateTab(url, tabId) {
     executeNav();
 }
 
+// Read the real URL a tab's proxied iframe is currently showing by decoding it out of the
+// proxy path. The frame is same-origin, so its location is readable; the proxy path can
+// carry extra frame-id segments before the real URL and its own params after it, so we
+// decodeURIComponent and then pull out the embedded http(s) URL.
+function readTabUrl(tab) {
+    try {
+        var href = tab.iframe.contentWindow.location.href;
+        var start = location.origin + '/nZ970vr4/';
+        if (href.indexOf(start) !== 0) return null;
+        var real = decodeURIComponent(href.slice(start.length)).match(/https?:\/\/.*$/);
+        if (!real) return null;
+        var u = new URL(real[0]);
+        return u.origin + u.pathname;
+    } catch (e) {
+        // frame not navigated yet, or not readable
+        return null;
+    }
+}
+
+// Keep the address bar (plus tab title, lock icon and favicon) in step with navigations the
+// user makes inside the page (link clicks, redirects, pushState), not just address-bar visits.
+function syncActiveTabUrl() {
+    var tab = tabs.get(activeTabId);
+    if (!tab || tab.isA1 || !tab.iframe.classList.contains('n1o2p')) return;
+    var url = readTabUrl(tab);
+    if (url === null || url === tab.frameUrl) return;
+    tab.frameUrl = url;
+    tab.url = url;
+    addrInput.value = url;
+    updateLockIcon(url);
+    try { tab.title.textContent = new URL(url).hostname; } catch (e) { tab.title.textContent = url; }
+    applyFavicon(tab, url);
+}
+setInterval(syncActiveTabUrl, 500);
+
 function openSettings(tab) {
     if (!tab.settingsPage) {
         tab.settingsPage = document.createElement('div');
