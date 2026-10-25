@@ -7,19 +7,23 @@
     <link rel="preload" href="/stuff/LyzaHBeO/jCC9IUDB.wasm" as="fetch" type="application/wasm" crossorigin="anonymous">
     <style>
         html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
-        #frame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+        #frame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #000; }
     </style>
 </head>
 <body>
 <!-- Headless proxy frame: no UI. Driven entirely by the query string:
        ?g=<base64 url to open>   (required)
        ?w=<base64 wisp url>      (optional; defaults to wss://<host>/api/)
-     Uses the same L1bc transport + scramjet controller as study.html. -->
+       ?backend=u                (optional; use the Ultraviolet backend. Default: scramjet)
+     Scramjet mode uses the same L1bc transport + controller as study.html.
+     Ultraviolet mode uses the modified uv files (wiring per uvthing/index.html). -->
 <iframe id="frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation"></iframe>
 
-<script src="/x9K2m.js"></script>
-<script src="/8b3rt.js"></script>
-<script src="/pGJxh.js"></script>
+<!-- Shared / UV deps: x9K2m.js = W1I41 (bare-mux), 8b3rt.js = uv core, pGJxh.js = __u22$config -->
+<script src="/frame/x9K2m.js"></script>
+<script src="/frame/8b3rt.js"></script>
+<script src="/frame/pGJxh.js"></script>
+<!-- Scramjet deps -->
 <script src="/stuff/LyzaHBeO/hdr6ZzzC.js"></script>
 <script src="/stuff/LyzaHBeO/msJpa98j.js"></script>
 <script src="/.assets/index-k9v3f1.js"></script>
@@ -45,17 +49,29 @@
     var params = new URLSearchParams(location.search);
     var gotoUrl = b64dec(params.get("g"));
     var w1sp = b64dec(params.get("w")) || ("wss://" + window.location.host + "/api/");
+    // ?backend=u (or uv) -> Ultraviolet backend (the modified uv files); otherwise scramjet.
+    var backend = (params.get("backend") || "").toLowerCase();
+    var useUV = backend === "u" || backend === "uv";
 
     var iframe = document.getElementById("frame");
 
-    async function boot() {
-        if (!gotoUrl) {
-            document.title = "frame: missing ?g=";
-            console.error("[frame] no ?g= (base64 url) provided");
-            return;
-        }
+    // Drop any service worker registered by the OTHER backend so the chosen one controls
+    // the / scope (scramjet SW = /k3Vq8.js, UV SW = /pLBYQ.js conflict at the same scope).
+    async function cleanupSW(keepFile) {
+        try {
+            var regs = await navigator.serviceWorker.getRegistrations();
+            for (var i = 0; i < regs.length; i++) {
+                var sw = regs[i].active || regs[i].waiting || regs[i].installing;
+                var url = (sw && sw.scriptURL) || "";
+                if (url.indexOf(keepFile) === -1) { try { await regs[i].unregister(); } catch (e) {} }
+            }
+        } catch (e) {}
+    }
 
-        // L1bc transport, wrapped by the cf solver, exactly like study.html.
+    // Scramjet backend: L1bc transport + cf solver, same as study.html.
+    async function bootScramjet() {
+        await cleanupSW("/k3Vq8.js");
+
         var transportClient = new window.L1bcTransport.L1bcClient({ w1p: w1sp });
         await transportClient.init();
         var wrappedTransport = window.cfSolver.wrap(transportClient);
@@ -83,6 +99,41 @@
         var frame = ctrl.createFrame(iframe);
         if (!frame) throw new Error("createFrame returned null");
         frame.go(gotoUrl);
+    }
+
+    // Ultraviolet backend: same wiring as uvthing/index.html, using the modified uv files.
+    async function bootUV() {
+        await cleanupSW("/frame/pLBYQ.js");
+
+        var connection = new window.W1I41.W1I41Connection("/frame/8hF6n.js");
+        var swReg = await navigator.serviceWorker.register("/frame/pLBYQ.js", { scope: "/frame/" });
+
+        // Wait for the SW to activate before navigating, otherwise the first request
+        // for the /5jP9z/ prefix escapes to the network (404) instead of being proxied.
+        if (!swReg.active) {
+            await new Promise(function (resolve) {
+                var worker = swReg.installing || swReg.waiting;
+                if (!worker) return resolve();
+                worker.addEventListener("statechange", function () {
+                    if (worker.state === "activated") resolve();
+                });
+            });
+        }
+        await navigator.serviceWorker.ready;
+
+        await connection.setzIWyC("/frame/index-1OTY61e4.min.mjs", [{ WeZaN: w1sp }]);
+
+        iframe.src = self.__u22$config.prefix + self.__u22$config.encodeUrl(gotoUrl);
+    }
+
+    async function boot() {
+        if (!gotoUrl) {
+            document.title = "frame: missing ?g=";
+            console.error("[frame] no ?g= (base64 url) provided");
+            return;
+        }
+        if (useUV) await bootUV();
+        else await bootScramjet();
     }
 
     boot().catch(function (err) {
