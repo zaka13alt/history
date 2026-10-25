@@ -1,14 +1,14 @@
 {
   "name": "wisp-server",
   "version": "1.0.0",
-  "description": "Node.js Wisp-js server",
+  "description": "Node.js Wisp server (epoxy-server)",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "wispurr": "^4.2.0",
+    "epoxy-server-node": "2.0.0",
     "ws": "^8.18.0"
   }
 }
