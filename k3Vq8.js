@@ -1,5 +1,5 @@
-importScripts('https://cdn.jsdelivr.net/gh/zaka13alt/history@main/stuff/LyzaHBeO/WBv0kYC0.js');
-importScripts("https://cdn.jsdelivr.net/gh/zaka13alt/history@main/h.js");
+importScripts('/stuff/LyzaHBeO/WBv0kYC0.js');
+importScripts("/h.js");
  
 const blockedKeywords = _c.theBadKeywords;
  
