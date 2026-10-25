@@ -1,5 +1,5 @@
 importScripts('/stuff/LyzaHBeO/WBv0kYC0.js');
-importScripts("/h.js");
+importScripts("/js/h.js");
  
 const blockedKeywords = _c.theBadKeywords;
  

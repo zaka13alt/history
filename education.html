@@ -261,7 +261,7 @@
 
     async function loadstudys() {
         try {
-            const response = await fetch("/index.json");
+            const response = await fetch("/json/index.json");
 
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);

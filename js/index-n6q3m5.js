@@ -1,5 +1,5 @@
 importScripts("./.assets/index-t6p2d8.js");
-importScripts("/h.js");
+importScripts("/js/h.js");
  
 const blockedKeywords = _c.theBadKeywords;
  
