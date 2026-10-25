@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>frame</title>
+    <link rel="preload" href="/stuff/LyzaHBeO/jCC9IUDB.wasm" as="fetch" type="application/wasm" crossorigin="anonymous">
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; background: #000; overflow: hidden; }
+        #frame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+    </style>
+</head>
+<body>
+<!-- Headless proxy frame: no UI. Driven entirely by the query string:
+       ?g=<base64 url to open>   (required)
+       ?w=<base64 wisp url>      (optional; defaults to wss://<host>/api/)
+     Uses the same L1bc transport + scramjet controller as study.html. -->
+<iframe id="frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation"></iframe>
+
+<script src="/x9K2m.js"></script>
+<script src="/8b3rt.js"></script>
+<script src="/pGJxh.js"></script>
+<script src="/stuff/LyzaHBeO/hdr6ZzzC.js"></script>
+<script src="/stuff/LyzaHBeO/msJpa98j.js"></script>
+<script src="/.assets/index-k9v3f1.js"></script>
+<script src="/.assets/index-v8c4z2.js"></script>
+
+<script>
+(function () {
+    "use strict";
+
+    // Decode a base64 param. Tolerant of URL-safe base64 (-_), of '+' that a query
+    // string turned into a space, and of missing '=' padding. Handles UTF-8.
+    function b64dec(s) {
+        if (!s) return "";
+        try {
+            s = String(s).replace(/-/g, "+").replace(/_/g, "/").replace(/ /g, "+");
+            while (s.length % 4) s += "=";
+            return decodeURIComponent(escape(atob(s)));
+        } catch (e) {
+            try { return atob(String(s)); } catch (_) { return ""; }
+        }
+    }
+
+    var params = new URLSearchParams(location.search);
+    var gotoUrl = b64dec(params.get("g"));
+    var w1sp = b64dec(params.get("w")) || ("wss://" + window.location.host + "/api/");
+
+    var iframe = document.getElementById("frame");
+
+    async function boot() {
+        if (!gotoUrl) {
+            document.title = "frame: missing ?g=";
+            console.error("[frame] no ?g= (base64 url) provided");
+            return;
+        }
+
+        // L1bc transport, wrapped by the cf solver, exactly like study.html.
+        var transportClient = new window.L1bcTransport.L1bcClient({ w1p: w1sp });
+        await transportClient.init();
+        var wrappedTransport = window.cfSolver.wrap(transportClient);
+
+        var swReg = await navigator.serviceWorker.register("/k3Vq8.js", { scope: "/", updateViaCache: "none" });
+        var activeWorker = swReg.active || await new Promise(function (resolve) {
+            var worker = swReg.installing || swReg.waiting;
+            worker.addEventListener("statechange", function () {
+                if (worker.state === "activated") resolve(worker);
+            });
+        });
+
+        var ctrl = new window.$K4q9p2XvController.Controller({
+            serviceworker: activeWorker,
+            transport: wrappedTransport,
+            config: {
+                prefix: "/nZ970vr4/",
+                K4q9p2XvPath: "/stuff/LyzaHBeO/hdr6ZzzC.js",
+                injectPath: "/stuff/LyzaHBeO/jtqxcoHL.js",
+                wasmPath: "/stuff/LyzaHBeO/jCC9IUDB.wasm"
+            }
+        });
+        await ctrl.wait();
+
+        var frame = ctrl.createFrame(iframe);
+        if (!frame) throw new Error("createFrame returned null");
+        frame.go(gotoUrl);
+    }
+
+    boot().catch(function (err) {
+        console.error("[frame] boot failed", err);
+        document.title = "frame error";
+    });
+})();
+</script>
+</body>
+</html>
