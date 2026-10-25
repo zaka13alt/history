@@ -14,16 +14,16 @@
 <!-- Headless proxy frame: no UI. Driven entirely by the query string:
        ?g=<base64 url to open>   (required)
        ?w=<base64 wisp url>      (optional; defaults to wss://<host>/api/)
-       ?backend=u                (optional; use the Ultraviolet backend. Default: scramjet)
-     Scramjet mode uses the same L1bc transport + controller as study.html.
-     Ultraviolet mode uses the modified uv files (wiring per uvthing/index.html). -->
+       ?backend=u                (optional; use the Ultraviolet backend. Default: ss)
+     ss mode uses the same L1bc transport + controller as study.html.
+     Ultraviolet mode uses the modified u22 files (wiring per u22thing/index.html). -->
 <iframe id="frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation"></iframe>
 
-<!-- Shared / UV deps: x9K2m.js = W1I41 (bare-mux), 8b3rt.js = uv core, pGJxh.js = __u22$config -->
+<!-- Shared / u22 deps: x9K2m.js = W1I41 (bare-mux), 8b3rt.js = u22 core, pGJxh.js = __u22$config -->
 <script src="/frame/x9K2m.js"></script>
 <script src="/frame/8b3rt.js"></script>
 <script src="/frame/pGJxh.js"></script>
-<!-- Scramjet deps -->
+<!-- ss deps -->
 <script src="/stuff/LyzaHBeO/hdr6ZzzC.js"></script>
 <script src="/stuff/LyzaHBeO/msJpa98j.js"></script>
 <script src="/.assets/index-k9v3f1.js"></script>
@@ -49,14 +49,14 @@
     var params = new URLSearchParams(location.search);
     var gotoUrl = b64dec(params.get("g"));
     var w1sp = b64dec(params.get("w")) || ("wss://" + window.location.host + "/api/");
-    // ?backend=u (or uv) -> Ultraviolet backend (the modified uv files); otherwise scramjet.
+    // ?backend=u (or u22) -> Ultraviolet backend (the modified u22 files); otherwise ss.
     var backend = (params.get("backend") || "").toLowerCase();
-    var useUV = backend === "u" || backend === "uv";
+    var useu22 = backend === "u" || backend === "u22";
 
     var iframe = document.getElementById("frame");
 
     // Drop any service worker registered by the OTHER backend so the chosen one controls
-    // the / scope (scramjet SW = /k3Vq8.js, UV SW = /pLBYQ.js conflict at the same scope).
+    // the / scope (ss SW = /k3Vq8.js, u22 SW = /pLBYQ.js conflict at the same scope).
     async function cleanupSW(keepFile) {
         try {
             var regs = await navigator.serviceWorker.getRegistrations();
@@ -68,8 +68,8 @@
         } catch (e) {}
     }
 
-    // Scramjet backend: L1bc transport + cf solver, same as study.html.
-    async function bootScramjet() {
+    // ss backend: L1bc transport + cf solver, same as study.html.
+    async function bootss() {
         await cleanupSW("/k3Vq8.js");
 
         var transportClient = new window.L1bcTransport.L1bcClient({ w1p: w1sp });
@@ -101,8 +101,8 @@
         frame.go(gotoUrl);
     }
 
-    // Ultraviolet backend: same wiring as uvthing/index.html, using the modified uv files.
-    async function bootUV() {
+    // Ultraviolet backend: same wiring as uvthing/index.html, using the modified u22 files.
+    async function bootu22() {
         await cleanupSW("/frame/pLBYQ.js");
 
         var connection = new window.W1I41.W1I41Connection("/frame/8hF6n.js");
@@ -132,8 +132,8 @@
             console.error("[frame] no ?g= (base64 url) provided");
             return;
         }
-        if (useUV) await bootUV();
-        else await bootScramjet();
+        if (useu22) await bootu22();
+        else await bootss();
     }
 
     boot().catch(function (err) {
