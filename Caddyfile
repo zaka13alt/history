@@ -167,16 +167,13 @@
 		}
 	}
 
-	# Wisp routes: /api, /api/, /api/anything, /wisp, /wisp/... all become
-	# exactly /wisp/ (query kept), which is the path epoxy-server expects.
-	# (strip_prefix + /wisp{uri} broke WebSockets over HTTP/2 in browsers.)
-	# Sent straight to epoxy-server on 6001, skipping the Node app on 3000.
+	# Existing Wisp routes
 	handle /api* {
-		rewrite * /wisp/?{query}
+		uri strip_prefix /api
+		rewrite * /wisp{uri}
 
-		reverse_proxy 127.0.0.1:6001 {
+		reverse_proxy localhost:6001 {
 			header_up Host {upstream_hostport}
-			header_up X-Real-IP {remote_host}
 
 			transport http {
 				read_timeout 0
@@ -186,11 +183,8 @@
 	}
 
 	handle /wisp* {
-		rewrite * /wisp/?{query}
-
-		reverse_proxy 127.0.0.1:6001 {
+		reverse_proxy localhost:6001 {
 			header_up Host {upstream_hostport}
-			header_up X-Real-IP {remote_host}
 
 			transport http {
 				read_timeout 0
@@ -201,7 +195,7 @@
 
 	# Existing local /np proxy fallback
 	handle /np/* {
-		reverse_proxy localhost:3000 {
+		reverse_proxy localhost:6001 {
 			header_up Host {upstream_hostport}
 			header_up X-No-Proxy true
 
