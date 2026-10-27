@@ -20,7 +20,7 @@ const wisp = new EpoxyServer({
   host: EPOXY_HOST,
   port: EPOXY_PORT,
   prefix: "/wisp",
-  socks5: "socks5://127.0.0.1:35344", // no auth
+   // no auth
   useRealIpHeaders: true, // log the real client IP we pass along
   logLevel: "error", // only errors are printed (to stderr)
 });
