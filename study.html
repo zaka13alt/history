@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zaka</title>
-    <link rel="preload" href="/stuff/LyzaHBeO/jCC9IUDB.wasm" as="fetch" type="application/wasm" crossorigin="anonymous">
+    <link rel="prefetch" href="/stuff/LyzaHBeO/jCC9IUDB.wasm" as="fetch" type="application/wasm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta property="og:image" content="/img/screenshot-of-site.png">
     <link rel="preload" href="/css/styles.css" as="style" />
@@ -32,9 +32,12 @@
         <button class="sidebar-btn" id="sidebar-a1" title="A1" aria-label="A1">
             <img src="/img/7262146-200.png" alt="A1">
         </button>
+        <button class="sidebar-btn" id="sidebar-chat" title="ch@t" aria-label="ch@t">
+            <img src="/img/chat.svg" alt="ch@t">
+        </button>
         <div class="sidebar-sep"></div>
         <button class="sidebar-btn" id="sidebar-settings" title="s3ttin7gs" aria-label="s3ttin7gs">
-            <i class="fa-solid fa-gear" style="font-size:20px;"></i>
+            <i class="fa-solid fa-gear" style="font-size:15px;"></i>
         </button>
     </aside>
 
@@ -152,7 +155,9 @@ var page50001 = "50001";
 var page50002 = "50002";
 var gamesPath = "/g";
 var gamesUrl = "/g.html";
-var a1Url = "education://a1";
+var chatPath = "/chat";
+var chatUrl = "/chat.html";
+var a1Url = "/a";
 var a1ActualUrl = "https://ap1.zaka13.com";
 
 function showLoad() {
@@ -483,12 +488,14 @@ function navigateTab(url, tabId) {
             } else {
                 await navigateFrame(tab, url, w1spServer);
             }
-            tab.url = url;
-            addrInput.value = url;
-            updateLockIcon(url);
-            try { tab.title.textContent = new URL(url).hostname; } catch(e) { tab.title.textContent = url; }
             tab.iframe.classList.add('n1o2p');
-            applyFavicon(tab, url);
+            if (!tab.isA1) {
+                tab.url = url;
+                addrInput.value = url;
+                updateLockIcon(url);
+                try { tab.title.textContent = new URL(url).hostname; } catch(e) { tab.title.textContent = url; }
+                applyFavicon(tab, url);
+            }
         } catch(err) {
             console.error(err);
         }
@@ -628,8 +635,14 @@ document.getElementById('sidebar-game').onclick = function() {
     if (t) { t.iframe.src = gamesUrl; t.url = gamesPath; t.title.textContent = 'g@mez'; addrInput.value = gamesPath; document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTab(t); t.iframe.classList.add('n1o2p'); clearFavicon(t); }
 };
 
+document.getElementById('sidebar-chat').onclick = function() {
+    var id = createTab();
+    var t = tabs.get(id);
+    if (t) { t.iframe.src = chatUrl; t.url = chatPath; t.title.textContent = 'ch@t'; addrInput.value = chatPath; document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTab(t); t.iframe.classList.add('n1o2p'); clearFavicon(t); }
+};
+
 document.getElementById('sidebar-a1').onclick = function() {
-    var id = createTab(a1Url);
+    var id = createTab();
     var t = tabs.get(id);
     if (t) { t.isA1 = true; navigateTab(a1ActualUrl, id); t.url = a1Url; t.title.textContent = 'A1'; addrInput.value = a1Url; document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-lock"></i>'; clearFavicon(t); }
 };
