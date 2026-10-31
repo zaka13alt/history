@@ -3,6 +3,8 @@ import { createServer } from "node:http";
 import { connect } from "node:net";
 import { readFileSync } from "node:fs";
 import { createUseCounter } from "./use.js";
+import { createChat } from "./chat.js";
+import { createAuth } from "./auth.js";
 import { handlePasswordVerify } from "./password.js";
 
 const userConfig = JSON.parse(
@@ -52,14 +54,18 @@ function routeToEpoxy(req, socket, head) {
 }
 
 const useCounter = createUseCounter();
+const auth = createAuth();
+const chat = createChat(auth);
 
 const server = createServer(async (req, res) => {
   if (await handlePasswordVerify(req, res)) return;
+  if (await auth.handleHttp(req, res)) return;
   res.writeHead(426, { Upgrade: "websocket", Connection: "Upgrade" });
   res.end();
 });
 server.on("upgrade", (req, socket, head) => {
   if (useCounter.handleUpgrade(req, socket, head)) return;
+  if (chat.handleUpgrade(req, socket, head)) return;
   if (req.url.startsWith("/wisp/")) return routeToEpoxy(req, socket, head);
   socket.destroy();
 });
