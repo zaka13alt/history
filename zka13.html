@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>zaka ai</title>
+  <link rel="stylesheet" href="/css/zui.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+  <style>
+    body { display: flex; justify-content: center; align-items: center; padding: 20px; overflow: hidden; }
+    #particles-js { position: fixed; inset: 0; z-index: 0; background: #000; }
+    .chat-shell {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 640px; height: calc(100vh - 40px);
+      background: rgba(15, 15, 15, 0.92);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+      display: flex; flex-direction: column; overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+    .chat-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 13px 16px; background: rgba(11, 11, 11, 0.85); border-bottom: 1px solid var(--border);
+    }
+    .chat-head h1 { font-size: 1rem; font-weight: 600; margin: 0; }
+    .chat-head .tag { font-size: .72rem; color: var(--text-muted); border: 1px solid var(--border); border-radius: 20px; padding: 2px 9px; margin-left: auto; }
+    .chat-box { flex: 1; padding: 18px; overflow-y: auto; display: flex; flex-direction: column; }
+    .input-area { display: flex; gap: 10px; padding: 14px; background: rgba(11, 11, 11, 0.85); border-top: 1px solid var(--border); }
+    .input-area .zui-input { flex: 1; }
+    .typing { color: var(--text-muted); font-style: italic; }
+    @media (max-width: 600px) {
+      body { padding: 0; }
+      .chat-shell { height: 100vh; border-radius: 0; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="chat-shell">
+    <div class="chat-head">
+      <h1>zaka ai</h1>
+      <span class="tag">/a</span>
+    </div>
+    <div class="chat-box" id="box">
+      <div class="msg ai">Ask me anything!</div>
+    </div>
+    <div class="input-area">
+      <input class="zui-input" id="msg" placeholder="Type your message..." autocomplete="off" aria-label="message">
+      <button class="zui-btn" id="send">Send</button>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+    // Same backend ap1.zaka13.com uses: POST /a/ { model, messages } -> { choices:[{message:{content}}] }.
+    // Relative when served from ap1; absolute (CORS) otherwise.
+    var AI_ENDPOINT = location.hostname === "ap1.zaka13.com" ? "/a/" : "https://ap1.zaka13.com/a/";
+    var MODEL = "openrouter/free";
+
+    var box = document.getElementById("box");
+    var input = document.getElementById("msg");
+    var sendBtn = document.getElementById("send");
+
+    var history = [{ role: "system", content: "You are a helpful assistant." }];
+
+    function append(text, cls) {
+      var el = document.createElement("div");
+      el.className = "msg " + cls;
+      el.textContent = text; // textContent -> safe against HTML injection
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+      return el;
+    }
+
+    async function sendMessage() {
+      var text = input.value.trim();
+      if (!text) return;
+      input.value = "";
+      input.disabled = true; sendBtn.disabled = true;
+
+      append(text, "me");
+      history.push({ role: "user", content: text });
+      var typing = append("thinking...", "ai typing");
+
+      try {
+        var res = await fetch(AI_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: MODEL, messages: history })
+        });
+        var data = await res.json();
+        if (!res.ok) throw new Error((data && data.error && data.error.message) || ("HTTP " + res.status));
+        var aiText = data.choices[0].message.content;
+        typing.className = "msg ai";
+        typing.textContent = aiText;
+        box.scrollTop = box.scrollHeight;
+        history.push({ role: "assistant", content: aiText });
+      } catch (err) {
+        typing.remove();
+        append("Error: " + err.message, "system");
+      } finally {
+        input.disabled = false; sendBtn.disabled = false; input.focus();
+      }
+    }
+
+    sendBtn.onclick = sendMessage;
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); sendMessage(); } });
+
+    if (window.particlesJS) {
+      particlesJS("particles-js", {
+        particles: {
+          number: { value: 70, density: { enable: true, value_area: 900 } },
+          color: { value: "#ffffff" },
+          shape: { type: "circle" },
+          opacity: { value: 0.35, random: true },
+          size: { value: 2.5, random: true },
+          line_linked: { enable: true, distance: 130, color: "#ffffff", opacity: 0.14, width: 1 },
+          move: { enable: true, speed: 1.4, out_mode: "out" }
+        },
+        interactivity: {
+          detect_on: "canvas",
+          events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: true, mode: "push" }, resize: true },
+          modes: { grab: { distance: 140, line_linked: { opacity: 0.4 } }, push: { particles_nb: 3 } }
+        },
+        retina_detect: true
+      });
+    }
+    input.focus();
+  })();
+  </script>
+</body>
+</html>

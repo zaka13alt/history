@@ -1,0 +1,94 @@
+/* Shared zaka dark UI theme. Used by chat.html, education.html (games), zka13.html. */
+:root {
+  --bg-deep: #080808;
+  --bg-panel: #101010;
+  --bg-elevated: #191919;
+  --bg-hover: #1a1a1a;
+  --bg-input: #151515;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border: #292929;
+  --text: #f5f5f5;
+  --text-dim: #9aa0a6;
+  --text-muted: #6b6b6b;
+  --accent: #4dadff;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #000;
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Scrollbars */
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: var(--bg-deep); }
+*::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+*::-webkit-scrollbar-thumb:hover { background: #444; }
+
+/* Inputs */
+.zui-input {
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  font: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.zui-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(77, 173, 255, 0.15); }
+.zui-input::placeholder { color: var(--text-muted); }
+
+/* Buttons */
+.zui-btn {
+  background: var(--accent);
+  color: #06121f;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.08s;
+}
+.zui-btn:hover { filter: brightness(1.12); }
+.zui-btn:active { transform: scale(0.97); }
+.zui-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.zui-btn-ghost {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.zui-btn-ghost:hover { filter: none; background: var(--bg-hover); color: var(--text); }
+
+/* Message bubbles (chat + ai) */
+.msg {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  max-width: 80%;
+  line-height: 1.45;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.msg .meta { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 3px; }
+.msg.me { background: var(--bg-elevated); border: 1px solid var(--border); margin-left: auto; }
+.msg.them, .msg.ai { background: var(--bg-panel); border: 1px solid var(--border-subtle); margin-right: auto; }
+.msg.system {
+  background: #141414;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  text-align: center;
+  margin: 10px auto;
+  max-width: 100%;
+  font-size: 0.88rem;
+}
