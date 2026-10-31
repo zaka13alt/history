@@ -9,7 +9,7 @@ COPY node/package*.json ./
 
 RUN npm install --omit=dev --include=optional
 
-COPY node/index.js node/use.js node/password.js node/config.json ./
+COPY node/index.js node/use.js node/password.js node/chat.js node/auth.js node/config.json ./
 
 
 # =========================

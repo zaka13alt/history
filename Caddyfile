@@ -50,6 +50,20 @@
 	}
 }
 
+# Chat room: a WebSocket on the Node app (node/chat.js). Long-lived
+# sockets stay open, so it needs no timeouts.
+(chat_room) {
+	@chat path /chat /chat/*
+	handle @chat {
+		reverse_proxy localhost:3000 {
+			transport http {
+				read_timeout 0
+				write_timeout 0
+			}
+		}
+	}
+}
+
 # ITCode lesson login: the Node app on 3000 checks the posted password.
 (password_verify) {
 	@password_verify path /password/verify
@@ -61,7 +75,13 @@
 (proxy_routes) {
 	import flaresolverr
 	import use_counter
+	import chat_room
 	import password_verify
+
+	# Let static.html discover config (w.json / base.json) from any origin.
+	@corsConfig path */w.json */base.json
+	header @corsConfig Access-Control-Allow-Origin "*"
+	header @corsConfig Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
 
 	# Upstream placeholders can't be combined with a scheme, so each scheme and
 	# port form gets its own handler with an explicit dial address.

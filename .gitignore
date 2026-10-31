@@ -1,0 +1,6 @@
+node/node_modules/
+node/chat-history.json
+node/chat-mod.json
+node/users.json
+node/_testserver.mjs
+.claude/
