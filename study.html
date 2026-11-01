@@ -215,7 +215,7 @@ function clearFavicon(tab) {
 var controllerState = { controller: null, initPromise: null, transport: null };
 
 async function inits(w1sp) {
-    var transportClient = new window.L1bcTransport.L1bcClient({w1p: w1sp});
+    var transportClient = new window.libbyTransport.libbyClient({w1p: w1sp});
     await transportClient.init();
     var wrappedTransport = window.cfSolver.wrap(transportClient);
     
