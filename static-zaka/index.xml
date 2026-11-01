@@ -82,6 +82,11 @@
 
 <script>//<![CDATA[
 (function(){"use strict";
+// This page may be parsed as XHTML (application/xhtml+xml). In an XML document,
+// mk() makes a null-namespace element with no HTML behavior
+// (no .dataset/.style/.classList), so create everything in the XHTML namespace.
+var XHTMLNS = 'http://www.w3.org/1999/xhtml';
+function mk(tag){ return document.createElementNS(XHTMLNS, tag); }
 var BASE = new URL('./', location.href).pathname;
 var useBase = '', chatBase = '', chosenWisp = '', npBase = '';
 function testWisp(url){return new Promise(function(resolve){var ws,done=false;var to=setTimeout(function(){if(!done){done=true;try{ws.close();}catch(e){}resolve(false);}},4000);try{ws=new WebSocket(url);ws.onopen=function(){if(!done){done=true;clearTimeout(to);try{ws.close();}catch(e){}resolve(true);}};ws.onerror=function(){if(!done){done=true;clearTimeout(to);resolve(false);}};}catch(e){clearTimeout(to);resolve(false);}});}
@@ -304,33 +309,33 @@ async function navigateFrame(tab, url, w1sp) {
 
 function createTab(startUrl) {
     var id = ++tabCounter;
-    var tabEl = document.createElement('div');
+    var tabEl = mk('div');
     tabEl.className = 'f1g2h';
     tabEl.draggable = true;
     tabEl.dataset.tabId = id;
 
-    var favImg = document.createElement('img');
+    var favImg = mk('img');
     favImg.className = 'tab-favicon';
     favImg.style.display = 'none';
     tabEl.appendChild(favImg);
 
-    var title = document.createElement('span');
+    var title = mk('span');
     title.className = 'o7p8q';
     title.textContent = startUrl || 'n3w t3b';
     tabEl.appendChild(title);
 
-    var closeBtn = document.createElement('button');
+    var closeBtn = mk('button');
     closeBtn.className = 'r9s0t';
     closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
     closeBtn.onclick = function(e) { e.stopPropagation(); closeTab(id); };
     tabEl.appendChild(closeBtn);
     tabEl.onclick = function() { activateTab(id); };
 
-    var iframe = document.createElement('iframe');
+    var iframe = mk('iframe');
     iframe.className = 'k9l0m';
     iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
 
-    var newTabPage = document.createElement('div');
+    var newTabPage = mk('div');
     newTabPage.className = 'q3r4s';
     var svgNS = "http://www.w3.org/2000/svg";
     var svg = document.createElementNS(svgNS, "svg");
@@ -346,7 +351,7 @@ function createTab(startUrl) {
     text.textContent = "zaka";
     svg.appendChild(rect); svg.appendChild(text);
 
-    var grid = document.createElement('div');
+    var grid = mk('div');
     grid.className = 'w7x8y';
     newTabPage.appendChild(svg);
     newTabPage.appendChild(grid);
@@ -430,24 +435,24 @@ function showNewTab(tab) {
 function renderShortcuts(container, tab) {
     container.innerHTML = '';
     shortcuts.forEach(function(s) {
-        var t = document.createElement('div');
+        var t = mk('div');
         t.className = 'z9a0b';
         t.title = s.url;
-        var ic = document.createElement('div');
+        var ic = mk('div');
         ic.className = 'c1d2e';
         if (s.img) {
-            var iconImg = document.createElement('img');
+            var iconImg = mk('img');
             // Absolute http(s) image URLs go through the /np/ image proxy (same as
             // tab favicons); relative paths are used as-is.
             iconImg.src = /^https?:\/\//i.test(s.img) ? (npBase || location.origin) + '/np/' + s.img : s.img;
             iconImg.alt = s.name;
             ic.appendChild(iconImg);
         } else {
-            var icon = document.createElement('i');
+            var icon = mk('i');
             icon.className = s.icon || 'fa-solid fa-globe';
             ic.appendChild(icon);
         }
-        var name = document.createElement('div');
+        var name = mk('div');
         name.className = 'f3g4h';
         name.textContent = s.name;
         t.appendChild(ic); t.appendChild(name);
@@ -460,14 +465,14 @@ function renderShortcuts(container, tab) {
         });
         container.appendChild(t);
     });
-    var dc = document.createElement('a');
+    var dc = mk('a');
     dc.className = 'discord-link';
     dc.href = '/frame/frame.html?g=aHR0cHM6Ly9kaXNjb3JkLmdnL1kyNkVVc3NQMw==';
     dc.target = '_blank';
-    var dci = document.createElement('img');
+    var dci = mk('img');
     dci.src = BASE + 'img/dc.svg';
     dci.alt = 'discord';
-    var dcs = document.createElement('span');
+    var dcs = mk('span');
     dcs.textContent = 'join the discord';
     dc.appendChild(dci); dc.appendChild(dcs);
     container.appendChild(dc);
@@ -512,15 +517,15 @@ function navigateTab(url, tabId) {
 
 function openSettings(tab) {
     if (!tab.settingsPage) {
-        tab.settingsPage = document.createElement('div');
+        tab.settingsPage = mk('div');
         tab.settingsPage.className = 'i5j6k';
 
-        var wrap = document.createElement('div');
+        var wrap = mk('div');
         wrap.className = 'l7m8n';
 
-        var hd = document.createElement('div');
+        var hd = mk('div');
         hd.className = 'o9p0q';
-        var backBtn = document.createElement('button');
+        var backBtn = mk('button');
         backBtn.className = 'r1s2t';
         backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
         backBtn.onclick = function() {
@@ -532,51 +537,51 @@ function openSettings(tab) {
             document.getElementById('p5q6r').innerHTML = '<i class="fa-solid fa-globe"></i>';
             clearFavicon(tab);
         };
-        var tt = document.createElement('div');
+        var tt = mk('div');
         tt.className = 'u3v4w';
         tt.textContent = 's3ttin7gs';
         hd.appendChild(backBtn); hd.appendChild(tt);
 
-        var secNet = document.createElement('div');
+        var secNet = mk('div');
         secNet.className = 'x5y6z';
-        var hNet = document.createElement('div');
+        var hNet = mk('div');
         hNet.className = 'a7b8c'; hNet.textContent = 'Network';
-        var rNet = document.createElement('div');
+        var rNet = mk('div');
         rNet.className = 'd9e0f';
-        var lNet = document.createElement('div');
+        var lNet = mk('div');
         lNet.className = 'g1h2i'; lNet.innerHTML = '<div class="j3k4l">w13p</div><div class="m5n6o">self explanitory</div>';
-        var inpNet = document.createElement('input');
+        var inpNet = mk('input');
         inpNet.className = 'p7q8r'; inpNet.type = 'text'; inpNet.value = w1spServer; inpNet.placeholder = 'wss://w13p.example.com/api/';
         rNet.appendChild(lNet); rNet.appendChild(inpNet); secNet.appendChild(hNet); secNet.appendChild(rNet);
 
-        var secSrch = document.createElement('div');
+        var secSrch = mk('div');
         secSrch.className = 'x5y6z';
-        var hSrch = document.createElement('div');
+        var hSrch = mk('div');
         hSrch.className = 'a7b8c'; hSrch.textContent = 'Search';
-        var rSrch = document.createElement('div');
+        var rSrch = mk('div');
         rSrch.className = 'd9e0f';
-        var lSrch = document.createElement('div');
+        var lSrch = mk('div');
         lSrch.className = 'g1h2i'; lSrch.innerHTML = '<div class="j3k4l">search engine</div><div class="m5n6o"></div>';
-        var selSrch = document.createElement('select');
+        var selSrch = mk('select');
         selSrch.className = 's9t0u';
         var engines = [{v:"https://duckduckgo.com/search?q=%s",n:'DuckDuckGo'},{v:"https://www.google.com/search?q=%s",n:'Google'},{v:"https://www.bing.com/search?q=%s",n:'Bing'},{v:"https://search.brave.com/search?q=%s",n:'Brave'}];
         engines.forEach(function(o) {
-            var op = document.createElement('option');
+            var op = mk('option');
             op.value = o.v; op.textContent = o.n;
             if (o.v === searchEngine) op.selected = true;
             selSrch.appendChild(op);
         });
         rSrch.appendChild(lSrch); rSrch.appendChild(selSrch); secSrch.appendChild(hSrch); secSrch.appendChild(rSrch);
 
-        var secAct = document.createElement('div');
+        var secAct = mk('div');
         secAct.className = 'x5y6z';
-        var hAct = document.createElement('div');
+        var hAct = mk('div');
         hAct.className = 'a7b8c'; hAct.textContent = 'Actions';
-        var rAct = document.createElement('div');
+        var rAct = mk('div');
         rAct.className = 'd9e0f';
-        var lAct = document.createElement('div');
+        var lAct = mk('div');
         lAct.className = 'g1h2i'; lAct.innerHTML = '<div class="j3k4l">Save settings</div><div class="m5n6o">apply + refresh stuff + save changes</div>';
-        var saveBtn = document.createElement('button');
+        var saveBtn = mk('button');
         saveBtn.className = 'v1w2x'; saveBtn.textContent = 'Save';
         saveBtn.onclick = function() {
             var v = inpNet.value.trim();
