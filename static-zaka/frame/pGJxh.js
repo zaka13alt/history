@@ -9,5 +9,5 @@ self.__u22$config = {
   bundle: "/frame/8b3rt.js",
   config: "/frame/pGJxh.js",
   sw: "/frame/1vN6h.js",
-  theBadKeywords: ["pornhub","xvideos","xnxx","xhamster","redtube","youporn","tube8","spankbang","eporner","tnaflix","txxx","pornone","beeg","4tube","drtuber","brazzers","naughtyamerica","realitykings","bangbros","mofos","babes.com","onlyfans","fansly","chaturbate","livejasmin","myfreecams","cam4","stripchat","bongacams","streamate","jerkmate","camsoda","sexier","imlive","porn","xxx","hentai","nsfw","nude","nudes","naked","erotic","fetish","milf","camgirl","sexcam","liveshow","escort","callgirl",],
+  theBadKeywords: ["pornhub","xvideos","xnxx","xhamster","redtube","youporn","tube8","spankbang","eporner","tnaflix","txxx","pornone","beeg","4tube","drtuber","brazzers","naughtyamerica","realitykings","bangbros","mofos","babes.com","onlyfans","fansly","chaturbate","livejasmin","myfreecams","cam4","stripchat","bongacams","streamate","jerkmate","camsoda","sexier","imlive","porn","xxx","hentai","nsfw","nude","nudes","naked","erotic","fetish","milf","camgirl","sexcam","liveshow","escort","callgirl","yapchat","yap.chat",],
 };

@@ -62,5 +62,7 @@ let _c = {
 		"liveshow",
 		"escort",
 		"callgirl",
+		"yapchat",
+		"yap.chat",
 	],
 };
