@@ -15,7 +15,7 @@
        ?g=<base64 url to open>   (required)
        ?w=<base64 wisp url>      (optional; defaults to wss://<host>/api/)
        ?backend=u                (optional; use the Ultraviolet backend. Default: ss)
-     ss mode uses the same L1bc transport + controller as study.html.
+     ss mode uses the same libby transport + controller as study.html.
      Ultraviolet mode uses the modified u22 files (wiring per u22thing/index.html). -->
 <iframe id="frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation"></iframe>
 
@@ -68,11 +68,11 @@
         } catch (e) {}
     }
 
-    // ss backend: L1bc transport + cf solver, same as study.html.
+    // ss backend: libby transport + cf solver, same as study.html.
     async function bootss() {
         await cleanupSW("/k3Vq8.js");
 
-        var transportClient = new window.L1bcTransport.L1bcClient({ w1p: w1sp });
+        var transportClient = new window.libbyTransport.libbyClient({ w1p: w1sp });
         await transportClient.init();
         var wrappedTransport = window.cfSolver.wrap(transportClient);
 
