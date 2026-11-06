@@ -76,6 +76,7 @@
 <script src="frame/pGJxh.js"></script>
 <script src="stuff/LyzaHBeO/hdr6ZzzC.js"></script>
 <script src="stuff/LyzaHBeO/msJpa98j.js"></script>
+<script src="js/zaka-newwin.js"></script>
 <script src=".assets/index-k9v3f1.js"></script>
 <script src=".assets/index-v8c4z2.js"></script>
 
@@ -284,7 +285,11 @@ window.addEventListener('resize', function() { ytTabs.forEach(resizeYT); });
 // Tab Creation
 function createFrame(tab) {
     if (tab.frame && tab.controller === controllerState.controller) return tab.frame;
-    var frame = controllerState.controller.createFrame(tab.iframe);
+    // No allow-popups on tab iframes: new-window links/window.open open as zaka tabs.
+    var nw = window.zakaNewWindowPlugin && window.zakaNewWindowPlugin(function (u) {
+        try { createTab(String(u)); } catch (e) { console.error(e); }
+    });
+    var frame = controllerState.controller.createFrame(tab.iframe, { plugins: nw ? [nw] : [] });
     if (!frame) throw new Error('createFrame returned null');
     tab.frame = frame;
     tab.controller = controllerState.controller;
@@ -327,7 +332,7 @@ function createTab(startUrl) {
 
     var iframe = document.createElement('iframe');
     iframe.className = 'k9l0m';
-    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
+    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
 
     var newTabPage = document.createElement('div');
     newTabPage.className = 'q3r4s';

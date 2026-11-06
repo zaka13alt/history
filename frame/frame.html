@@ -17,7 +17,7 @@
        ?backend=u                (optional; use the Ultraviolet backend. Default: ss)
      ss mode uses the same libby transport + controller as study.html.
      Ultraviolet mode uses the modified u22 files (wiring per u22thing/index.html). -->
-<iframe id="frame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation"></iframe>
+<iframe id="frame" sandbox="allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation"></iframe>
 
 <!-- Shared / u22 deps: x9K2m.js = W1I41 (bare-mux), 8b3rt.js = u22 core, pGJxh.js = __u22$config -->
 <script src="/frame/x9K2m.js"></script>
@@ -26,6 +26,7 @@
 <!-- ss deps -->
 <script src="/stuff/LyzaHBeO/hdr6ZzzC.js"></script>
 <script src="/stuff/LyzaHBeO/msJpa98j.js"></script>
+<script src="/js/zaka-newwin.js"></script>
 <script src="/.assets/index-k9v3f1.js"></script>
 <script src="/.assets/index-v8c4z2.js"></script>
 
@@ -96,7 +97,13 @@
         });
         await ctrl.wait();
 
-        var frame = ctrl.createFrame(iframe);
+        // No allow-popups on the iframe: new-window links/window.open open in another
+        // proxied frame.html tab (base64 ?g=), never the raw URL.
+        var nw = window.zakaNewWindowPlugin && window.zakaNewWindowPlugin(function (u) {
+            var b = btoa(unescape(encodeURIComponent(String(u))));
+            window.open("/frame/frame.html?g=" + encodeURIComponent(b), "_blank", "noopener");
+        });
+        var frame = ctrl.createFrame(iframe, { plugins: nw ? [nw] : [] });
         if (!frame) throw new Error("createFrame returned null");
         frame.go(gotoUrl);
     }
