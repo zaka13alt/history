@@ -4,7 +4,7 @@
 set -e
 
 REPO_URL="https://github.com/zaka13alt/history"
-# FIX 1: Set correct directory cloned by Git ('history' instead of 'REPO')
+# FIX: Set correct directory cloned by Git ('history' instead of 'REPO')
 REPO_DIR="history" 
 
 echo "Starting script..."
@@ -20,7 +20,6 @@ if [ -d "$REPO_DIR" ]; then
     echo "Repository directory already exists. Pulling latest updates..."
     cd "$REPO_DIR"
     git pull
-    # FIX 2: Return using absolute tracking instead of risky 'cd ..'
     cd "$SCRIPT_START_DIR"
 else
     echo "Cloning GitHub repository..."
@@ -58,7 +57,6 @@ fi
 
 # 3. Go to the node/ directory, handle npm install and PM2
 echo "Navigating to node directory..."
-# FIX 3: Force absolute reference evaluation to avoid directory offsets
 cd "$SCRIPT_START_DIR/$REPO_DIR/node"
 
 echo "Running npm install..."
@@ -87,7 +85,6 @@ pm2 save
 
 # Configure PM2 to run on system boot automatically
 echo "Configuring PM2 to start on system boot..."
-# FIX 4: Filter out text warnings from pm2 startup to isolate execution command
 STARTUP_CMD=$(pm2 startup | grep -v "\[PM2\]" | tail -n 1)
 if [ -n "$STARTUP_CMD" ]; then
     eval "$STARTUP_CMD"
@@ -95,7 +92,6 @@ fi
 
 # 4. Go to root, find Caddyfile, and install Caddy
 echo "Returning to project root directory..."
-# FIX 5: Use explicit baseline path tracking
 PROJECT_ROOT_ABS="$SCRIPT_START_DIR/$REPO_DIR"
 cd "$PROJECT_ROOT_ABS"
 
@@ -118,20 +114,32 @@ fi
 echo "Detecting platform and installing Caddy..."
 if [[ "$OS_TYPE" == "linux" ]]; then
     if command -v apt-get &> /dev/null; then
-        # Debian/Ubuntu strings reconstruction
+        # Debian/Ubuntu 
+        # FIX: URL split into 4 parts exactly matching your configuration block
         PART1="https://dl."
         PART2="cloudsmith.io/"
         PART3="public/caddy/"
         PART4="stable/"
-        GPG_FILE="debian.gpg.key"
-        LIST_FILE="debian.deb.txt"
+        GPG_FILE="gpg.key"
+        
         FULL_GPG_URL="${PART1}${PART2}${PART3}${PART4}${GPG_FILE}"
-        FULL_LIST_URL="${PART1}${PART2}${PART3}${PART4}${LIST_FILE}"
+        REPO_BASE_URL="${PART1}${PART2}${PART3}${PART4}deb/debian"
         
         echo "Installing Caddy via APT..."
         sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl
+        
+        # Download and dearmor the key cleanly
         curl -1sLf "$FULL_GPG_URL" | sudo gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-        curl -1sLf "$FULL_LIST_URL" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+        
+        # Fallback block to guard against zero-byte HTML responses
+        if [ ! -s /usr/share/keyrings/caddy-stable-archive-keyring.gpg ] || [ $(stat -c%s /usr/share/keyrings/caddy-stable-archive-keyring.gpg) -lt 500 ]; then
+            echo "Cloudsmith key file download failed or returned invalid data. Using keyserver fallback..."
+            sudo gpg --no-default-keyring --keyring /usr/share/keyrings/caddy-stable-archive-keyring.gpg --keyserver hkp://://ubuntu.com --recv-keys 6572BBEF1B5DF28F || true
+        fi
+
+        # Register repo with the split parts
+        echo "deb [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.gpg] ${REPO_BASE_URL} any main" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+        
         sudo apt-get update
         sudo apt-get install caddy -y
     elif command -v dnf &> /dev/null; then
