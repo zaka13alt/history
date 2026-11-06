@@ -112,30 +112,33 @@ fi
 # Install Caddy based on the platform
 echo "Detecting platform and installing Caddy..."
 if [[ "$OS_TYPE" == "linux" ]]; then
-    # Determine machine architecture (amd64 / arm64)
-    ARCH_TYPE=$(uname -m)
-    CADDY_ARCH="amd64"
-    if [[ "$ARCH_TYPE" == "aarch64" || "$ARCH_TYPE" == "arm64" ]]; then
-        CADDY_ARCH="arm64"
+    if command -v apt-get &> /dev/null; then
+        echo "Installing Caddy via official stable APT repository..."
+        
+        # Install prerequisites
+        sudo apt-get update
+        sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl
+        
+        # FIX: Complete, unified single-piece URLs with no internal variable fragmentation
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+        curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list > /dev/null
+        
+        sudo chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+        sudo chmod o+r /etc/apt/sources.list.d/caddy-stable.list
+        
+        sudo apt-get update
+        sudo apt-get install caddy -y
+        
+    elif command -v dnf &> /dev/null; then
+        # RHEL/CentOS/Fedora
+        echo "Installing Caddy via DNF..."
+        sudo dnf install -y 'dnf-command(copr)'
+        sudo dnf copr enable -y @caddy/caddy
+        sudo dnf install -y caddy
+    else
+        echo "Unsupported Linux distribution. Please install Caddy manually."
+        exit 1
     fi
-
-    CADDY_VER="2.11.8"
-    echo "Downloading pre-compiled static Caddy binary directly from GitHub releases ($CADDY_ARCH)..."
-    
-    # FIX: Clean, uninterrupted URL string wrapped tightly in double quotes to prevent resolution failures.
-    CADDY_DOWNLOAD_URL="https://github.com{CADDY_VER}/caddy_${CADDY_VER}_linux_${CADDY_ARCH}.tar.gz"
-    
-    curl -L "$CADDY_DOWNLOAD_URL" -o caddy.tar.gz
-    
-    # Extract binary, place into path, clean up setup context
-    tar -xzf caddy.tar.gz caddy
-    sudo mv caddy /usr/bin/caddy
-    sudo chmod +x /usr/bin/caddy
-    rm -f caddy.tar.gz
-    
-    # Clean up old broken repo configs to prevent future systemic package warnings
-    sudo rm -f /etc/apt/sources.list.d/caddy-stable.list
-    
 elif [[ "$OS_TYPE" == "darwin" ]]; then
     # macOS
     if command -v brew &> /dev/null; then
@@ -211,4 +214,4 @@ else
     echo "No recognized firewall utility found (UFW/Firewalld). Ensure ports 80 and 443 are open manually."
 fi
 
-echo "Deployment script executed successfully! Caddy version $(caddy version) is live."
+echo "Deployment script executed successfully!"
