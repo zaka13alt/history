@@ -310,11 +310,8 @@ export function createChat(auth) {
       return true;
     }
 
-    if (bans.has(username.toLowerCase())) {
-      socket.end("HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n");
-      return true;
-    }
-
+    // Upgrade even when banned so the connection handler can close with 4003,
+    // allowing the client to distinguish a ban from an expired/invalid session.
     wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, username));
     return true;
   }
