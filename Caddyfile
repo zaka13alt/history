@@ -1,4 +1,6 @@
 {
+	# Caddy asks this before issuing an on-demand cert; anything but 2xx is
+	# refused. See /internal-check in the localhost site at the bottom.
 	on_demand_tls {
 		ask http://localhost/internal-check
 	}
@@ -17,13 +19,20 @@
 # Host-based denials. These are handle blocks (not bare respond) so they run
 # before every other handle; a bare respond is ordered after handle and never fired.
 (deny_hosts) {
-	@tooLong header_regexp Host ^.{61,}$
+	# Hostnames over 60 chars, and wildcard-DNS hostnames (nip.io, sslip.io,
+	# anyip.dev, ... or anything embedding an IPv4 address): drop the
+	# connection with no response. /internal-check refuses certs for the same.
+	@tooLong header_regexp Host ^[^:]{61,}(:[0-9]+)?$
+	@wildcardDns header_regexp Host (?i)(^|\.)(nip\.io|sslip\.io|xip\.io|nip\.direct|sslip\.net|traefik\.me|lvh\.me|localtest\.me|vcap\.me|lacolhost\.com|localhost\.direct|local\.gd|anyip\.dev|ip\.addr\.tools|backname\.io|fuf\.me|plesk\.page|nip\.lol|hipio\.io|ipq\.co)(:[0-9]+)?$|(^|[.-])[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[a-z]|(^|[.-])[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}\.[a-z]
 	@whm header Host *whm*
 	@cpanel header Host *cpanel*
 	@login header Host *login*
 
 	handle @tooLong {
-		respond "Request denied" 493
+		abort
+	}
+	handle @wildcardDns {
+		abort
 	}
 	handle @whm {
 		respond "Request denied" 493
@@ -451,7 +460,13 @@ http://:4000 {
 # localhost: on-demand TLS ask check, FlareSolverr, and static files.
 # This site wins over :80 for Host: localhost, so localhost routes must live here.
 http://localhost, http://127.0.0.1 {
+	# On-demand TLS gate (Caddy calls it with ?domain=<host>): no certs for
+	# hostnames over 60 chars or for wildcard-DNS hostnames.
+	@askTooLong expression `{http.request.uri.query.domain}.size() > 60`
+	@askWildcard expression `{http.request.uri.query.domain}.matches(r'(?i)(^|\.)(nip\.io|sslip\.io|xip\.io|nip\.direct|sslip\.net|traefik\.me|lvh\.me|localtest\.me|vcap\.me|lacolhost\.com|localhost\.direct|local\.gd|anyip\.dev|ip\.addr\.tools|backname\.io|fuf\.me|plesk\.page|nip\.lol|hipio\.io|ipq\.co)$|(^|[.-])[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[a-z]|(^|[.-])[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}-[0-9]{1,3}\.[a-z]')`
 	handle /internal-check {
+		respond @askTooLong "refused: hostname over 60 characters" 403
+		respond @askWildcard "refused: wildcard DNS hostname" 403
 		respond 200
 	}
 
