@@ -8,8 +8,8 @@ const HISTORY_MAX = 50;
 const RATE_WINDOW_MS = 3000;
 const RATE_MAX = 5;
 const PING_INTERVAL_MS = 30000;
-const HISTORY_FILE = new URL("./chat-history.json", import.meta.url);
-const MOD_FILE = new URL("./chat-mod.json", import.meta.url);
+const HISTORY_FILE = new URL("chat-history.json", import.meta.url);
+const MOD_FILE = new URL("chat-mod.json", import.meta.url);
 
 // Text channels.
 const CHANNELS = ["general", "games", "proxies", "offtopic"];
