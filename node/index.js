@@ -11,10 +11,10 @@ const userConfig = JSON.parse(
   readFileSync(new URL("./config.json", import.meta.url), "utf8")
 );
 
-// epoxy-server listens on 127.0.0.1:6001; the main app on :3000 forwards
+// epoxy-server listens on 127.0.0.1:4444; the main app on :3000 forwards
 // /wisp/ WebSocket upgrades to it.
 const EPOXY_HOST = "127.0.0.1";
-const EPOXY_PORT = 6001;
+const EPOXY_PORT = 4444;
 const APP_PORT = 3000;
 
 const wisp = new EpoxyServer({
