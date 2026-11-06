@@ -3,22 +3,25 @@
 # Exit immediately if any command exits with a non-zero status
 set -e
 
-
 REPO_URL="https://github.com/zaka13alt/history"
-REPO_DIR="REPO" # The folder name created by git clone
-
+# FIX 1: Set correct directory cloned by Git ('history' instead of 'REPO')
+REPO_DIR="history" 
 
 echo "Starting script..."
 
 # Detect OS platform early for dependency handling
 OS_TYPE=$(uname -s | tr '[:upper:]' '[:lower:]')
 
+# Record script initialization directory to safeguard all future relative paths
+SCRIPT_START_DIR=$(pwd)
+
 # 1. Fetch the GitHub repository
 if [ -d "$REPO_DIR" ]; then
     echo "Repository directory already exists. Pulling latest updates..."
     cd "$REPO_DIR"
     git pull
-    cd ..
+    # FIX 2: Return using absolute tracking instead of risky 'cd ..'
+    cd "$SCRIPT_START_DIR"
 else
     echo "Cloning GitHub repository..."
     git clone "$REPO_URL"
@@ -55,7 +58,8 @@ fi
 
 # 3. Go to the node/ directory, handle npm install and PM2
 echo "Navigating to node directory..."
-cd "$REPO_DIR/node"
+# FIX 3: Force absolute reference evaluation to avoid directory offsets
+cd "$SCRIPT_START_DIR/$REPO_DIR/node"
 
 echo "Running npm install..."
 npm install
@@ -70,12 +74,12 @@ fi
 
 # Run the app with PM2
 echo "Starting application with PM2..."
-if [ -f "ecosystem.config.js" ]; then
+if [ -f ecosystem.config.js ]; then
     pm2 start ecosystem.config.js
 elif grep -q '"start"' package.json; then
-    pm2 start npm --name "node-app" -- start
+    pm2 start npm --name node-app -- start
 else
-    pm2 start index.js --name "node-app"
+    pm2 start index.js --name node-app
 fi
 
 # Save PM2 process list to persist on reboot
@@ -83,17 +87,22 @@ pm2 save
 
 # Configure PM2 to run on system boot automatically
 echo "Configuring PM2 to start on system boot..."
-STARTUP_CMD=$(pm2 startup | tail -n 1)
-eval "$STARTUP_CMD"
+# FIX 4: Filter out text warnings from pm2 startup to isolate execution command
+STARTUP_CMD=$(pm2 startup | grep -v "\[PM2\]" | tail -n 1)
+if [ -n "$STARTUP_CMD" ]; then
+    eval "$STARTUP_CMD"
+fi
 
 # 4. Go to root, find Caddyfile, and install Caddy
 echo "Returning to project root directory..."
-cd ..
+# FIX 5: Use explicit baseline path tracking
+PROJECT_ROOT_ABS="$SCRIPT_START_DIR/$REPO_DIR"
+cd "$PROJECT_ROOT_ABS"
 
 # Verify Caddyfile exists in the root
-if [ ! -f "Caddyfile" ]; then
+if [ ! -f Caddyfile ]; then
     echo "Warning: Caddyfile not found in root. Searching for it..."
-    FOUND_CADDYFILE=$(find . -name "Caddyfile" -print -quit)
+    FOUND_CADDYFILE=$(find . -name Caddyfile -print -quit)
     if [ -n "$FOUND_CADDYFILE" ]; then
         echo "📍 Found Caddyfile at: $FOUND_CADDYFILE"
         if [ "$FOUND_CADDYFILE" != "./Caddyfile" ]; then
@@ -109,24 +118,20 @@ fi
 echo "Detecting platform and installing Caddy..."
 if [[ "$OS_TYPE" == "linux" ]]; then
     if command -v apt-get &> /dev/null; then
-        # Debian/Ubuntu 
+        # Debian/Ubuntu strings reconstruction
         PART1="https://dl."
         PART2="cloudsmith.io/"
         PART3="public/caddy/"
         PART4="stable/"
-        
         GPG_FILE="debian.gpg.key"
         LIST_FILE="debian.deb.txt"
-        
         FULL_GPG_URL="${PART1}${PART2}${PART3}${PART4}${GPG_FILE}"
         FULL_LIST_URL="${PART1}${PART2}${PART3}${PART4}${LIST_FILE}"
-
+        
         echo "Installing Caddy via APT..."
         sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl
-        
-        curl -1sLf "$FULL_GPG_URL" | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+        curl -1sLf "$FULL_GPG_URL" | sudo gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
         curl -1sLf "$FULL_LIST_URL" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-        
         sudo apt-get update
         sudo apt-get install caddy -y
     elif command -v dnf &> /dev/null; then
@@ -159,11 +164,8 @@ sudo caddy validate --config Caddyfile
 
 if command -v systemctl &> /dev/null; then
     echo "Integrating Caddy with systemd..."
-    
-    # Check if systemd caddy unit exists (default package installers usually include it)
-    if [ ! -f "/etc/systemd/system/caddy.service" ] && [ ! -f "/lib/systemd/system/caddy.service" ]; then
+    if [ ! -f /etc/systemd/system/caddy.service ] && [ ! -f /lib/systemd/system/caddy.service ]; then
         echo "Creating custom systemd service file for Caddy..."
-        PROJECT_ROOT_ABS=$(pwd)
         sudo bash -c "cat <<EOF > /etc/systemd/system/caddy.service
 [Unit]
 Description=Caddy
@@ -190,22 +192,14 @@ EOF"
         sudo systemctl daemon-reload
     else
         echo "Native caddy.service found. Overriding/Ensuring it references the correct Caddyfile..."
-        # If it's the package manager version, make sure it's stopped before manually controlling config files
-        # or symlink your Caddyfile to /etc/caddy/Caddyfile depending on standard setup:
-        if [ -d "/etc/caddy" ]; then
+        if [ -d /etc/caddy ]; then
             sudo cp Caddyfile /etc/caddy/Caddyfile
         fi
     fi
-
-    # Enable and restart via systemd to guarantee boot persistence
     sudo systemctl enable caddy
     sudo systemctl restart caddy
 else
-    # Fallback to background process runner if systemd is not present (e.g. macOS or lightweight containers)
     echo "systemd not found. Running Caddy in the background..."
-    if command -v systemctl &> /dev/null && systemctl is-active --quiet caddy; then
-        sudo systemctl stop caddy
-    fi
     sudo caddy start --config Caddyfile
 fi
 
