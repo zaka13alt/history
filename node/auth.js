@@ -83,9 +83,9 @@ export function createAuth() {
 
   async function handleHttp(req, res) {
     const { pathname } = new URL(req.url, "http://localhost");
-    const isSignup = pathname === "/chat/signup";
-    const isLogin = pathname === "/chat/login";
-    const isLogout = pathname === "/chat/logout";
+    const isSignup = pathname === "/chat/signup" || pathname === "/chat/signup/";
+    const isLogin = pathname === "/chat/login" || pathname === "/chat/login/";
+    const isLogout = pathname === "/chat/logout" || pathname === "/chat/logout/";
     if (!isSignup && !isLogin && !isLogout) return false;
 
     if (req.method !== "POST") { res.setHeader("Allow", "POST"); send(res, 405, { ok: false, error: "Method not allowed" }); return true; }
