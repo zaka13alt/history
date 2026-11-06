@@ -263,10 +263,12 @@
       socket.onmessage = function (e) {
         if (ws !== socket) return;
         var data; try { data = JSON.parse(e.data); } catch (_) { return; }
-        if (data.type === "welcome") {
+        if (data.type === "welcome" || data.type === "role") {
           myRole = data.role || "member";
-          renderChannels(data.channels || []);
-          setActiveChannel(data.channel || "general");
+          if (data.type === "welcome") {
+            renderChannels(data.channels || []);
+            setActiveChannel(data.channel || "general");
+          }
           whoEl.innerHTML = "";
           whoEl.appendChild(document.createTextNode("@" + myName));
           if (myRole === "owner" || myRole === "admin") { var bb = document.createElement("span"); bb.className = "badge " + myRole; bb.textContent = myRole; whoEl.appendChild(bb); }

@@ -5,8 +5,14 @@ import { readFileSync, writeFileSync } from "node:fs";
 // moderation commands (/ban, /timeout, ...). Auth (username) comes from auth.js.
 const MSG_MAX = 500;
 const HISTORY_MAX = 50;
-const RATE_WINDOW_MS = 3000;
+// Anti-spam (per user, shared across all their tabs/sockets).
+const RATE_WINDOW_MS = 5000; // at most RATE_MAX messages per window
 const RATE_MAX = 5;
+const MIN_GAP_MS = 600; // minimum time between two messages
+const DUP_WINDOW_MS = 30000; // same text can't be repeated within this window
+const STRIKE_WINDOW_MS = 30000; // this many spam strikes in the window...
+const STRIKE_MAX = 3;
+const AUTO_TIMEOUT_S = 60; // ...earns an automatic timeout
 const PING_INTERVAL_MS = 30000;
 const HISTORY_FILE = new URL("chat-history.json", import.meta.url);
 const MOD_FILE = new URL("chat-mod.json", import.meta.url);
@@ -20,7 +26,13 @@ const DEFAULT_CHANNEL = "general";
 const ROLES = { zakaontop: "owner" };
 const RANK = { member: 0, admin: 1, owner: 2 };
 
-const roleOf = (u) => ROLES[String(u).toLowerCase()] || "member";
+// Users promoted with /mod (lowercase usernames), persisted in chat-mod.json.
+const mods = new Set();
+
+const roleOf = (u) => {
+  const k = String(u).toLowerCase();
+  return ROLES[k] || (mods.has(k) ? "admin" : "member");
+};
 const rankOf = (u) => RANK[roleOf(u)];
 
 const BAD_WORDS = ["fuck", "shit", "bitch", "asshole", "cunt", "nigger", "faggot"];
@@ -60,6 +72,7 @@ export function createChat(auth) {
   try {
     const mod = JSON.parse(readFileSync(MOD_FILE, "utf8"));
     if (mod && Array.isArray(mod.bans)) mod.bans.forEach((u) => bans.add(String(u).toLowerCase()));
+    if (mod && Array.isArray(mod.mods)) mod.mods.forEach((u) => mods.add(String(u).toLowerCase()));
     if (mod && mod.timeouts)
       for (const k in mod.timeouts) if (mod.timeouts[k] > Date.now()) timeouts.set(k, mod.timeouts[k]);
   } catch {
@@ -90,13 +103,58 @@ export function createChat(auth) {
         if (v > Date.now()) t[k] = v;
       });
       try {
-        writeFileSync(MOD_FILE, JSON.stringify({ bans: [...bans], timeouts: t }));
+        writeFileSync(MOD_FILE, JSON.stringify({ bans: [...bans], mods: [...mods], timeouts: t }));
       } catch (e) {
         console.error("chat mod persist:", e.message);
       }
     }, 300);
     modTimer.unref?.();
   };
+
+  // lowercase username -> { times: [], last: [{text, ts}], strikes: [] }
+  const spam = new Map();
+  const spamState = (u) => {
+    let s = spam.get(u);
+    if (!s) spam.set(u, (s = { times: [], last: [], strikes: [] }));
+    return s;
+  };
+  // Returns an error string if the message should be blocked, else null.
+  function checkSpam(username, text) {
+    const u = username.toLowerCase();
+    const s = spamState(u);
+    const now = Date.now();
+    s.times = s.times.filter((t) => now - t < RATE_WINDOW_MS);
+    s.last = s.last.filter((m) => now - m.ts < DUP_WINDOW_MS);
+    const norm = text.toLowerCase().replace(/\s+/g, " ");
+
+    let reason = null;
+    if (s.times.length && now - s.times[s.times.length - 1] < MIN_GAP_MS) reason = "Slow down a little.";
+    else if (s.times.length >= RATE_MAX) reason = "You're sending messages too fast.";
+    else if (s.last.some((m) => m.text === norm)) reason = "Don't repeat the same message.";
+
+    if (!reason) {
+      s.times.push(now);
+      s.last.push({ text: norm, ts: now });
+      if (s.last.length > 5) s.last.shift();
+      return null;
+    }
+
+    s.strikes = s.strikes.filter((t) => now - t < STRIKE_WINDOW_MS);
+    s.strikes.push(now);
+    if (s.strikes.length >= STRIKE_MAX && rankOf(username) < RANK.admin) {
+      s.strikes = [];
+      timeouts.set(u, now + AUTO_TIMEOUT_S * 1000);
+      persistMod();
+      return "You've been timed out for " + AUTO_TIMEOUT_S + "s for spamming.";
+    }
+    return reason;
+  }
+
+  setInterval(() => {
+    const now = Date.now();
+    for (const [u, s] of spam)
+      if (!s.times.some((t) => now - t < DUP_WINDOW_MS) && !s.strikes.some((t) => now - t < STRIKE_WINDOW_MS)) spam.delete(u);
+  }, 60000).unref();
 
   const sendTo = (ws, obj) => {
     if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(obj));
@@ -131,13 +189,56 @@ export function createChat(auth) {
       }
   }
 
+  // Push a role change to all of a user's open sockets.
+  function refreshRole(username) {
+    const u = username.toLowerCase();
+    const role = roleOf(username);
+    for (const c of wss.clients)
+      if (c.username && c.username.toLowerCase() === u) {
+        c.role = role;
+        sendTo(c, { type: "role", role });
+      }
+  }
+
   function handleCommand(ws, raw) {
     const parts = raw.slice(1).trim().split(/\s+/);
     const cmd = (parts[0] || "").toLowerCase();
     const isMod = rankOf(ws.username) >= RANK.admin;
+    const isOwner = rankOf(ws.username) >= RANK.owner;
 
     if (cmd === "help") {
-      sysTo(ws, "Commands: /help" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user>" : ""));
+      sysTo(ws, "Commands: /help" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
+      return;
+    }
+
+    if (cmd === "mod" || cmd === "unmod") {
+      if (!isOwner) {
+        sysTo(ws, "Only the owner can use that command.");
+        return;
+      }
+      const target = parts[1];
+      if (!target) {
+        sysTo(ws, "Usage: /" + cmd + " <username>");
+        return;
+      }
+      const tu = target.toLowerCase();
+      if (ROLES[tu]) {
+        sysTo(ws, target + " already has a hardcoded role (" + ROLES[tu] + ").");
+        return;
+      }
+      if (cmd === "mod") {
+        if (mods.has(tu)) return sysTo(ws, target + " is already a mod.");
+        mods.add(tu);
+        persistMod();
+        refreshRole(target);
+        sysChannel(ws.channel, target + " was made a mod by " + ws.username + ".");
+      } else {
+        if (!mods.has(tu)) return sysTo(ws, target + " isn't a mod.");
+        mods.delete(tu);
+        persistMod();
+        refreshRole(target);
+        sysChannel(ws.channel, target + " is no longer a mod.");
+      }
       return;
     }
 
@@ -185,7 +286,6 @@ export function createChat(auth) {
     ws.username = username;
     ws.role = roleOf(username);
     ws.channel = DEFAULT_CHANNEL;
-    ws.msgTimes = [];
     ws.isAlive = true;
 
     ws.on("pong", () => {
@@ -240,13 +340,12 @@ export function createChat(auth) {
         return;
       }
 
-      const now = Date.now();
-      ws.msgTimes = ws.msgTimes.filter((t) => now - t < RATE_WINDOW_MS);
-      if (ws.msgTimes.length >= RATE_MAX) {
-        sysTo(ws, "You're sending messages too fast.");
+      const spamErr = checkSpam(username, text);
+      if (spamErr) {
+        sysTo(ws, spamErr);
         return;
       }
-      ws.msgTimes.push(now);
+      const now = Date.now();
 
       const message = {
         type: "msg",

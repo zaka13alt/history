@@ -14,8 +14,6 @@ const MAX_BODY_BYTES = 4096;
 const USERNAME_RE = /^[A-Za-z0-9_-]{3,24}$/;
 const PW_MIN = 6;
 const PW_MAX = 128;
-const RATE_WINDOW_MS = 60000;
-const RATE_MAX = 20;
 
 function send(res, status, body) {
   res.writeHead(status, {
@@ -141,18 +139,6 @@ export function createAuth() {
     return session.username;
   };
 
-  const attempts = new Map();
-  const throttled = (ip) => {
-    const now = Date.now();
-    const recent = (attempts.get(ip) || []).filter(
-      (timestamp) => now - timestamp < RATE_WINDOW_MS
-    );
-
-    recent.push(now);
-    attempts.set(ip, recent);
-    return recent.length > RATE_MAX;
-  };
-
   async function handleHttp(req, res) {
     const { pathname } = new URL(req.url, "http://localhost");
     const isSignup = pathname === "/chat/signup" || pathname === "/chat/signup/";
@@ -193,12 +179,6 @@ export function createAuth() {
       }
 
       send(res, 200, { ok: true, username });
-      return true;
-    }
-
-    const ip = (req.headers["x-real-ip"] || req.socket.remoteAddress || "").toString();
-    if (throttled(ip)) {
-      send(res, 429, { ok: false, error: "Too many attempts, slow down." });
       return true;
     }
 
