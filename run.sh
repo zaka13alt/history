@@ -4,7 +4,6 @@
 set -e
 
 REPO_URL="https://github.com/zaka13alt/history"
-# FIX: Set correct directory cloned by Git ('history' instead of 'REPO')
 REPO_DIR="history" 
 
 echo "Starting script..."
@@ -113,45 +112,27 @@ fi
 # Install Caddy based on the platform
 echo "Detecting platform and installing Caddy..."
 if [[ "$OS_TYPE" == "linux" ]]; then
-    if command -v apt-get &> /dev/null; then
-        # Debian/Ubuntu 
-        # FIX: URL split into 4 parts exactly matching your configuration block
-        PART1="https://dl."
-        PART2="cloudsmith.io/"
-        PART3="public/caddy/"
-        PART4="stable/"
-        GPG_FILE="gpg.key"
-        
-        FULL_GPG_URL="${PART1}${PART2}${PART3}${PART4}${GPG_FILE}"
-        REPO_BASE_URL="${PART1}${PART2}${PART3}${PART4}deb/debian"
-        
-        echo "Installing Caddy via APT..."
-        sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl
-        
-        # Download and dearmor the key cleanly
-        curl -1sLf "$FULL_GPG_URL" | sudo gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-        
-        # Fallback block to guard against zero-byte HTML responses
-        if [ ! -s /usr/share/keyrings/caddy-stable-archive-keyring.gpg ] || [ $(stat -c%s /usr/share/keyrings/caddy-stable-archive-keyring.gpg) -lt 500 ]; then
-            echo "Cloudsmith key file download failed or returned invalid data. Using keyserver fallback..."
-            sudo gpg --no-default-keyring --keyring /usr/share/keyrings/caddy-stable-archive-keyring.gpg --keyserver hkp://://ubuntu.com --recv-keys 6572BBEF1B5DF28F || true
-        fi
-
-        # Register repo with the split parts
-        echo "deb [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.gpg] ${REPO_BASE_URL} any main" | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-        
-        sudo apt-get update
-        sudo apt-get install caddy -y
-    elif command -v dnf &> /dev/null; then
-        # RHEL/CentOS/Fedora
-        echo "Installing Caddy via DNF..."
-        sudo dnf install -y 'dnf-command(copr)'
-        sudo dnf copr enable -y @caddy/caddy
-        sudo dnf install -y caddy
-    else
-        echo "Unsupported Linux distribution. Please install Caddy manually."
-        exit 1
+    # Determine machine architecture (amd64 / arm64)
+    ARCH_TYPE=$(uname -m)
+    CADDY_ARCH="amd64"
+    if [[ "$ARCH_TYPE" == "aarch64" || "$ARCH_TYPE" == "arm64" ]]; then
+        CADDY_ARCH="arm64"
     fi
+
+    # UPDATED: Targets modern production milestone build (v2.11.8)
+    CADDY_VER="2.11.8"
+    echo "Downloading pre-compiled static Caddy binary directly from GitHub releases ($CADDY_ARCH)..."
+    curl -L "https://github.com{CADDY_VER}/caddy_${CADDY_VER}_linux_${CADDY_ARCH}.tar.gz" -o caddy.tar.gz
+    
+    # Extract binary, place into path, clean up setup context
+    tar -xzf caddy.tar.gz caddy
+    sudo mv caddy /usr/bin/caddy
+    sudo chmod +x /usr/bin/caddy
+    rm -f caddy.tar.gz
+    
+    # Clean up old broken repo configs to prevent future systemic package warnings
+    sudo rm -f /etc/apt/sources.list.d/caddy-stable.list
+    
 elif [[ "$OS_TYPE" == "darwin" ]]; then
     # macOS
     if command -v brew &> /dev/null; then
@@ -227,4 +208,4 @@ else
     echo "No recognized firewall utility found (UFW/Firewalld). Ensure ports 80 and 443 are open manually."
 fi
 
-echo "Deployment script executed successfully!"
+echo "Deployment script executed successfully! Caddy version $(caddy version) is live."
