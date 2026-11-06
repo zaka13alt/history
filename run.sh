@@ -3,7 +3,7 @@
 # Exit immediately if any command exits with a non-zero status
 set -e
 
-REPO_URL="https://github.com/zaka13alt/history"
+REPO_URL="https://github.com"
 REPO_DIR="history" 
 
 echo "Starting script..."
@@ -119,10 +119,13 @@ if [[ "$OS_TYPE" == "linux" ]]; then
         CADDY_ARCH="arm64"
     fi
 
-    # UPDATED: Targets modern production milestone build (v2.11.8)
     CADDY_VER="2.11.8"
     echo "Downloading pre-compiled static Caddy binary directly from GitHub releases ($CADDY_ARCH)..."
-    curl -L "https://github.com/caddyserver/caddy/releases/download/v2.11.8/caddy_2.11.8_linux_amd64.tar.gz" -o caddy.tar.gz
+    
+    # FIX: Clean, uninterrupted URL string wrapped tightly in double quotes to prevent resolution failures.
+    CADDY_DOWNLOAD_URL="https://github.com{CADDY_VER}/caddy_${CADDY_VER}_linux_${CADDY_ARCH}.tar.gz"
+    
+    curl -L "$CADDY_DOWNLOAD_URL" -o caddy.tar.gz
     
     # Extract binary, place into path, clean up setup context
     tar -xzf caddy.tar.gz caddy
