@@ -3,7 +3,7 @@
 # Exit immediately if any command exits with a non-zero status
 set -e
 
-REPO_URL="https://github.com"
+REPO_URL="https://github.com/zaka13alt/history"
 REPO_DIR="history" 
 
 echo "Starting script..."
