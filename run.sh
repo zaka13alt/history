@@ -122,7 +122,7 @@ if [[ "$OS_TYPE" == "linux" ]]; then
     # UPDATED: Targets modern production milestone build (v2.11.8)
     CADDY_VER="2.11.8"
     echo "Downloading pre-compiled static Caddy binary directly from GitHub releases ($CADDY_ARCH)..."
-    curl -L "https://github.com{CADDY_VER}/caddy_${CADDY_VER}_linux_${CADDY_ARCH}.tar.gz" -o caddy.tar.gz
+    curl -L "https://github.com/caddyserver/caddy/releases/download/v2.11.8/caddy_2.11.8_linux_amd64.tar.gz" -o caddy.tar.gz
     
     # Extract binary, place into path, clean up setup context
     tar -xzf caddy.tar.gz caddy
