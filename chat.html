@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
   (function () {
     "use strict";
     var authCard = document.getElementById("auth");
@@ -137,6 +137,7 @@
         if (!res.ok || !data.ok) throw new Error(data.error || ("HTTP " + res.status));
         token = data.token; myName = data.username; save();
         authPass.value = "";
+        everOpened = false; // Reset connection session flag for new authentication attempt
         showChat(); connect();
       } catch (err) { authErr.textContent = err.message; }
       finally { btnLogin.disabled = btnSignup.disabled = false; }
@@ -231,9 +232,18 @@
           addSystem(data.text);
         }
       };
-      ws.onclose = function () {
+      ws.onclose = function (e) {
         dot.classList.remove("on");
-        if (!everOpened) { clearAuth(); showAuth(); authErr.textContent = "Session expired or you were removed, please log in again."; return; }
+        
+        // Code 4003 is custom banned, clean eviction.
+        // If it never opened and wasn't manually logged out, drop session.
+        if (!everOpened || e.code === 4003) { 
+          clearAuth(); 
+          showAuth(); 
+          authErr.textContent = e.code === 4003 ? "You have been banned from this room." : "Session expired or you were removed, please log in again."; 
+          return; 
+        }
+        
         setTimeout(connect, delay); delay = Math.min(delay * 2, 15000);
       };
       ws.onerror = function () { try { ws.close(); } catch (_) {} };
@@ -252,5 +262,6 @@
     else { showAuth(); }
   })();
   </script>
+
 </body>
 </html>
