@@ -282,6 +282,66 @@ function openInNewTab(url) {
     try { createTab(String(url)); } catch (e) { console.error(e); }
 }
 
+// The tab iframes are sandboxed WITHOUT allow-popups, so the browser can never
+// open a real tab/window from proxied content (that leaked the real URL).
+// This plugin turns every "new window" intent inside a frame (target=_blank
+// links, ctrl/shift/middle-click, window.open) into a new zaka tab instead.
+function makeNewWindowPlugin() {
+    var MP = window.$K4q9p2XvController && window.$K4q9p2XvController.ManagedPlugin;
+    if (!MP) return null;
+    function opensNewWindow(doc, name) {
+        var n = String(name == null ? '' : name).trim();
+        var l = n.toLowerCase();
+        if (!n || l === '_self' || l === '_parent' || l === '_top' || l === '_unfencedtop') return false;
+        if (l === '_blank' || l === '_new') return true;
+        // A named target only stays in-page if a frame with that name exists.
+        try { return !doc.querySelector('iframe[name="' + n.replace(/"/g, '\\"') + '"],frame[name="' + n.replace(/"/g, '\\"') + '"]'); } catch (e) { return true; }
+    }
+    function resolve(ctx, raw) {
+        try {
+            var u = new URL(String(raw), ctx.client.url.href);
+            if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+            return u.href;
+        } catch (e) { return null; }
+    }
+    function hook(ctx) {
+        var w = ctx.window, doc = w && w.document;
+        if (!doc) return;
+        doc.addEventListener('click', onClick, false);
+        doc.addEventListener('auxclick', onClick, false);
+        function onClick(e) {
+            if (e.defaultPrevented || (e.button !== 0 && e.button !== 1)) return;
+            var a = e.target && e.target.closest ? e.target.closest('a[href],area[href]') : null;
+            if (!a) return;
+            var wantsNew = e.button === 1 || e.ctrlKey || e.metaKey || e.shiftKey ||
+                opensNewWindow(doc, a.getAttribute('target'));
+            if (!wantsNew) return;
+            var url = resolve(ctx, a.getAttribute('href'));
+            e.preventDefault();
+            if (url) openInNewTab(url);
+        }
+        var origOpen = w.open;
+        var zakaOpen = function (url, name, features) {
+            if (!opensNewWindow(doc, name == null ? '_blank' : name)) return origOpen.apply(this, arguments);
+            var real = (url == null || url === '') ? null : resolve(ctx, url);
+            if (real) openInNewTab(real);
+            return null;
+        };
+        try { Object.defineProperty(w, 'open', { value: zakaOpen, writable: true, configurable: true }); }
+        catch (e) { try { w.open = zakaOpen; } catch (e2) { console.warn('could not hook window.open', e2); } }
+    }
+    class NewWindowPlugin extends MP {
+        constructor() { super('zaka-new-window', []); }
+        install(e) {
+            if (super.install) super.install(e);
+            this.tap(e.hooks.init.post, function (ctx) {
+                try { hook(ctx); } catch (err) { console.error('new-window hook failed', err); }
+            });
+        }
+    }
+    return new NewWindowPlugin();
+}
+
 // Per-frame scramjet plugins from $K4q9p2XvUtils. Fresh instances per frame so
 // each one's callbacks can close over its own tab.
 function buildTabPlugins(tab) {
@@ -292,11 +352,15 @@ function buildTabPlugins(tab) {
         // Cache GET/HEAD responses in Cache Storage (respects cache-control).
         if (U.HttpCachePlugin) plugins.push(new U.HttpCachePlugin());
         // Links/navigations that would escape the proxy open as a new zaka tab.
+        // The plugin 302-redirects the escaping window to whatever we return, so
+        // never return the real URL (that loads it unproxied and leaks it); send
+        // that window to a same-origin page that just closes itself.
         if (U.CatchEscapedLinksPlugin) plugins.push(new U.CatchEscapedLinksPlugin(function (escapedUrl) {
-            var u = String(escapedUrl);
-            openInNewTab(u);
-            return u;
+            openInNewTab(String(escapedUrl));
+            return location.origin + '/__/escaped.html';
         }));
+        var nw = makeNewWindowPlugin();
+        if (nw) plugins.push(nw);
         // Keep the address bar in sync with the frame's real URL (clicks, history, redirects).
         if (U.UrlWatcherPlugin) plugins.push(new U.UrlWatcherPlugin(function (realUrl) {
             if (!tab) return;
@@ -356,7 +420,7 @@ function createTab(startUrl) {
 
     var iframe = document.createElement('iframe');
     iframe.className = 'k9l0m';
-    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
+    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
 
     var newTabPage = document.createElement('div');
     newTabPage.className = 'q3r4s';
