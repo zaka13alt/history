@@ -17,7 +17,7 @@ const DEFAULT_CHANNEL = "general";
 
 // Hardcoded roles by lowercase username. Everyone else is a member.
 // Add more like:  zaka: "owner",  someadmin: "admin",
-const ROLES = { zaka13: "owner" };
+const ROLES = { zakaontop: "owner" };
 const RANK = { member: 0, admin: 1, owner: 2 };
 const roleOf = (u) => ROLES[String(u).toLowerCase()] || "member";
 const rankOf = (u) => RANK[roleOf(u)];
