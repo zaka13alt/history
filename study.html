@@ -261,6 +261,36 @@ async function ensureController(w1sp) {
     return controllerState.initPromise;
 }
 
+// U(V) backend: SW at /frame/ (separate scope from the SJ SW at /), bare-mux
+// transport pointed at the same w13p server.
+var uvState = { w1sp: null, ready: null };
+async function ensureUV(w1sp) {
+    var reg = await navigator.serviceWorker.register('/frame/pLBYQ.js', { scope: '/frame/' });
+    if (!reg.active) {
+        await new Promise(function (resolve) {
+            var worker = reg.installing || reg.waiting;
+            if (!worker) return resolve();
+            worker.addEventListener('statechange', function () { if (worker.state === 'activated') resolve(); });
+        });
+    }
+    if (uvState.w1sp !== w1sp || !uvState.ready) {
+        uvState.w1sp = w1sp;
+        var conn = new window.W1I41.W1I41Connection('/frame/8hF6n.js');
+        uvState.ready = conn.setzIWyC('/frame/index-1OTY61e4.min.mjs', [{ WeZaN: w1sp }]);
+        uvState.ready.catch(function () { uvState.ready = null; });
+    }
+    await uvState.ready;
+}
+// Real URL of a U(V) frame: strip the prefix and xor-decode the rest.
+function uvRealUrl(iframe) {
+    try {
+        var loc = iframe.contentWindow.location;
+        var prefix = self.__u22$config.prefix;
+        if (loc.pathname.indexOf(prefix) !== 0) return null;
+        return u2.codec.xor.decode((loc.pathname + loc.search + loc.hash).slice(prefix.length));
+    } catch (e) { return null; }
+}
+
 // YouTube Layout Hook
 var ytTabs = new Set();
 function isYouTube(url) { try { return /(^|\.)youtube\.com$/.test(new URL(url).hostname); } catch(e) { return false; } }
@@ -522,11 +552,25 @@ function navigateTab(url, tabId) {
     var executeNav = async function() {
         try {
             if (backendMode === "ultrev") {
-                // Fallback to Ultravi0let mode if configured
-                await ensureController(w1spServer);
-                if (!tab.frame) tab.frame = controllerState.controller.createFrame(tab.iframe, { plugins: buildTabPlugins(tab) });
-                tab.frame.go(url);
+                await ensureUV(w1spServer);
+                tab.frame = null; tab.isUV = true;
+                if (!tab.uvWatch) {
+                    tab.uvWatch = true;
+                    tab.iframe.addEventListener('load', function () {
+                        if (!tab.isUV) return;
+                        var real = uvRealUrl(tab.iframe);
+                        if (!real || tab.isA1) return;
+                        tab.url = real;
+                        if (activeTabId !== tab.id) return;
+                        addrInput.value = real;
+                        updateLockIcon(real);
+                        try { tab.title.textContent = new URL(real).hostname; } catch (e) { tab.title.textContent = real; }
+                        applyFavicon(tab, real);
+                    });
+                }
+                tab.iframe.src = self.__u22$config.prefix + u2.codec.xor.encode(url);
             } else {
+                tab.isUV = false;
                 await navigateFrame(tab, url, w1spServer);
             }
             tab.iframe.classList.add('n1o2p');
@@ -602,6 +646,20 @@ function openSettings(tab) {
         });
         rSrch.appendChild(lSrch); rSrch.appendChild(selSrch); secSrch.appendChild(hSrch); secSrch.appendChild(rSrch);
 
+        var lBe = document.createElement('div');
+        lBe.className = 'g1h2i'; lBe.innerHTML = '<div class="j3k4l">backend</div><div class="m5n6o"></div>';
+        var selBe = document.createElement('select');
+        selBe.className = 's9t0u';
+        [{v:'default',n:'SJ v2 (default)'},{v:'ultrev',n:'U(V) 3.2.10'}].forEach(function(o) {
+            var op = document.createElement('option');
+            op.value = o.v; op.textContent = o.n;
+            if (o.v === backendMode) op.selected = true;
+            selBe.appendChild(op);
+        });
+        var rBe = document.createElement('div');
+        rBe.className = 'd9e0f';
+        rBe.appendChild(lBe); rBe.appendChild(selBe); secNet.appendChild(rBe);
+
         var secAct = document.createElement('div');
         secAct.className = 'x5y6z';
         var hAct = document.createElement('div');
@@ -617,6 +675,8 @@ function openSettings(tab) {
             if (v && v.startsWith('wss://')) { w1spServer = v; localStorage.setItem(storagew1sp, v); }
             searchEngine = selSrch.value;
             localStorage.setItem(storageSearch, searchEngine);
+            backendMode = selBe.value;
+            localStorage.setItem(storageBackend, backendMode);
             saveBtn.textContent = 'Saved';
             setTimeout(function() { saveBtn.textContent = 'Save'; }, 1200);
         };
@@ -664,8 +724,8 @@ addrInput.addEventListener('keydown', function(e) {
 });
 
 plusBtn.onclick = function() { createTab(); };
-backBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && t.frame && t.frame.go) { try { t.iframe.contentWindow.history.back(); } catch(e){} } };
-fwdBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && t.frame && t.frame.go) { try { t.iframe.contentWindow.history.forward(); } catch(e){} } };
+backBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && ((t.frame && t.frame.go) || t.isUV)) { try { t.iframe.contentWindow.history.back(); } catch(e){} } };
+fwdBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && ((t.frame && t.frame.go) || t.isUV)) { try { t.iframe.contentWindow.history.forward(); } catch(e){} } };
 reloadBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && t.url) navigateTab(t.url, activeTabId); };
 starBtn.onclick = function() { var i = starBtn.querySelector('i'); i.classList.toggle('fa-regular'); i.classList.toggle('fa-solid'); };
 settingsBtn.onclick = function() { var t = tabs.get(activeTabId); if (t) { t.url = settingsUrl; t.title.textContent = 's3ttin7gs'; openSettings(t); } };
