@@ -1023,7 +1023,7 @@ var l1bc = function() {
         throw new FS.ErrnoError(29);
       }
       if (result === void 0 && bytesRead === 0) {
-        throw new FS.ErrnoError(6);
+        throw (FS.genericErrors[6] || (FS.genericErrors[6] = new FS.ErrnoError(6)));
       }
       if (result === null || result === void 0) break;
       bytesRead++;
@@ -2238,21 +2238,15 @@ var l1bc = function() {
     if (FS.ErrnoError) return;
     FS.ErrnoError = function ErrnoError(errno, node) {
       this.node = node;
+      // perf: these are internal control-flow errors (EAGAIN on every socket poll). The debug
+      // build captured + demangled a stack trace and scanned every errno code per throw.
       this.setErrno = function(errno2) {
         this.errno = errno2;
-        for (var key in ERRNO_CODES) {
-          if (ERRNO_CODES[key] === errno2) {
-            this.code = key;
-            break;
-          }
-        }
+        if (!FS.__errnoNames) { FS.__errnoNames = {}; for (var key in ERRNO_CODES) if (!(ERRNO_CODES[key] in FS.__errnoNames)) FS.__errnoNames[ERRNO_CODES[key]] = key; }
+        this.code = FS.__errnoNames[errno2];
       };
       this.setErrno(errno);
       this.message = ERRNO_MESSAGES[errno];
-      if (this.stack) {
-        Object.defineProperty(this, "stack", { value: new Error().stack, writable: true });
-        this.stack = demangleAll(this.stack);
-      }
     };
     FS.ErrnoError.prototype = new Error();
     FS.ErrnoError.prototype.constructor = FS.ErrnoError;
@@ -2381,7 +2375,7 @@ var l1bc = function() {
           throw new FS.ErrnoError(29);
         }
         if (result === void 0 && bytesRead === 0) {
-          throw new FS.ErrnoError(6);
+          throw (FS.genericErrors[6] || (FS.genericErrors[6] = new FS.ErrnoError(6)));
         }
         if (result === null || result === void 0) break;
         bytesRead++;
@@ -3195,7 +3189,7 @@ var l1bc = function() {
       if (!dest || dest.socket.readyState === dest.socket.CLOSING || dest.socket.readyState === dest.socket.CLOSED) {
         throw new FS.ErrnoError(53);
       } else if (dest.socket.readyState === dest.socket.CONNECTING) {
-        throw new FS.ErrnoError(6);
+        throw (FS.genericErrors[6] || (FS.genericErrors[6] = new FS.ErrnoError(6)));
       }
     }
     if (ArrayBuffer.isView(buffer2)) {
@@ -3232,10 +3226,10 @@ var l1bc = function() {
         } else if (dest.socket.readyState === dest.socket.CLOSING || dest.socket.readyState === dest.socket.CLOSED) {
           return null;
         } else {
-          throw new FS.ErrnoError(6);
+          throw (FS.genericErrors[6] || (FS.genericErrors[6] = new FS.ErrnoError(6)));
         }
       } else {
-        throw new FS.ErrnoError(6);
+        throw (FS.genericErrors[6] || (FS.genericErrors[6] = new FS.ErrnoError(6)));
       }
     }
     var queuedLength = queued.data.byteLength || queued.data.length;
@@ -3758,7 +3752,7 @@ var l1bc = function() {
       return 0;
     }
     if (currentLength == 0) {
-      throw new FS.ErrnoError(6);
+      throw (FS.genericErrors[6] || (FS.genericErrors[6] = new FS.ErrnoError(6)));
     }
     var toRead = Math.min(currentLength, length);
     var totalRead = toRead;
