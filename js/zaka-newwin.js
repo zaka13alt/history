@@ -71,19 +71,46 @@
         var w = ctx.window, doc = w && w.document;
         if (!doc) return;
 
+        function linkOf(e) {
+            // Use the full event path so links inside shadow DOM are found too.
+            var path = e.composedPath ? e.composedPath() : [e.target];
+            for (var i = 0; i < path.length; i++) {
+                var el = path[i];
+                if (el && el.nodeType === 1 && (el.localName === "a" || el.localName === "area") && el.hasAttribute("href")) return el;
+            }
+            return null;
+        }
+        // Capture phase on the window: apps (e.g. Discord) handle link clicks themselves and
+        // may stopPropagation, so a bubbling document listener never saw the click and the
+        // sandbox silently blocked the new window. Decide after the page's handlers have run:
+        // if none of them handled it (preventDefault), open the zaka tab; if one did (say via
+        // window.open, which is hooked below), leave it alone so nothing opens twice.
         function onClick(e) {
-            if (e.defaultPrevented || (e.button !== 0 && e.button !== 1)) return;
-            var a = e.target && e.target.closest ? e.target.closest("a[href],area[href]") : null;
+            if (e.button !== 0 && e.button !== 1) return;
+            var a = linkOf(e);
             if (!a) return;
             var wantsNew = e.button === 1 || e.ctrlKey || e.metaKey || e.shiftKey ||
                 opensNewWindow(doc, a.getAttribute("target"));
             if (!wantsNew) return;
             var url = resolve(ctx, a.getAttribute("href"));
-            e.preventDefault();
-            if (url) onOpen(url);
+            if (!url) return;
+            setTimeout(function () { if (!e.defaultPrevented) onOpen(url); }, 0);
         }
-        doc.addEventListener("click", onClick, false);
-        doc.addEventListener("auxclick", onClick, false);
+        w.addEventListener("click", onClick, true);
+        w.addEventListener("auxclick", onClick, true);
+
+        // a.click() on a link that isn't in the page never reaches any listener.
+        try {
+            var proto = w.HTMLElement.prototype, nativeClick = proto.click;
+            proto.click = function () {
+                if ((this.localName === "a" || this.localName === "area") && !this.isConnected && this.hasAttribute("href") &&
+                    opensNewWindow(doc, this.getAttribute("target"))) {
+                    var url = resolve(ctx, this.getAttribute("href"));
+                    if (url) { onOpen(url); return; }
+                }
+                return nativeClick.apply(this, arguments);
+            };
+        } catch (e) {}
 
         // Forms that submit into a new window are blocked by the sandbox; at least
         // don't let them fail silently for GET forms.
@@ -103,7 +130,9 @@
 
         var origOpen = w.open;
         var zakaOpen = function (url, name, features) {
-            if (!opensNewWindow(doc, name == null ? "_blank" : name)) return origOpen.apply(this, arguments);
+            // An empty or missing name means a new window to the browser (url-opener.com
+            // calls window.open(url, "")), same as "_blank".
+            if (!opensNewWindow(doc, name == null || String(name) === "" ? "_blank" : name)) return origOpen.apply(this, arguments);
             var blank = url == null || url === "" || /^\s*about:blank\s*$/i.test(String(url));
             var win = fakeWindow(ctx, onOpen, blank ? null : resolve(ctx, url));
             // Like a real browser: noopener/noreferrer opens get no window handle back.
