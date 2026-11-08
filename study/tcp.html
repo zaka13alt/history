@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCP/IP - ITCode</title>
+<meta name="description" content="Packets, ports, connections, and how data gets reliably from A to B.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#networking">Networking</a> &rsaquo; TCP/IP</div>
+<article>
+<h1>TCP/IP</h1>
+<p class="lede">Underneath HTTP and almost everything else sits TCP/IP &mdash; the pair of protocols that move bytes across the internet without losing them.</p>
+
+<p>The internet is a <em>packet-switched</em> network: data is chopped into small packets, each routed independently, and reassembled at the far end. Two protocols do most of the work &mdash; <strong>IP</strong> handles addressing and routing, <strong>TCP</strong> handles reliability.</p>
+
+<h2>IP: addressing</h2>
+<p>Every device has an IP address. IPv4 looks like <code>192.168.1.10</code> (four bytes). IPv6 looks like <code>2001:db8::1</code> and exists because we ran out of IPv4 addresses. IP gets a packet <em>toward</em> a destination by hopping through routers, but it makes no promises &mdash; packets can arrive out of order, duplicated, or not at all.</p>
+
+<h2>TCP: reliability</h2>
+<p>TCP builds a dependable stream on top of unreliable IP. It:</p>
+<ul>
+<li>numbers every byte so the other side can reorder them,</li>
+<li>acknowledges what it received, and retransmits what went missing,</li>
+<li>uses <strong>flow control</strong> and <strong>congestion control</strong> so it does not overwhelm the receiver or the network.</li>
+</ul>
+
+<h2>The three-way handshake</h2>
+<p>Before any data flows, TCP sets up a connection:</p>
+<pre><code>Client  --- SYN --->        Server
+Client  <-- SYN/ACK --      Server
+Client  --- ACK --->        Server
+        (connection open)</code></pre>
+<p>This is why a brand-new connection has a little latency cost &mdash; a full round trip before the first byte of real data. (TLS then adds its own handshake on top; see the <a href="/study/tls.html">TLS tutorial</a>.)</p>
+
+<h2>Ports</h2>
+<p>An IP address finds the machine; a <strong>port</strong> finds the program on it. Some well-known ports:</p>
+<table>
+<tr><th>Port</th><th>Service</th></tr>
+<tr><td>80</td><td>HTTP</td></tr>
+<tr><td>443</td><td>HTTPS</td></tr>
+<tr><td>22</td><td>SSH</td></tr>
+<tr><td>53</td><td>DNS</td></tr>
+</table>
+
+<h2>TCP vs UDP</h2>
+<p>UDP is the no-promises alternative: fire a packet and hope. It has no handshake and no retransmission, which makes it fast and great for video calls, games, and DNS, where a slightly late packet is worse than a lost one. HTTP/3 actually runs over UDP (via QUIC) and rebuilds reliability itself.</p>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a><a href="/study/tls.html">TLS / HTTPS</a><a href="/study/websockets.html">WebSockets</a><a href="/study/python.html">Python</a><a href="/study/javascript.html">JavaScript</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

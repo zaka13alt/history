@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git - ITCode</title>
+<meta name="description" content="Commits, branches, and the everyday commands you will actually use.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#programming">Programming</a> &rsaquo; Git</div>
+<article>
+<h1>Git</h1>
+<p class="lede">Git records the history of your project so you can experiment freely, undo mistakes, and work with others.</p>
+
+<p>Git is a <strong>version control system</strong>. It snapshots your project over time, lets you branch off to try things, and merges work back together. Almost every software project uses it.</p>
+
+<h2>The three areas</h2>
+<p>A change moves through three places before it is shared:</p>
+<ol>
+<li>Your <strong>working directory</strong> &mdash; the files as they are right now.</li>
+<li>The <strong>staging area</strong> &mdash; changes you have marked for the next commit (<code>git add</code>).</li>
+<li>The <strong>repository</strong> &mdash; committed history (<code>git commit</code>).</li>
+</ol>
+
+<h2>Everyday commands</h2>
+<pre><code>git status                 # what has changed
+git add file.txt           # stage a change
+git add .                   # stage everything
+git commit -m "message"     # record a snapshot
+git log --oneline           # see history</code></pre>
+
+<h2>Branches</h2>
+<p>A branch is a movable pointer to a commit. Work on a feature without disturbing the main line:</p>
+<pre><code>git switch -c new-feature   # create and switch
+# ...make commits...
+git switch main
+git merge new-feature       # bring it back in</code></pre>
+
+<h2>Working with a remote</h2>
+<pre><code>git clone https://... repo   # copy a repo
+git pull                     # fetch + merge others' work
+git push                     # send your commits up</code></pre>
+
+<h2>Undoing things</h2>
+<table>
+<tr><th>You want to</th><th>Command</th></tr>
+<tr><td>Unstage a file</td><td><code>git restore --staged file</code></td></tr>
+<tr><td>Discard a change</td><td><code>git restore file</code></td></tr>
+<tr><td>Fix the last commit message</td><td><code>git commit --amend</code></td></tr>
+<tr><td>Undo a commit, keep changes</td><td><code>git reset HEAD~1</code></td></tr>
+</table>
+<div class="note"><strong>Commit often, in small pieces.</strong> A tidy history of focused commits is far easier to read, review, and bisect than one giant commit at the end of the day.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/python.html">Python</a><a href="/study/javascript.html">JavaScript</a><a href="/study/node.html">Node.js</a><a href="/study/html.html">HTML &amp; CSS</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

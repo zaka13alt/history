@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebSockets - ITCode</title>
+<meta name="description" content="Keeping a connection open for real-time, two-way communication.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#networking">Networking</a> &rsaquo; WebSockets</div>
+<article>
+<h1>WebSockets</h1>
+<p class="lede">HTTP is a one-shot request and reply. WebSockets keep the line open so the server can talk back whenever it wants.</p>
+
+<p>Normal HTTP is a monologue with a reply: you ask, the server answers, the connection is done. That is fine for loading a page, but awful for a chat app or a live scoreboard, where the <em>server</em> needs to push updates to <em>you</em>. WebSockets solve exactly that.</p>
+
+<h2>The upgrade</h2>
+<p>A WebSocket starts life as an ordinary HTTP request with a special header asking to switch protocols:</p>
+<pre><code>GET /chat HTTP/1.1
+Host: example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==</code></pre>
+<p>If the server agrees, it replies <code>101 Switching Protocols</code>, and from that point the same TCP connection is a full-duplex WebSocket &mdash; both sides can send <strong>frames</strong> at any time, with almost no per-message overhead.</p>
+
+<h2>Using one in the browser</h2>
+<pre><code>const ws = new WebSocket("wss://example.com/chat");
+
+ws.onopen = () => ws.send("hello");
+ws.onmessage = (e) => console.log("got:", e.data);
+ws.onclose = () => console.log("closed");</code></pre>
+<p>Note the <code>wss://</code> scheme &mdash; that is WebSocket over TLS, the encrypted version, just like <code>https</code> is to <code>http</code>.</p>
+
+<h2>When to reach for them</h2>
+<ul>
+<li>Chat and messaging.</li>
+<li>Live dashboards, prices, sports scores.</li>
+<li>Multiplayer games and collaborative editors.</li>
+<li>Anything where waiting for the client to ask again would feel laggy.</li>
+</ul>
+
+<h2>Alternatives</h2>
+<p>If you only need the server to push <em>to</em> the client (not both ways), <strong>Server-Sent Events</strong> are simpler and run over plain HTTP. For request/response with occasional pushes, long-polling still works. WebSockets win when traffic is genuinely two-way and frequent.</p>
+<div class="note"><strong>Heads up:</strong> a WebSocket that is idle for a while can be dropped by proxies or load balancers. Apps usually send a small <em>ping</em> frame every so often to keep it alive.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a><a href="/study/tcp.html">TCP/IP</a><a href="/study/tls.html">TLS / HTTPS</a><a href="/study/python.html">Python</a><a href="/study/javascript.html">JavaScript</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

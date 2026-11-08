@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python - ITCode</title>
+<meta name="description" content="A beginner-friendly tour of Python: values, control flow, and functions.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#programming">Programming</a> &rsaquo; Python</div>
+<article>
+<h1>Python</h1>
+<p class="lede">Python is readable, batteries-included, and everywhere &mdash; from quick scripts to data science. This is the core you need to start.</p>
+
+<p>Python&rsquo;s whole design goal is readability. Blocks are defined by indentation rather than braces, and the standard library is enormous, so a lot of what you want to do is already written.</p>
+
+<h2>Values and variables</h2>
+<pre><code>name = "Ada"          # str
+age = 36              # int
+height = 1.68         # float
+is_admin = False      # bool
+items = ["a", "b"]    # list
+person = {"id": 1}    # dict</code></pre>
+<p>You do not declare types &mdash; a variable just points at a value, and can later point at a different one.</p>
+
+<h2>Control flow</h2>
+<pre><code>if age >= 18:
+    print("adult")
+elif age >= 13:
+    print("teen")
+else:
+    print("child")
+
+for item in items:
+    print(item)
+
+n = 0
+while n < 3:
+    n += 1</code></pre>
+<p>The colon and the indentation are not optional &mdash; they <em>are</em> the block syntax.</p>
+
+<h2>Functions</h2>
+<pre><code>def greet(name, excited=False):
+    msg = f"Hello, {name}"
+    return msg + "!" if excited else msg
+
+print(greet("Ada"))            # Hello, Ada
+print(greet("Ada", True))      # Hello, Ada!</code></pre>
+<p>That <code>f"..."</code> is an <strong>f-string</strong> &mdash; the cleanest way to drop values into text.</p>
+
+<h2>Collections you will use constantly</h2>
+<ul>
+<li><strong>list</strong> &mdash; ordered, changeable: <code>nums = [3, 1, 2]; nums.sort()</code></li>
+<li><strong>dict</strong> &mdash; key/value pairs: <code>user["name"]</code></li>
+<li><strong>set</strong> &mdash; unique values: <code>set([1, 1, 2])</code> is <code>{1, 2}</code></li>
+<li><strong>tuple</strong> &mdash; ordered, fixed: <code>point = (3, 4)</code></li>
+</ul>
+
+<h2>A list comprehension</h2>
+<p>A Python idiom worth learning early &mdash; build a list in one expression:</p>
+<pre><code>squares = [n * n for n in range(5)]   # [0, 1, 4, 9, 16]
+evens = [n for n in range(10) if n % 2 == 0]</code></pre>
+<div class="note"><strong>Next step:</strong> once comfortable, look at modules (<code>import</code>), virtual environments (<code>python -m venv</code>), and <code>pip</code> for installing packages.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/javascript.html">JavaScript</a><a href="/study/node.html">Node.js</a><a href="/study/html.html">HTML &amp; CSS</a><a href="/study/git.html">Git</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

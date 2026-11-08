@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APIs - ITCode</title>
+<meta name="description" content="What an API is, how requests and responses work, and how to build one.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#programming">Programming</a> &rsaquo; APIs</div>
+<article>
+<h1>APIs</h1>
+<p class="lede">An API is how one program talks to another. On the web that usually means sending HTTP requests and getting JSON back.</p>
+
+<p>API stands for <em>Application Programming Interface</em> &mdash; a defined set of operations one program exposes for another to use. A web API is just that, delivered over HTTP: you send a request to a URL and get structured data (usually <a href="/study/json.html">JSON</a>) back.</p>
+
+<h2>REST, the common style</h2>
+<p>Most web APIs follow a REST-ish convention: <strong>resources</strong> live at URLs, and HTTP methods act on them.</p>
+<table>
+<tr><th>Request</th><th>Does</th></tr>
+<tr><td><code>GET /users</code></td><td>List users</td></tr>
+<tr><td><code>GET /users/42</code></td><td>Get one user</td></tr>
+<tr><td><code>POST /users</code></td><td>Create a user</td></tr>
+<tr><td><code>PATCH /users/42</code></td><td>Update a user</td></tr>
+<tr><td><code>DELETE /users/42</code></td><td>Delete a user</td></tr>
+</table>
+
+<h2>Calling one</h2>
+<pre><code>const res = await fetch("https://api.example.com/users/42", {
+  headers: { "Authorization": "Bearer YOUR_TOKEN" }
+});
+const user = await res.json();
+console.log(user.name);</code></pre>
+<p>Always check <code>res.ok</code> (or the status code) before trusting the body &mdash; see the <a href="/study/http.html">HTTP tutorial</a> for what the codes mean.</p>
+
+<h2>Sending data</h2>
+<pre><code>await fetch("https://api.example.com/users", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name: "Ada" })
+});</code></pre>
+
+<h2>Authentication</h2>
+<p>Most APIs need to know who you are. Common schemes:</p>
+<ul>
+<li><strong>API keys</strong> &mdash; a secret string, often in a header.</li>
+<li><strong>Bearer tokens</strong> &mdash; <code>Authorization: Bearer ...</code>, frequently a JWT.</li>
+<li><strong>OAuth</strong> &mdash; a flow that lets users grant limited access without sharing their password.</li>
+</ul>
+
+<h2>Good manners</h2>
+<ul>
+<li>Respect <strong>rate limits</strong> &mdash; a <code>429</code> means slow down.</li>
+<li>Version your API (<code>/v1/...</code>) so you can change it without breaking callers.</li>
+<li>Return useful status codes and error messages.</li>
+</ul>
+<div class="note"><strong>Never put secrets in front-end code.</strong> An API key shipped in browser JavaScript is visible to anyone. Keep it on a server and proxy the request.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/python.html">Python</a><a href="/study/javascript.html">JavaScript</a><a href="/study/node.html">Node.js</a><a href="/study/html.html">HTML &amp; CSS</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

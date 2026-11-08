@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSH - ITCode</title>
+<meta name="description" content="Logging into remote machines securely, and why keys beat passwords.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#other">Other</a> &rsaquo; SSH</div>
+<article>
+<h1>SSH</h1>
+<p class="lede">SSH is the standard way to get a secure shell on a remote machine. Learn the command, then switch to keys.</p>
+
+<p>SSH (Secure Shell) gives you an encrypted connection to another computer&rsquo;s command line. It is how almost everyone administers servers. The traffic is encrypted end to end, so it is safe even over untrusted networks.</p>
+
+<h2>Connecting</h2>
+<pre><code>ssh ada@203.0.113.10
+ssh ada@server.example.com -p 2222   # non-default port</code></pre>
+<p>The first time, SSH shows the server&rsquo;s <strong>fingerprint</strong> and asks you to confirm. It remembers it in <code>~/.ssh/known_hosts</code>, and warns you loudly if it ever changes &mdash; which could mean the server was rebuilt, or something is impersonating it.</p>
+
+<h2>Keys instead of passwords</h2>
+<p>Password logins are brute-forceable. A <strong>key pair</strong> is far stronger and more convenient. You generate two linked keys &mdash; a private one you keep, a public one you hand out:</p>
+<pre><code>$ ssh-keygen -t ed25519
+# creates ~/.ssh/id_ed25519 (private) and id_ed25519.pub (public)
+
+$ ssh-copy-id ada@server      # install your public key there</code></pre>
+<p>Now you log in with no password, and the private key never leaves your machine. Protect it with a passphrase, and let <code>ssh-agent</code> hold it unlocked during your session.</p>
+
+<h2>Copying files</h2>
+<pre><code>scp file.txt ada@server:/home/ada/     # copy up
+scp ada@server:/var/log/app.log .      # copy down
+rsync -av ./site/ ada@server:/var/www/  # sync a folder</code></pre>
+
+<h2>Config shortcuts</h2>
+<p>Put common hosts in <code>~/.ssh/config</code> so you can type <code>ssh web</code> instead of the full address:</p>
+<pre><code>Host web
+  HostName 203.0.113.10
+  User ada
+  Port 2222</code></pre>
+<div class="note"><strong>Hardening a server:</strong> once key login works, disable password authentication entirely in <code>/etc/ssh/sshd_config</code> (<code>PasswordAuthentication no</code>) to shut the door on brute-force attempts.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/json.html">JSON</a><a href="/study/sql.html">SQL</a><a href="/study/databases.html">Databases</a><a href="/study/linux.html">Linux</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

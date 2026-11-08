@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux - ITCode</title>
+<meta name="description" content="The operating system that runs the internet: files, permissions, processes.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#other">Other</a> &rsaquo; Linux</div>
+<article>
+<h1>Linux</h1>
+<p class="lede">Most servers run Linux. Knowing your way around the filesystem, permissions, and processes pays off constantly.</p>
+
+<p>Linux is a free, Unix-like operating system that powers the majority of the world&rsquo;s servers. You interact with it mostly through the <a href="/study/cli.html">command line</a>, so a little fluency goes a long way.</p>
+
+<h2>The filesystem</h2>
+<p>Everything hangs off a single root, <code>/</code>. Some directories you will meet:</p>
+<table>
+<tr><th>Path</th><th>Holds</th></tr>
+<tr><td><code>/home</code></td><td>Users&rsquo; personal files</td></tr>
+<tr><td><code>/etc</code></td><td>System configuration</td></tr>
+<tr><td><code>/var</code></td><td>Logs, spool, changing data</td></tr>
+<tr><td><code>/usr</code></td><td>Installed programs and libraries</td></tr>
+<tr><td><code>/tmp</code></td><td>Temporary files</td></tr>
+</table>
+
+<h2>Permissions</h2>
+<p>Every file has an owner, a group, and three sets of permissions &mdash; read, write, execute &mdash; for owner, group, and everyone else:</p>
+<pre><code>$ ls -l script.sh
+-rwxr-xr-- 1 ada staff 128 Nov 8 10:00 script.sh
+
+$ chmod +x script.sh     # make executable
+$ chmod 644 notes.txt     # rw-r--r--
+$ chown ada notes.txt     # change owner</code></pre>
+<p>The digits are octal: read=4, write=2, execute=1, added up per group. So <code>644</code> is read/write for the owner, read-only for everyone else.</p>
+
+<h2>Processes</h2>
+<pre><code>$ ps aux            # list running processes
+$ top               # live view of CPU/memory
+$ kill 1234         # ask process 1234 to stop
+$ kill -9 1234      # force it
+$ systemctl status caddy   # a managed service</code></pre>
+
+<h2>The superuser</h2>
+<p><code>root</code> can do anything. You usually run a normal account and prefix privileged commands with <code>sudo</code>:</p>
+<pre><code>$ sudo systemctl restart nginx</code></pre>
+<div class="note"><strong>Be deliberate with <code>sudo</code> and <code>rm -rf</code>.</strong> There is no recycle bin on the command line &mdash; a deleted file is gone. Double-check the path before you press enter.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/json.html">JSON</a><a href="/study/sql.html">SQL</a><a href="/study/databases.html">Databases</a><a href="/study/cli.html">Command Line</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

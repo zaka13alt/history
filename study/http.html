@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP - ITCode</title>
+<meta name="description" content="How HTTP requests and responses work: methods, headers, and status codes.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#networking">Networking</a> &rsaquo; HTTP</div>
+<article>
+<h1>HTTP</h1>
+<p class="lede">Every page you open and every API you call speaks HTTP. Here is what actually travels between your browser and the server.</p>
+
+<p>HTTP (HyperText Transfer Protocol) is a simple idea: the client sends a <strong>request</strong>, and the server sends back a <strong>response</strong>. Both are just text, followed optionally by a body. Once you have seen the raw shape of them, the rest of the web stops feeling like magic.</p>
+
+<h2>A request</h2>
+<p>When you visit a page, your browser sends something like this:</p>
+<pre><code>GET /index.html HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0
+Accept: text/html</code></pre>
+<p>The first line has three parts: the <strong>method</strong> (<code>GET</code>), the <strong>path</strong> (<code>/index.html</code>), and the protocol version. Everything after it is <strong>headers</strong> &mdash; key/value pairs that describe the request.</p>
+
+<h2>Methods</h2>
+<table>
+<tr><th>Method</th><th>Means</th></tr>
+<tr><td><code>GET</code></td><td>Fetch a resource. Should not change anything.</td></tr>
+<tr><td><code>POST</code></td><td>Send data to be processed (a form, a new record).</td></tr>
+<tr><td><code>PUT</code></td><td>Replace a resource at a known location.</td></tr>
+<tr><td><code>PATCH</code></td><td>Partially update a resource.</td></tr>
+<tr><td><code>DELETE</code></td><td>Remove a resource.</td></tr>
+</table>
+<p>GET and HEAD are called <em>safe</em> methods because they only read. A browser will happily retry them; it is more careful with POST because it might do something twice.</p>
+
+<h2>A response</h2>
+<pre><code>HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: 1270
+
+&lt;!DOCTYPE html&gt;...</code></pre>
+<p>The number <code>200</code> is the <strong>status code</strong>. The body comes after a blank line.</p>
+
+<h2>Status codes</h2>
+<ul>
+<li><strong>2xx</strong> &mdash; success. <code>200 OK</code>, <code>201 Created</code>, <code>204 No Content</code>.</li>
+<li><strong>3xx</strong> &mdash; redirection. <code>301</code> (moved permanently), <code>302</code>/<code>307</code> (temporary), <code>304 Not Modified</code> (use your cache).</li>
+<li><strong>4xx</strong> &mdash; the client got it wrong. <code>400</code>, <code>401</code> (not authenticated), <code>403</code> (forbidden), <code>404</code> (not found), <code>429</code> (too many requests).</li>
+<li><strong>5xx</strong> &mdash; the server got it wrong. <code>500</code>, <code>502</code> (bad gateway), <code>503</code> (unavailable).</li>
+</ul>
+<div class="note"><strong>Tip:</strong> a <code>405 Method Not Allowed</code> means the URL exists but does not accept the method you used &mdash; for example, sending a <code>POST</code> to a page that only serves <code>GET</code>.</div>
+
+<h2>Headers worth knowing</h2>
+<ul>
+<li><code>Content-Type</code> &mdash; what the body is (<code>text/html</code>, <code>application/json</code>, <code>image/png</code>).</li>
+<li><code>Content-Length</code> &mdash; how many bytes the body is.</li>
+<li><code>Cache-Control</code> &mdash; how long the response may be reused.</li>
+<li><code>Authorization</code> &mdash; credentials for the request.</li>
+<li><code>Location</code> &mdash; where a redirect points.</li>
+</ul>
+<p>HTTP/2 and HTTP/3 change how these bytes travel over the wire &mdash; multiplexing many requests over one connection, compressing headers &mdash; but the request/response model above stays exactly the same.</p>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/dns.html">DNS</a><a href="/study/tcp.html">TCP/IP</a><a href="/study/tls.html">TLS / HTTPS</a><a href="/study/websockets.html">WebSockets</a><a href="/study/python.html">Python</a><a href="/study/javascript.html">JavaScript</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL - ITCode</title>
+<meta name="description" content="Querying relational databases: SELECT, WHERE, JOIN, and friends.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#other">Other</a> &rsaquo; SQL</div>
+<article>
+<h1>SQL</h1>
+<p class="lede">SQL is the language for asking questions of a relational database. A handful of keywords covers most of what you will ever write.</p>
+
+<p>SQL (Structured Query Language) is how you read and change data in relational databases like PostgreSQL, MySQL, and SQLite. Data lives in <strong>tables</strong> &mdash; rows and columns &mdash; and SQL describes <em>what</em> you want, not how to fetch it.</p>
+
+<h2>Reading data</h2>
+<pre><code>SELECT name, email
+FROM users
+WHERE active = true
+ORDER BY name
+LIMIT 10;</code></pre>
+<p>Read it as: pick these columns, from this table, keep rows matching this condition, sort them, and stop after ten.</p>
+
+<h2>Filtering</h2>
+<pre><code>WHERE age >= 18
+WHERE name LIKE 'A%'          -- starts with A
+WHERE country IN ('US', 'UK')
+WHERE deleted_at IS NULL</code></pre>
+
+<h2>Aggregating</h2>
+<pre><code>SELECT country, COUNT(*) AS people
+FROM users
+GROUP BY country
+HAVING COUNT(*) > 100;</code></pre>
+<p><code>GROUP BY</code> collapses rows into groups; aggregate functions like <code>COUNT</code>, <code>SUM</code>, <code>AVG</code> summarize each group. <code>HAVING</code> filters the groups (<code>WHERE</code> filters rows before grouping).</p>
+
+<h2>Joining tables</h2>
+<p>Relational data is split across tables and reconnected with <strong>joins</strong>:</p>
+<pre><code>SELECT orders.id, users.name
+FROM orders
+JOIN users ON users.id = orders.user_id;</code></pre>
+<p>An <code>INNER JOIN</code> keeps only matching rows; a <code>LEFT JOIN</code> keeps every row from the left table even when there is no match.</p>
+
+<h2>Changing data</h2>
+<pre><code>INSERT INTO users (name, email) VALUES ('Ada', 'ada@x.com');
+UPDATE users SET active = false WHERE id = 42;
+DELETE FROM users WHERE id = 42;</code></pre>
+<div class="note"><strong>Danger:</strong> <code>UPDATE</code> and <code>DELETE</code> without a <code>WHERE</code> clause hit <em>every</em> row. Run a <code>SELECT</code> with the same condition first to see what you are about to touch.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/json.html">JSON</a><a href="/study/databases.html">Databases</a><a href="/study/linux.html">Linux</a><a href="/study/cli.html">Command Line</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

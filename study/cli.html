@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command Line - ITCode</title>
+<meta name="description" content="Navigating, finding, and piping: the shell commands you reach for daily.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#other">Other</a> &rsaquo; Command Line</div>
+<article>
+<h1>Command Line</h1>
+<p class="lede">The command line feels intimidating until a dozen commands click into place. These are the ones you will use every day.</p>
+
+<p>The shell is a text interface to your computer. It is faster than clicking for a huge range of tasks, and it is often the <em>only</em> interface on a server. This covers the everyday toolkit.</p>
+
+<h2>Getting around</h2>
+<pre><code>pwd            # where am I
+ls -la         # list files, including hidden, with detail
+cd projects    # change directory
+cd ..          # up one level
+cd ~           # home</code></pre>
+
+<h2>Working with files</h2>
+<pre><code>cat file.txt          # print a file
+less file.txt         # scroll through it (q to quit)
+cp a.txt b.txt        # copy
+mv a.txt docs/        # move or rename
+rm old.txt            # delete
+mkdir new-folder      # make a directory</code></pre>
+
+<h2>Finding things</h2>
+<pre><code>grep "error" log.txt           # lines containing "error"
+grep -ri "todo" .              # recursive, case-insensitive
+find . -name "*.js"            # files by name
+find . -type f -mtime -1       # changed in the last day</code></pre>
+
+<h2>Pipes: the superpower</h2>
+<p>Each command does one thing; the pipe <code>|</code> feeds one command&rsquo;s output into the next. That composition is the whole philosophy of the shell:</p>
+<pre><code># the 5 biggest files here
+du -ah . | sort -rh | head -5
+
+# how many lines mention "warning"
+grep "warning" log.txt | wc -l</code></pre>
+
+<h2>Redirection</h2>
+<pre><code>command > out.txt     # write output to a file (overwrite)
+command >> out.txt    # append
+command 2> err.txt    # redirect errors
+command < in.txt      # feed a file as input</code></pre>
+<div class="note"><strong>Shortcuts that save time:</strong> Tab completes names, the up arrow recalls commands, <code>Ctrl+C</code> stops a running command, and <code>Ctrl+R</code> searches your history.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/json.html">JSON</a><a href="/study/sql.html">SQL</a><a href="/study/databases.html">Databases</a><a href="/study/linux.html">Linux</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

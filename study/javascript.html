@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript - ITCode</title>
+<meta name="description" content="The language of the browser: variables, functions, the DOM, and async.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#programming">Programming</a> &rsaquo; JavaScript</div>
+<article>
+<h1>JavaScript</h1>
+<p class="lede">JavaScript runs in every browser and makes pages interactive. Learn the language, then the DOM, then asynchronous code.</p>
+
+<p>JavaScript is the one programming language every browser runs. It started small and grew into a full, modern language &mdash; and with Node.js it runs on servers too (see the <a href="/study/node.html">Node.js tutorial</a>).</p>
+
+<h2>Variables and types</h2>
+<pre><code>const name = "Ada";     // cannot be reassigned
+let count = 0;          // can change
+count = count + 1;
+
+// types: string, number, boolean, null, undefined, object, symbol, bigint</code></pre>
+<p>Prefer <code>const</code> by default and switch to <code>let</code> only when you actually reassign. Avoid the old <code>var</code>.</p>
+
+<h2>Functions</h2>
+<pre><code>function add(a, b) {
+  return a + b;
+}
+
+// arrow function &mdash; shorter, and handy for callbacks
+const double = (n) => n * 2;</code></pre>
+
+<h2>Objects and arrays</h2>
+<pre><code>const user = { id: 1, name: "Ada" };
+user.name;            // "Ada"
+
+const nums = [3, 1, 2];
+nums.map(n => n * 2); // [6, 2, 4]
+nums.filter(n => n > 1);
+nums.sort((a, b) => a - b);</code></pre>
+
+<h2>Touching the page (the DOM)</h2>
+<p>The <strong>DOM</strong> is the browser&rsquo;s object model of the page. JavaScript reads and changes it:</p>
+<pre><code>const btn = document.querySelector("#save");
+btn.addEventListener("click", () => {
+  document.querySelector("#status").textContent = "Saved!";
+});</code></pre>
+
+<h2>Asynchronous code</h2>
+<p>Network calls do not finish instantly, so JavaScript does not wait &mdash; it uses <strong>promises</strong>. <code>async</code>/<code>await</code> makes them read top-to-bottom:</p>
+<pre><code>async function loadUser(id) {
+  const res = await fetch(`/api/users/${id}`);
+  if (!res.ok) throw new Error("request failed");
+  const data = await res.json();
+  return data;
+}</code></pre>
+<div class="note"><strong>Mental model:</strong> JavaScript is single-threaded. Instead of blocking, it hands slow work (timers, network, clicks) to the browser and runs your callback later. That is the &ldquo;event loop.&rdquo;</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/python.html">Python</a><a href="/study/node.html">Node.js</a><a href="/study/html.html">HTML &amp; CSS</a><a href="/study/git.html">Git</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>

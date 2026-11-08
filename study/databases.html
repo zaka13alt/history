@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Databases - ITCode</title>
+<meta name="description" content="Relational vs non-relational, and how to think about storing data.">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f7f7f5;color:#222;font-family:Arial,Helvetica,sans-serif;line-height:1.65}
+a{color:#2864d7;text-decoration:none}
+a:hover{text-decoration:underline}
+header{height:62px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 32px}
+.header-inner{width:100%;max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:21px;font-weight:bold;letter-spacing:-0.5px;color:#222}
+.logo span{color:#2864d7}
+nav{display:flex;gap:24px;font-size:14px}
+nav a{color:#555}
+nav a:hover{color:#111;text-decoration:none}
+main{max-width:820px;margin:auto;padding:46px 25px 80px}
+.crumb{font-size:13px;color:#888;margin-bottom:22px}
+.crumb a{color:#888}
+article h1{font-size:36px;line-height:1.15;letter-spacing:-1.2px;margin:0 0 10px}
+.lede{font-size:18px;color:#666;margin:0 0 36px;max-width:680px}
+article h2{font-size:23px;letter-spacing:-0.4px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid #e3e3e0}
+article h3{font-size:17px;margin:26px 0 8px}
+article p{margin:0 0 15px;max-width:720px}
+article ul,article ol{max-width:720px;padding-left:22px}
+article li{margin:5px 0}
+code{background:#ececeb;padding:1px 5px;border-radius:4px;font-family:Menlo,Consolas,monospace;font-size:13px}
+pre{background:#20252b;color:#e7eaee;padding:16px 18px;border-radius:7px;overflow:auto;font-size:13px;line-height:1.5}
+pre code{background:none;padding:0;color:inherit;font-size:13px}
+.note{background:#eef3fd;border-left:3px solid #2864d7;padding:12px 16px;border-radius:0 6px 6px 0;margin:20px 0;font-size:14.5px}
+.note strong{color:#1c47a0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+th,td{border:1px solid #ddd;padding:8px 11px;text-align:left}
+th{background:#f0f0ee}
+.more{margin-top:48px;padding-top:22px;border-top:1px solid #ddd}
+.more h2{border:none;font-size:16px;text-transform:uppercase;letter-spacing:0.7px;color:#888;margin:0 0 12px;padding:0}
+.more-grid{display:flex;flex-wrap:wrap;gap:9px}
+.more-grid a{background:#fff;border:1px solid #d8d8d8;padding:8px 13px;font-size:13px;color:#444;border-radius:5px}
+.more-grid a:hover{border-color:#aaa;color:#111;text-decoration:none}
+footer{border-top:1px solid #ddd;background:#fff;padding:28px 25px;color:#777;font-size:13px}
+.footer-inner{max-width:820px;margin:auto;display:flex;justify-content:space-between}
+@media(max-width:700px){header{padding:0 18px}nav{display:none}article h1{font-size:29px}.footer-inner{flex-direction:column;gap:5px}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<a href="/" class="logo"><span>IT</span>Code</a>
+<nav><a href="/">Home</a><a href="/#programming">Programming</a><a href="/#networking">Networking</a><a href="/#other">Other</a></nav>
+</div></header>
+<main>
+<div class="crumb"><a href="/">Home</a> &rsaquo; <a href="/#other">Other</a> &rsaquo; Databases</div>
+<article>
+<h1>Databases</h1>
+<p class="lede">A database is organized, durable storage you can query. The big choice is how structured your data is.</p>
+
+<p>Any real application needs to keep data around between requests and restarts. A <strong>database</strong> is software built for exactly that: storing data durably and letting you query it efficiently.</p>
+
+<h2>Relational (SQL) databases</h2>
+<p>Data lives in tables with a fixed <strong>schema</strong> &mdash; defined columns and types. Tables relate to each other by keys, and you query with <a href="/study/sql.html">SQL</a>. Examples: PostgreSQL, MySQL, SQLite.</p>
+<p>They shine when:</p>
+<ul>
+<li>your data is structured and the shape is known,</li>
+<li>relationships matter (users have orders, orders have items),</li>
+<li>you need <strong>transactions</strong> &mdash; several changes that must all succeed or all fail.</li>
+</ul>
+
+<h2>Non-relational (NoSQL) databases</h2>
+<p>A family of databases that drop the rigid table model for flexibility or scale:</p>
+<table>
+<tr><th>Type</th><th>Stores</th><th>Example</th></tr>
+<tr><td>Document</td><td>JSON-like documents</td><td>MongoDB</td></tr>
+<tr><td>Key/value</td><td>Simple pairs, very fast</td><td>Redis</td></tr>
+<tr><td>Wide-column</td><td>Huge, sparse tables</td><td>Cassandra</td></tr>
+<tr><td>Graph</td><td>Nodes and relationships</td><td>Neo4j</td></tr>
+</table>
+
+<h2>ACID transactions</h2>
+<p>The guarantee that makes relational databases trustworthy. A transaction is <strong>A</strong>tomic (all or nothing), <strong>C</strong>onsistent, <strong>I</strong>solated (concurrent transactions do not corrupt each other), and <strong>D</strong>urable (once committed, it survives a crash). Moving money between accounts is the classic case.</p>
+
+<h2>Indexes</h2>
+<p>An index is a lookup structure that makes queries on a column fast &mdash; the difference between scanning a million rows and jumping straight to the one you want. The trade-off: indexes take space and slow down writes slightly, so you add them where you actually query, not everywhere.</p>
+<div class="note"><strong>Rule of thumb:</strong> start relational. It handles the vast majority of apps well, and you reach for NoSQL when you hit a specific need it solves &mdash; caching, massive scale, or genuinely schema-less data.</div>
+</article>
+<div class="more">
+<h2>Keep reading</h2>
+<div class="more-grid"><a href="/study/json.html">JSON</a><a href="/study/sql.html">SQL</a><a href="/study/linux.html">Linux</a><a href="/study/cli.html">Command Line</a><a href="/study/http.html">HTTP</a><a href="/study/dns.html">DNS</a></div>
+</div>
+</main>
+<footer><div class="footer-inner"><span>ITCode</span><span>Programming &amp; technology tutorials</span></div></footer>
+</body>
+</html>
