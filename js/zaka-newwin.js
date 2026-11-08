@@ -34,6 +34,39 @@
         }
     }
 
+    // window.open() used to return null, which breaks the very common
+    //   var w = window.open("", "_blank"); w.location = url;
+    // pattern (and makes sites think popups are blocked). Return a stand-in window
+    // whose location assignment opens the zaka tab. Any "...__location" key is
+    // treated as location too, since the proxy's JS rewriter renames it.
+    function fakeWindow(ctx, onOpen, initial) {
+        var current = initial || "about:blank", opened = false, closed = false;
+        function go(u) {
+            if (closed) return;
+            var real = resolve(ctx, u);
+            if (!real) return;
+            current = real;
+            if (!opened) { opened = true; onOpen(real); }
+        }
+        if (initial) { opened = true; onOpen(initial); }
+        var loc = { assign: go, replace: go, reload: function () {}, toString: function () { return current; } };
+        Object.defineProperty(loc, "href", { get: function () { return current; }, set: go, enumerable: true });
+        ["origin", "protocol", "host", "hostname", "port", "pathname", "search", "hash"].forEach(function (k) {
+            Object.defineProperty(loc, k, { get: function () { try { return new URL(current)[k]; } catch (e) { return ""; } }, enumerable: true });
+        });
+        var doc = { title: "", body: null, write: function () {}, writeln: function () {}, close: function () {}, open: function () { return doc; } };
+        var target = {
+            opener: null, document: doc, name: "",
+            close: function () { closed = true; }, focus: function () {}, blur: function () {},
+            postMessage: function () {}, addEventListener: function () {}, removeEventListener: function () {}
+        };
+        var isLoc = function (p) { return typeof p === "string" && (p === "location" || /__location$/.test(p)); };
+        return new Proxy(target, {
+            get: function (t, p) { if (p === "closed") return closed; if (isLoc(p)) return loc; return t[p]; },
+            set: function (t, p, v) { if (isLoc(p)) { go(v); return true; } t[p] = v; return true; }
+        });
+    }
+
     function hook(ctx, onOpen) {
         var w = ctx.window, doc = w && w.document;
         if (!doc) return;
@@ -69,11 +102,12 @@
         }, false);
 
         var origOpen = w.open;
-        var zakaOpen = function (url, name) {
+        var zakaOpen = function (url, name, features) {
             if (!opensNewWindow(doc, name == null ? "_blank" : name)) return origOpen.apply(this, arguments);
-            var real = url == null || url === "" ? null : resolve(ctx, url);
-            if (real) onOpen(real);
-            return null;
+            var blank = url == null || url === "" || /^\s*about:blank\s*$/i.test(String(url));
+            var win = fakeWindow(ctx, onOpen, blank ? null : resolve(ctx, url));
+            // Like a real browser: noopener/noreferrer opens get no window handle back.
+            return /(^|,)\s*no(opener|referrer)\s*(=\s*(yes|1|true)\s*)?(,|$)/i.test(String(features || "")) ? null : win;
         };
         try {
             Object.defineProperty(w, "open", { value: zakaOpen, writable: true, configurable: true });
