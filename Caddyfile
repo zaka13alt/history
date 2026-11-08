@@ -96,6 +96,9 @@
 			header_up -Origin
 			header_up -Cookie
 			header_down -Set-Cookie
+			# Callable from other origins (zaka-static on GitHub Pages / the OVH bucket / file://)
+			header_down Access-Control-Allow-Origin "*"
+			header_down Access-Control-Allow-Methods "GET"
 		}
 	}
 }
