@@ -52,6 +52,7 @@
             <div class="j1k2l">
                 <span id="p5q6r"><i class="fa-solid fa-globe"></i></span>
                 <input id="t3u4v" type="text" class="m3n4o" placeholder="s3arc7 or u3l" autocomplete="off" spellcheck="false">
+                <div id="f4g5h"></div>
             </div>
             <div id="s7t8u">
                 <button type="button" class="v9w0x" id="w5x6y" title="b6h1s"><i class="fa-regular fa-star"></i></button>
@@ -672,6 +673,63 @@ function openSettings(tab) {
 }
 
 // Event Listeners
+// Search suggestions (/s/<query> -> Google suggest via Caddy)
+(function () {
+    var box = document.getElementById('f4g5h');
+    var items = [], sel = -1, typed = '', timer = 0, ctrl = null;
+    function hide() { box.style.display = 'none'; box.textContent = ''; items = []; sel = -1; if (ctrl) { ctrl.abort(); ctrl = null; } }
+    function mark(i) {
+        items.forEach(function (el, j) { el.classList.toggle('z2a3b', j === i); });
+        sel = i;
+        addrInput.value = i < 0 ? typed : items[i].textContent;
+    }
+    function choose(text) {
+        addrInput.value = text;
+        hide();
+        addrInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    }
+    function show(list) {
+        box.textContent = ''; items = []; sel = -1;
+        list.slice(0, 8).forEach(function (text) {
+            var row = document.createElement('div');
+            row.className = 'r6s7t';
+            var icon = document.createElement('i');
+            icon.className = 'fa-solid fa-magnifying-glass';
+            var label = document.createElement('span');
+            label.textContent = text;
+            row.appendChild(icon); row.appendChild(label);
+            row.addEventListener('mousedown', function (e) { e.preventDefault(); choose(text); });
+            box.appendChild(row); items.push(row);
+        });
+        box.style.display = items.length ? 'block' : 'none';
+    }
+    addrInput.addEventListener('input', function () {
+        typed = addrInput.value;
+        clearTimeout(timer);
+        var q = typed.trim();
+        if (!q || /^education:\/\//i.test(q)) { hide(); return; }
+        timer = setTimeout(function () {
+            if (ctrl) ctrl.abort();
+            var mine = ctrl = new AbortController();
+            fetch('/s/' + encodeURIComponent(q), { signal: mine.signal })
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(function (d) {
+                    if (mine !== ctrl || addrInput.value !== typed || document.activeElement !== addrInput) return;
+                    show(Array.isArray(d) && Array.isArray(d[1]) ? d[1].filter(function (x) { return typeof x === 'string'; }) : []);
+                })
+                .catch(function () {});
+        }, 130);
+    });
+    addrInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { clearTimeout(timer); hide(); return; }
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') { e.preventDefault(); mark(sel + 1 >= items.length ? -1 : sel + 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); mark(sel - 1 < -1 ? items.length - 1 : sel - 1); }
+        else if (e.key === 'Escape') { mark(-1); hide(); }
+    });
+    addrInput.addEventListener('blur', function () { setTimeout(hide, 120); });
+})();
+
 addrInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
         e.preventDefault();

@@ -81,7 +81,27 @@
 	}
 }
 
+# Search suggestions for the zaka address bar: /s/<query> -> Google's suggest API
+# (Firefox JSON format). Strips client IP, cookies, referer and origin going out,
+# and any cookies Google sets coming back.
+(search_suggest) {
+	@suggest path_regexp suggest ^/s/(.+)$
+	handle @suggest {
+		rewrite * /complete/search?client=firefox&ie=utf-8&oe=utf-8&q={re.suggest.1}
+		reverse_proxy https://suggestqueries.google.com {
+			header_up Host {upstream_hostport}
+			header_up -X-Forwarded-For
+			header_up -X-Real-IP
+			header_up -Referer
+			header_up -Origin
+			header_up -Cookie
+			header_down -Set-Cookie
+		}
+	}
+}
+
 (proxy_routes) {
+	import search_suggest
 	import flaresolverr
 	import use_counter
 	import chat_room
