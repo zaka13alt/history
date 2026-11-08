@@ -105,6 +105,13 @@
 
 (proxy_routes) {
 	import search_suggest
+
+	# Pages must always be revalidated. With no cache headers, browsers guessed a freshness
+	# lifetime from the file's age, and on reload Chrome only revalidates the top-level page:
+	# zaka loaded in an iframe (spych.org/ -> /study.html) kept a stale copy for hours.
+	# no-cache still uses the cached copy, it just checks the ETag first (a cheap 304).
+	@pages path / *.html *.xml *.svg
+	header @pages Cache-Control "no-cache"
 	import flaresolverr
 	import use_counter
 	import chat_room
