@@ -95,7 +95,7 @@ var configReady=(async function(){try{var b=await (await fetch(new URL('base.jso
 
 var defaultw1sp = "wss://" + window.location.host + "/api/";
 var defaultSearch = "https://duckduckgo.com/search?q=%s";
-var storageShortcuts = "zaka13_shortcuts_v3";
+var storageShortcuts = "zaka13_shortcuts_v4";
 var storagew1sp = "zaka13_w1sp_server";
 var storageSearch = "zaka13_search_engine";
 var storageBackend = "zaka13_backend";
@@ -121,7 +121,7 @@ try {
         {name:"TikTok", url:"https://tiktok.com", img:"https://storage.itcode.vip/icos/tiktok.ico"},
         {name:"Reddit", url:"https://reddit.com", img:"https://storage.itcode.vip/icos/reddit.jpg"},
         {name:"Spotify", url:"https://spotify.com", img:"https://storage.itcode.vip/icos/spotify.webp"},
-        {name:"Netflix", url:"https://netflix.com", img:"https://storage.itcode.vip/icos/netflix.png"},
+        {name:"Snapchat", url:"https://snapchat.com", img:"https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons@master/images/svg/snapchat.svg"},
         {name:"Twitch", url:"https://twitch.tv", img:"https://storage.itcode.vip/icos/twitch.ico"}
     ];
 }
