@@ -23,6 +23,7 @@ const wisp = new EpoxyServer({
   port: EPOXY_PORT,
   prefix: "/wisp",
   socks5: "socks5://127.0.0.1:35344", // no auth
+  resolveIpv6: true, // resolve AAAA and dial IPv6 upstreams (wireproxy routes v6)
   useRealIpHeaders: true, // log the real client IP we pass along
   logLevel: "error", // only errors are printed (to stderr)
 });
