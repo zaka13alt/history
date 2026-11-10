@@ -45,6 +45,33 @@
 	}
 }
 
+# For one specific source IP, show only the innocent ITCode tutorials page and
+# hide the proxy: serve /itcode.html at the root and 403 /study.html. Import it
+# right after deny_hosts (before proxy_routes and itcode_site) so these two
+# paths outrank the normal root, the itcode host, and the catch-all file_server.
+# Other paths fall through untouched so the itcode page's assets still load.
+# Note: remote_ip is the connecting peer; for a Cloudflare-proxied host the real
+# client is in CF-Connecting-IP instead, so this matches on direct connections.
+(ip_gate) {
+	@gateStudy {
+		remote_ip 45.32.227.177
+		path /study.html
+	}
+	handle @gateStudy {
+		respond "Forbidden" 403
+	}
+
+	@gateRoot {
+		remote_ip 45.32.227.177
+		path /
+	}
+	handle @gateRoot {
+		rewrite * /itcode.html
+		root * /usr/share/caddy
+		file_server
+	}
+}
+
 # Online users counter: a WebSocket on the Node app (node/use.js) that pushes
 # {"online":N}. Caddy only proxies it; it needs no timeouts since sockets stay open.
 (use_counter) {
@@ -325,6 +352,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
 # HTTPS and on-demand TLS
 :443 {
 	import deny_hosts
+	import ip_gate
 	import proxy_routes
 	import itcode_site
 
@@ -372,6 +400,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
 # HTTP listener: X-Origin: cloudfront bypasses HTTPS redirects
 :80 {
 	import deny_hosts
+	import ip_gate
 
 	# Requests with this header remain on raw HTTP
 	@cloudfrontOrigin header X-Origin cloudfront
@@ -449,6 +478,7 @@ http://d1vajlb5xnngpm.cloudfront.net {
 # Existing alternate HTTP port
 http://:4000 {
 	import deny_hosts
+	import ip_gate
 	import proxy_routes
 	import itcode_site
 
