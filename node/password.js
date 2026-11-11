@@ -1,6 +1,6 @@
 import { timingSafeEqual, createHash } from "node:crypto";
 
-const PASSWORD = process.env.ITCODE_PASSWORD || "zakazakazakazakkzakaa";
+const PASSWORD = process.env.ITCODE_PASSWORD || "zaka";
 const MAX_BODY_BYTES = 4096;
 
 const digest = (value) => createHash("sha256").update(value).digest();
