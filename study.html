@@ -15,13 +15,6 @@
         .r6s7t span { overflow: hidden; text-overflow: ellipsis; }
         .r6s7t:hover, .r6s7t.z2a3b { background: #232323; color: #fff; }
     </style>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7F6PMTEL54"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-7F6PMTEL54');
-    </script>
 </head>
 <body>
 <div id="app">
@@ -72,15 +65,15 @@
 
 <div class="use-count" id="use-count"><span id="use-count-n">0</span> online</div>
 
-<script src="/frame/x9K2m.js"></script>
-<script src="/frame/8b3rt.js"></script>
-<script src="/frame/pGJxh.js"></script>
-<script src="/stuff/LyzaHBeO/hdr6ZzzC.js"></script>
-<script src="/stuff/LyzaHBeO/msJpa98j.js"></script>
-<script src="/stuff/LyzaHBeO/RsfVVqxz.js"></script>
-<script src="/js/zaka-newwin.js?v=055848f6"></script>
-<script src="/.assets/index-k9v3f1.js"></script>
-<script src="/.assets/index-v8c4z2.js"></script>
+<script src="/frame/0lhdB.js"></script>
+<script src="/frame/DE81A.js"></script>
+<script src="/frame/9GH3n.js"></script>
+<script src="/stuff/LyzaHBeO/3euG74Zc.js"></script>
+<script src="/stuff/LyzaHBeO/xNHsqV3x.js"></script>
+<script src="/stuff/LyzaHBeO/C22VhTU9.js"></script>
+<script src="/js/ZNuSyiF.js?v=055848f6"></script>
+<script src="/.assets/index-nDtXnT.js"></script>
+<script src="/.assets/index-O1CBil.js"></script>
 
 <script>
 (function(){"use strict";
@@ -222,7 +215,7 @@ function sj(w1sp) {
     sjReady = (async function () {
         var transportClient = new window.libbyTransport.libbyClient({w1p: w1sp});
         await transportClient.init();
-        var swReg = await navigator.serviceWorker.register('/k3Vq8.js', {scope: '/', updateViaCache: 'none'});
+        var swReg = await navigator.serviceWorker.register('/HHbaN.js', {scope: '/', updateViaCache: 'none'});
         var activeWorker = swReg.active || await new Promise(function(resolve) {
             var worker = swReg.installing || swReg.waiting;
             worker.addEventListener('statechange', function() {
@@ -234,8 +227,8 @@ function sj(w1sp) {
             transport: window.cfSolver.wrap(transportClient),
             config: {
                 prefix: '/nZ970vr4/',
-                K4q9p2XvPath: '/stuff/LyzaHBeO/hdr6ZzzC.js',
-                injectPath: '/stuff/LyzaHBeO/jtqxcoHL.js',
+                K4q9p2XvPath: '/stuff/LyzaHBeO/3euG74Zc.js',
+                injectPath: '/stuff/LyzaHBeO/tgD2nbJS.js',
                 wasmPath: '/stuff/LyzaHBeO/jCC9IUDB.wasm'
             }
         });
@@ -283,7 +276,7 @@ function openInNewTab(url) {
     try { createTab(String(url)); } catch (e) { console.error(e); }
 }
 
-// New-window guard lives in /js/zaka-newwin.js (tab iframes have no allow-popups).
+// New-window guard lives in /js/ZNuSyiF.js (tab iframes have no allow-popups).
 // Per-frame scramjet plugins from $K4q9p2XvUtils. Fresh instances per frame so
 // each one's callbacks can close over its own tab.
 function buildTabPlugins(tab) {
@@ -508,7 +501,7 @@ function navigateTab(url, tabId) {
             var sb = 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation';
             tab.iframe.setAttribute('sandbox', uv ? sb + ' allow-popups' : sb);
             if (uv) {
-                var reg = await navigator.serviceWorker.register('/frame/pLBYQ.js', { scope: '/frame/' });
+                var reg = await navigator.serviceWorker.register('/frame/yhENv.js', { scope: '/frame/' });
                 if (!reg.active) await new Promise(function (resolve) {
                     var worker = reg.installing || reg.waiting;
                     if (!worker) return resolve();
@@ -516,7 +509,7 @@ function navigateTab(url, tabId) {
                 });
                 if (!uvReady || uvW1sp !== w1spServer) {
                     uvW1sp = w1spServer;
-                    uvReady = new window.W1I41.W1I41Connection('/frame/8hF6n.js').setzIWyC('/frame/index-1OTY61e4.min.mjs', [{ WeZaN: w1spServer }]);
+                    uvReady = new window.W1I41.W1I41Connection('/frame/ikfZf.js').setzIWyC('/frame/index-LrSiKl.min.mjs', [{ WeZaN: w1spServer }]);
                     uvReady.catch(function () { uvReady = null; });
                 }
                 await uvReady;

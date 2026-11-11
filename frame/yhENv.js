@@ -3,8 +3,8 @@
  
  * hi
  */
-importScripts('8b3rt.js');
-importScripts('pGJxh.js');
+importScripts('DE81A.js');
+importScripts('9GH3n.js');
 importScripts(__u22$config.sw || '1vN6h.js');
  
 const e2s6j = new fPvwK();

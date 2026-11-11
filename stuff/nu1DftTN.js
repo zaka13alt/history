@@ -122,8 +122,8 @@ async function init() {
         K4q9p2XvConfig: { flags: flagOverrides() },
         config: {
             prefix: PREFIX,
-            K4q9p2XvPath: BASE + 'LyzaHBeO/hdr6ZzzC.js',
-            injectPath: BASE + 'LyzaHBeO/jtqxcoHL.js',
+            K4q9p2XvPath: BASE + 'LyzaHBeO/3euG74Zc.js',
+            injectPath: BASE + 'LyzaHBeO/tgD2nbJS.js',
             wasmPath: BASE + 'LyzaHBeO/jCC9IUDB.wasm',
         },
     });

@@ -1,6 +1,6 @@
 /**
  * Minified by jsDelivr using Terser v5.48.0.
- * Original file: /gh/zaka13alt/uvthing@main/index-1OTY61e4.mjs
+ * Original file: /gh/zaka13alt/uvthing@main/index-LrSiKl.mjs
  *
  * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
  */
