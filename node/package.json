@@ -8,6 +8,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "detect-port": "^2.1.0",
     "epoxy-server-node": "2.0.0",
     "ws": "^8.18.0"
   }

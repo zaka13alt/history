@@ -2,6 +2,7 @@ import { EpoxyServer } from "epoxy-server-node";
 import { createServer } from "node:http";
 import { connect } from "node:net";
 import { readFileSync } from "node:fs";
+import detect from "detect-port";
 import { createUseCounter } from "./use.js";
 import { createChat } from "./chat.js";
 import { createAuth } from "./auth.js";
@@ -16,14 +17,29 @@ const userConfig = JSON.parse(
 const EPOXY_HOST = "127.0.0.1";
 const EPOXY_PORT = 4444;
 const APP_PORT = 3000;
+const SOCKS_PORT = 35344;
+
+// wireproxy exposes a SOCKS5 proxy on SOCKS_PORT. detect-port returns the port
+// itself when it's free, so a result !== SOCKS_PORT means something is listening
+// (the tunnel is up). If it's down, drop the proxy options so epoxy dials
+// upstreams directly instead of failing every request.
+const socksUp = (await detect(SOCKS_PORT)) !== SOCKS_PORT;
+if (!socksUp) {
+  console.error(`socks5 :${SOCKS_PORT} not listening; starting without proxy (direct connections)`);
+}
+const proxyOptions = socksUp
+  ? {
+      socks5: `socks5://127.0.0.1:${SOCKS_PORT}`, // no auth
+      resolveIpv6: true, // resolve AAAA and dial IPv6 upstreams (wireproxy routes v6)
+    }
+  : {};
 
 const wisp = new EpoxyServer({
   ...userConfig,
   host: EPOXY_HOST,
   port: EPOXY_PORT,
   prefix: "/wisp",
-  socks5: "socks5://127.0.0.1:35344", // no auth
-  resolveIpv6: true, // resolve AAAA and dial IPv6 upstreams (wireproxy routes v6)
+  ...proxyOptions,
   useRealIpHeaders: true, // log the real client IP we pass along
   logLevel: "error", // only errors are printed (to stderr)
 });
