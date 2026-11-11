@@ -254,6 +254,18 @@ function sj(w1sp) {
     return sjReady;
 }
 
+// Scramjet's service worker is killed when idle and then 404s proxied
+// requests; ping every registration periodically to keep the workers alive.
+function revive() {
+    if (!navigator.serviceWorker) return;
+    navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (reg) {
+            if (reg.active) try { reg.active.postMessage('keepalive'); } catch (e) {}
+        });
+    }).catch(function () {});
+}
+setInterval(revive, 15000);
+
 // U(V) bare-mux transport, set once per w13p server.
 var uvW1sp = null, uvReady = null;
 
