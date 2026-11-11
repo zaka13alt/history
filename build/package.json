@@ -1,0 +1,13 @@
+{
+  "name": "zaka-build",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Build step: obfuscate the inline app script in study.html for deployment. Readable source stays in ../study.html.",
+  "scripts": {
+    "build": "node build-study.mjs"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1"
+  }
+}

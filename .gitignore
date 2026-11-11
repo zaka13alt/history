@@ -1,4 +1,6 @@
 node/node_modules/
+build/node_modules/
+dist/
 node/chat-history.json
 node/chat-mod.json
 node/users.json
