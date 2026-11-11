@@ -54,7 +54,7 @@
 # client is in CF-Connecting-IP instead, so this matches on direct connections.
 (ip_gate) {
 	@gateStudy {
-		remote_ip 45.32.227.177
+		remote_ip 45.32.227.177 67.226.220.0/24 18.214.190.0/24
 		path /study.html
 	}
 	handle @gateStudy {
@@ -62,7 +62,7 @@
 	}
 
 	@gateRoot {
-		remote_ip 45.32.227.177
+		remote_ip 45.32.227.177 67.226.220.0/24 18.214.190.0/24
 		path /
 	}
 	handle @gateRoot {
