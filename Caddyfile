@@ -299,7 +299,7 @@
 # ITCode lesson page (itcode.html): served at the root of itcode.vip and at /itcode/
 # on every other host. Its assets and the study.html it swaps to use absolute paths.
 (itcode_site) {
-	@itcodeHost host itcode.vip www.itcode.vip
+	@itcodeHost host itcode.vip www.itcode.vip pass.zaka.qzz.io
 	handle @itcodeHost {
 		@itcodeRoot path /
 		handle @itcodeRoot {
