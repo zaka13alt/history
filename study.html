@@ -104,12 +104,12 @@ try {
     else throw new Error();
 } catch(e) {
    shortcuts = [
-        {name:"y0utube", url:"https://youtube.com", img:"https://storage.itcode.vip/icos/youtube.png"},
-        {name:"disc0rd", url:"https://discord.com/app", img:"https://storage.itcode.vip/icos/discord.png"},
-        {name:"tikt0k", url:"https://tiktok.com", img:"https://storage.itcode.vip/icos/tiktok.ico"},
-        {name:"sp0tify", url:"https://spotify.com", img:"https://storage.itcode.vip/icos/spotify.webp"},
-        {name:"snapch4t", url:"https://snapchat.com", img:"https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons@master/images/svg/snapchat.svg"},
-        {name:"tw1tch", url:"https://twitch.tv", img:"https://storage.itcode.vip/icos/twitch.ico"}
+        {name:"y0utube", url:"https://youtube.com", img:"/img/icos/youtube.png"},
+        {name:"disc0rd", url:"https://discord.com/app", img:"/img/icos/discord.png"},
+        {name:"tikt0k", url:"https://tiktok.com", img:"/img/icos/tiktok.ico"},
+        {name:"sp0tify", url:"https://spotify.com", img:"/img/icos/spotify.webp"},
+        {name:"snapch4t", url:"https://snapchat.com", img:"/img/icos/snapchat.svg"},
+        {name:"tw1tch", url:"https://twitch.tv", img:"/img/icos/twitch.ico"}
     ];
 }
 
@@ -173,7 +173,7 @@ function faviconCandidates(pageUrl) {
         if (host.indexOf('www.') !== 0 && host.split('.').length <= 2) hosts.unshift('www.' + host);
         var out = [];
         ['ico', 'png'].forEach(function (ext) {
-            hosts.forEach(function (h) { out.push('/np/https://' + h + '/favicon.' + ext); });
+            hosts.forEach(function (h) { out.push('https://' + h + '/favicon.' + ext); });
         });
         return out;
     } catch (_) { return []; }
@@ -438,10 +438,8 @@ function renderShortcuts(container, tb) {
         ic.className = 'yyaep';
         if (s.img) {
             var iconImg = document.createElement('img');
-            // CHANGE 3b: removed the literal word "proxy" from this comment, "proxy" was the only inline-script hint match
-            // Absolute http(s) image URLs go through the /np/ image gateway (same as
-            // tb favicons); relative paths are used as-is.
-            iconImg.src = /^https?:\/\//i.test(s.img) ? '/np/' + s.img : s.img;
+            // Icons are hosted locally under /img/icos; use whatever src is given as-is.
+            iconImg.src = s.img;
             iconImg.alt = s.name;
             ic.appendChild(iconImg);
         } else {
