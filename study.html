@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="prefetch" href="/stuff/loz2PSkv/jCC9IUDB.wasm" as="fetch" type="application/wasm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="preload" href="/css/styles.css?v=3" as="style" />
-    <link rel="stylesheet" href="/css/styles.css?v=3">
+    <link rel="preload" href="/css/styles.css?v=4" as="style" />
+    <link rel="stylesheet" href="/css/styles.css?v=4">
     <style>
         /* address-bar suggestions: inline so a stale cached styles.css can never leave this markup unstyled */
         #p1tl9 { display: none; position: absolute; top: 38px; left: 0; right: 0; z-index: 1000; padding: 5px; background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.55); }
@@ -80,19 +80,17 @@
 
 var defaultw1sp = "wss://" + window.location.host + "/api/";
 var defaultSearch = "https://duckduckgo.com/search?q=%s";
-var storageShortcuts = "k_o1elqq2o5j";
-var storagew1sp = "k_glc2z6w65v";
-var storageSearch = "k_bh6hn373lz";
-var storageBackend = "k_zene5uw70y";
+var storageShortcuts = "a4ajpezoi";
+var storagew1sp = "z8v0ba4i0";
+var storageSearch = "sfjlx5jda";
 
-var tabs = new Map();
-var activeTabId = null;
-var tabCounter = 0;
+var tbs = new Map();
+var activeTbId = null;
+var tbCounter = 0;
 
 var w1spServer = localStorage.getItem(storagew1sp) || defaultw1sp;
 var searchEngine = localStorage.getItem(storageSearch) || defaultSearch;
 if(searchEngine.indexOf('%s') < 0) searchEngine = defaultSearch;
-var backendMode = localStorage.getItem(storageBackend) || "default";
 
 var shortcuts = [];
 try {
@@ -113,27 +111,27 @@ try {
 
 (function() {
     var roblox = {name:"Roblox", url:"https://nowgg.fun/apps/a/19900/b.html", icon:"fa-solid fa-gamepad"};
-    var flag = "k_f6x4z4ssd6";
+    var flag = "dck9n709p";
     if(localStorage.getItem(flag)) return;
     if(!shortcuts.some(function(s){return s.url === roblox.url})) shortcuts.push(roblox);
     try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
 })();
 
 (function() {
-    var flag = "k_h3utb7nufp";
+    var flag = "sirk911ki";
     if(localStorage.getItem(flag)) return;
     shortcuts = shortcuts.filter(function(s){return !/^https?:\/\/(www\.)?github\.com\/?$/i.test(s.url)});
     try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
 })();
 
 (function() {
-    var flag = "k_7yzj881saz";
+    var flag = "wkjp5jh3f";
     if(localStorage.getItem(flag)) return;
     shortcuts = shortcuts.filter(function(s){return !/^https?:\/\/mail\.google\.com\/?$/i.test(s.url)});
     try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
 })();
 
-var tabBar = document.getElementById("o6k9n");
+var tbBar = document.getElementById("o6k9n");
 var viewRoot = document.getElementById("uzt0y");
 var addrInput = document.getElementById("z5blg");
 var plusBtn = document.getElementById("c85v1");
@@ -188,9 +186,9 @@ function loadFavicon(img, pageUrl, onFail) {
     next();
 }
 
-function applyFavicon(tab, url) {
-    if (!tab || !tab.faviconImg) return;
-    var img = tab.faviconImg;
+function applyFavicon(tb, url) {
+    if (!tb || !tb.faviconImg) return;
+    var img = tb.faviconImg;
     if (!faviconCandidates(url).length) { img.style.display = 'none'; return; }
     img.style.display = 'block';
     loadFavicon(img, url, function () { img.style.display = 'none'; });
@@ -201,10 +199,10 @@ function updateLockIcon(url) {
     document.getElementById('m7rrm').innerHTML = '<i class="fa-solid ' + icon + '"></i>';
 }
 
-function clearFavicon(tab) {
-    if (!tab || !tab.faviconImg) return;
-    tab.faviconImg.src = '';
-    tab.faviconImg.style.display = 'none';
+function clearFavicon(tb) {
+    if (!tb || !tb.faviconImg) return;
+    tb.faviconImg.src = '';
+    tb.faviconImg.style.display = 'none';
 }
 
 // SJ controller, built once per w13p server.
@@ -251,95 +249,93 @@ function revive() {
 }
 setInterval(revive, 15000);
 
-// U(V) bare-mux transport, set once per w13p server.
-var uvW1sp = null, uvReady = null;
 
 // YouTube Layout Hook
-var ytTabs = new Set();
+var ytTbs = new Set();
 function isYouTube(url) { try { return /(^|\.)youtube\.com$/.test(new URL(url).hostname); } catch(e) { return false; } }
-function resizeYT(tab) {
-    var iframe = tab.iframe, parent = iframe.parentNode;
+function resizeYT(tb) {
+    var iframe = tb.iframe, parent = iframe.parentNode;
     if (!parent) return;
     var w = parent.clientWidth, h = parent.clientHeight;
-    var scale = tab.frame && tab.isYT && isYouTube(tab.lastUrl) && w > 980 ? w / 980 : 1;
+    var scale = tb.frame && tb.isYT && isYouTube(tb.lastUrl) && w > 980 ? w / 980 : 1;
     if (scale === 1) { iframe.style.width = ''; iframe.style.height = ''; iframe.style.transform = ''; return; }
     iframe.style.width = (w / scale) + 'px';
     iframe.style.height = (h / scale) + 'px';
     iframe.style.transformOrigin = '0 0';
     iframe.style.transform = 'scale(' + scale + ')';
 }
-window.addEventListener('resize', function() { ytTabs.forEach(resizeYT); });
+window.addEventListener('resize', function() { ytTbs.forEach(resizeYT); });
 
-// Tab Creation
-// Open a URL as a brand-new tab in zaka's own tab UI.
-function openInNewTab(url) {
-    try { createTab(String(url)); } catch (e) { console.error(e); }
+// Tb Creation
+// Open a URL as a brand-new tb in zaka's own tb UI.
+function openInNewTb(url) {
+    try { createTb(String(url)); } catch (e) { console.error(e); }
 }
 
-// New-window guard lives in /js/ZNuSyiF.js (tab iframes have no allow-popups).
+// New-window guard lives in /js/ZNuSyiF.js (tb iframes have no allow-popups).
 // Per-frame zkaaajet plugins from $K5qkWTpAUtils. Fresh instances per frame so
-// each one's callbacks can close over its own tab.
-function buildTabPlugins(tab) {
+// each one's callbacks can close over its own tb.
+function buildTbPlugins(tb) {
     var U = window.$K5qkWTpAUtils;
     if (!U) return [];
     var plugins = [];
     try {
         // Cache GET/HEAD responses in Cache Storage (respects cache-control).
         if (U.HttpCachePlugin) plugins.push(new U.HttpCachePlugin());
-        // Links/navigations that would escape the proxy open as a new zaka tab.
+        // Links/navigations that would escape the proxy open as a new zaka tb.
         // The plugin 302-redirects the escaping window to whatever we return, so
         // never return the real URL (that loads it unproxied and leaks it); send
         // that window to a same-origin page that just closes itself.
         if (U.CatchEscapedLinksPlugin) plugins.push(new U.CatchEscapedLinksPlugin(function (escapedUrl) {
-            openInNewTab(String(escapedUrl));
+            openInNewTb(String(escapedUrl));
             return location.origin + '/__/escaped.html';
         }));
-        var nw = window.zakaNewWindowPlugin && window.zakaNewWindowPlugin(openInNewTab);
+        var nw = window.zakaNewWindowPlugin && window.zakaNewWindowPlugin(openInNewTb);
         if (nw) plugins.push(nw);
         // Keep the address bar in sync with the frame's real URL (clicks, history, redirects).
         if (U.UrlWatcherPlugin) plugins.push(new U.UrlWatcherPlugin(function (realUrl) {
-            if (!tab) return;
-            tab.url = realUrl;
-            if (activeTabId !== tab.id || tab.isA1) return;
+            if (!tb) return;
+            tb.url = realUrl;
+            if (activeTbId !== tb.id || tb.isA1) return;
             addrInput.value = realUrl;
             updateLockIcon(realUrl);
-            try { tab.title.textContent = new URL(realUrl).hostname; } catch (e) { tab.title.textContent = realUrl; }
-            applyFavicon(tab, realUrl);
+            try { tb.title.textContent = new URL(realUrl).hostname; } catch (e) { tb.title.textContent = realUrl; }
+            applyFavicon(tb, realUrl);
         }));
     } catch (e) { console.error('plugin setup failed', e); }
     return plugins;
 }
 
-function createTab(startUrl) {
-    var id = ++tabCounter;
-    var tabEl = document.createElement('div');
-    tabEl.className = 'm0jap';
-    tabEl.draggable = true;
-    tabEl.dataset.tabId = id;
+function createTb(startUrl) {
+    var id = ++tbCounter;
+    var tbEl = document.createElement('div');
+    tbEl.className = 'm0jap';
+    tbEl.draggable = true;
+    tbEl.dataset.tbId = id;
 
     var favImg = document.createElement('img');
-    favImg.className = 'tab-favicon';
+    favImg.className = 'tb-favicon';
     favImg.style.display = 'none';
-    tabEl.appendChild(favImg);
+    tbEl.appendChild(favImg);
 
     var title = document.createElement('span');
     title.className = 't9f20';
     title.textContent = startUrl || 'n3w t3b';
-    tabEl.appendChild(title);
+    tbEl.appendChild(title);
 
     var closeBtn = document.createElement('button');
     closeBtn.className = 'q1jap';
     closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-    closeBtn.onclick = function(e) { e.stopPropagation(); closeTab(id); };
-    tabEl.appendChild(closeBtn);
-    tabEl.onclick = function() { activateTab(id); };
+    closeBtn.onclick = function(e) { e.stopPropagation(); closeTb(id); };
+    tbEl.appendChild(closeBtn);
+    tbEl.onclick = function() { activateTb(id); };
 
     var iframe = document.createElement('iframe');
     iframe.className = 'wo515';
     iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
 
-    var newTabPage = document.createElement('div');
-    newTabPage.className = 'zzbzi';
+    var newTbPage = document.createElement('div');
+    newTbPage.className = 'zzbzi';
     var svgNS = "http://www.w3.org/2000/svg";
     var svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("class", "x7p4d");
@@ -356,86 +352,86 @@ function createTab(startUrl) {
     
     var grid = document.createElement('div');
     grid.className = 'zf54t';
-    newTabPage.appendChild(svg);
-    newTabPage.appendChild(grid);
+    newTbPage.appendChild(svg);
+    newTbPage.appendChild(grid);
 
-    tabBar.insertBefore(tabEl, plusBtn);
+    tbBar.insertBefore(tbEl, plusBtn);
     viewRoot.appendChild(iframe);
-    viewRoot.appendChild(newTabPage);
+    viewRoot.appendChild(newTbPage);
 
-    var tab = { id: id, tab: tabEl, iframe: iframe, title: title, url: startUrl || '', newTabPage: newTabPage, settingsPage: null, shortcutsContainer: grid, frame: null, w1sp: w1spServer, isA1: false, faviconImg: favImg };
-    tabs.set(id, tab);
-    renderShortcuts(grid, tab);
-    activateTab(id);
+    var tb = { id: id, tb: tbEl, iframe: iframe, title: title, url: startUrl || '', newTbPage: newTbPage, settingsPage: null, shortcutsContainer: grid, frame: null, w1sp: w1spServer, isA1: false, faviconImg: favImg };
+    tbs.set(id, tb);
+    renderShortcuts(grid, tb);
+    activateTb(id);
 
     if (startUrl) {
         if (startUrl === settingsUrl || startUrl === page50000 || startUrl === page50001 || startUrl === page50002) {
-            openSettings(tab);
+            openSettings(tb);
         } else {
-            navigateTab(startUrl, id);
+            navigateTb(startUrl, id);
         }
     }
     return id;
 }
 
-function closeTab(id) {
-    var tab = tabs.get(id);
-    if (!tab) return;
-    var wasActive = activeTabId === id;
-    tab.tab.remove();
-    tab.iframe.remove();
-    if (tab.newTabPage) tab.newTabPage.remove();
-    if (tab.settingsPage) tab.settingsPage.remove();
-    tabs.delete(id);
-    if (tabs.size === 0) { createTab(); return; }
+function closeTb(id) {
+    var tb = tbs.get(id);
+    if (!tb) return;
+    var wasActive = activeTbId === id;
+    tb.tb.remove();
+    tb.iframe.remove();
+    if (tb.newTbPage) tb.newTbPage.remove();
+    if (tb.settingsPage) tb.settingsPage.remove();
+    tbs.delete(id);
+    if (tbs.size === 0) { createTb(); return; }
     if (wasActive) {
-        var keys = Array.from(tabs.keys());
+        var keys = Array.from(tbs.keys());
         var idx = keys.indexOf(id);
-        activateTab(keys[Math.max(0, idx - 1)]);
+        activateTb(keys[Math.max(0, idx - 1)]);
     }
 }
 
-function activateTab(id) {
-    var tab = tabs.get(id);
-    if (!tab) return;
-    tabs.forEach(function(t) {
-        t.tab.classList.remove('a0tu7');
+function activateTb(id) {
+    var tb = tbs.get(id);
+    if (!tb) return;
+    tbs.forEach(function(t) {
+        t.tb.classList.remove('a0tu7');
         t.iframe.classList.remove('p2tra');
-        if (t.newTabPage) t.newTabPage.style.display = 'none';
+        if (t.newTbPage) t.newTbPage.style.display = 'none';
         if (t.settingsPage) t.settingsPage.classList.remove('p2tra');
     });
-    tab.tab.classList.add('a0tu7');
-    activeTabId = id;
+    tb.tb.classList.add('a0tu7');
+    activeTbId = id;
     
-    if (tab.url === settingsUrl || tab.url === page50000 || tab.url === page50001 || tab.url === page50002) {
-        openSettings(tab);
-    } else if (tab.isA1) {
-        tab.iframe.classList.add('p2tra');
+    if (tb.url === settingsUrl || tb.url === page50000 || tb.url === page50001 || tb.url === page50002) {
+        openSettings(tb);
+    } else if (tb.isA1) {
+        tb.iframe.classList.add('p2tra');
         addrInput.value = a1Url;
         document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>';
-    } else if (tab.url) {
-        tab.iframe.classList.add('p2tra');
-        addrInput.value = tab.url;
-        updateLockIcon(tab.url);
+    } else if (tb.url) {
+        tb.iframe.classList.add('p2tra');
+        addrInput.value = tb.url;
+        updateLockIcon(tb.url);
     } else {
-        if (tab.newTabPage) tab.newTabPage.style.display = 'flex';
+        if (tb.newTbPage) tb.newTbPage.style.display = 'flex';
         addrInput.value = '';
         document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-globe"></i>';
     }
 }
 
-function hideNewTab(tab) {
-    if (tab.newTabPage) tab.newTabPage.style.display = 'none';
-    tab.iframe.classList.remove('p2tra');
-    if (tab.settingsPage) tab.settingsPage.classList.remove('p2tra');
+function hideNewTb(tb) {
+    if (tb.newTbPage) tb.newTbPage.style.display = 'none';
+    tb.iframe.classList.remove('p2tra');
+    if (tb.settingsPage) tb.settingsPage.classList.remove('p2tra');
 }
 
-function showNewTab(tab) {
-    if (tab.newTabPage) tab.newTabPage.style.display = 'flex';
-    if (tab.settingsPage) tab.settingsPage.classList.remove('p2tra');
+function showNewTb(tb) {
+    if (tb.newTbPage) tb.newTbPage.style.display = 'flex';
+    if (tb.settingsPage) tb.settingsPage.classList.remove('p2tra');
 }
 
-function renderShortcuts(container, tab) {
+function renderShortcuts(container, tb) {
     container.innerHTML = '';
     shortcuts.forEach(function(s) {
         var t = document.createElement('div');
@@ -446,7 +442,7 @@ function renderShortcuts(container, tab) {
         if (s.img) {
             var iconImg = document.createElement('img');
             // Absolute http(s) image URLs go through the /np/ image proxy (same as
-            // tab favicons); relative paths are used as-is.
+            // tb favicons); relative paths are used as-is.
             iconImg.src = /^https?:\/\//i.test(s.img) ? '/np/' + s.img : s.img;
             iconImg.alt = s.name;
             ic.appendChild(iconImg);
@@ -460,11 +456,11 @@ function renderShortcuts(container, tab) {
         name.textContent = s.name;
         t.appendChild(ic); t.appendChild(name);
         t.addEventListener('click', function() {
-            if (!tab) return;
-            tab.url = s.url;
-            tab.title.textContent = s.name;
-            hideNewTab(tab);
-            navigateTab(s.url, tab.id);
+            if (!tb) return;
+            tb.url = s.url;
+            tb.title.textContent = s.name;
+            hideNewTb(tb);
+            navigateTb(s.url, tb.id);
         });
         container.appendChild(t);
     });
@@ -488,72 +484,32 @@ function parseInput(input) {
     return searchEngine.replace('%s', encodeURIComponent(val));
 }
 
-function navigateTab(url, tabId) {
-    var tab = tabs.get(tabId);
-    if (!tab) return;
-    hideNewTab(tab);
+function navigateTb(url, tbId) {
+    var tb = tbs.get(tbId);
+    if (!tb) return;
+    hideNewTb(tb);
     
     var executeNav = async function() {
         try {
-            var uv = backendMode === "ultrev";
-            tab.isUV = uv;
-            // U(V) has no new-window plugin, so its tabs get popups; SJ tabs don't.
-            var sb = 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation';
-            tab.iframe.setAttribute('sandbox', uv ? sb + ' allow-popups' : sb);
-            if (uv) {
-                var reg = await navigator.serviceWorker.register('/frame/yhENv.js', { scope: '/frame/' });
-                if (!reg.active) await new Promise(function (resolve) {
-                    var worker = reg.installing || reg.waiting;
-                    if (!worker) return resolve();
-                    worker.addEventListener('statechange', function () { if (worker.state === 'activated') resolve(); });
-                });
-                if (!uvReady || uvW1sp !== w1spServer) {
-                    uvW1sp = w1spServer;
-                    uvReady = new window.W1I41.W1I41Connection('/frame/ikfZf.js').setzIWyC('/frame/index-LrSiKl.min.mjs', [{ WeZaN: w1spServer }]);
-                    uvReady.catch(function () { uvReady = null; });
-                }
-                await uvReady;
-                tab.frame = null;
-                if (!tab.uvWatch) {
-                    tab.uvWatch = true;
-                    // Follow U(V) navigations: slice the prefix off the path and xor-decode it.
-                    tab.iframe.addEventListener('load', function () {
-                        if (!tab.isUV || tab.isA1) return;
-                        var real;
-                        try {
-                            var loc = tab.iframe.contentWindow.location, prefix = self.__u22$config.prefix;
-                            if (loc.pathname.indexOf(prefix) !== 0) return;
-                            real = u2.codec.xor.decode((loc.pathname + loc.search + loc.hash).slice(prefix.length));
-                        } catch (e) { return; }
-                        tab.url = real;
-                        if (activeTabId !== tab.id) return;
-                        addrInput.value = real;
-                        updateLockIcon(real);
-                        try { tab.title.textContent = new URL(real).hostname; } catch (e) { tab.title.textContent = real; }
-                        applyFavicon(tab, real);
-                    });
-                }
-                tab.iframe.src = self.__u22$config.prefix + u2.codec.xor.encode(url);
-            } else {
-                var ctrl = await sj(w1spServer);
-                if (!tab.frame || tab.controller !== ctrl) {
-                    tab.frame = ctrl.createFrame(tab.iframe, { plugins: buildTabPlugins(tab) });
-                    if (!tab.frame) throw new Error('createFrame returned null');
-                    tab.controller = ctrl;
-                    ytTabs.add(tab);
-                }
-                tab.isYT = true;
-                tab.lastUrl = url;
-                resizeYT(tab);
-                tab.frame.go(url);
+            tb.iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
+            var ctrl = await sj(w1spServer);
+            if (!tb.frame || tb.controller !== ctrl) {
+                tb.frame = ctrl.createFrame(tb.iframe, { plugins: buildTbPlugins(tb) });
+                if (!tb.frame) throw new Error('createFrame returned null');
+                tb.controller = ctrl;
+                ytTbs.add(tb);
             }
-            tab.iframe.classList.add('p2tra');
-            if (!tab.isA1) {
-                tab.url = url;
+            tb.isYT = true;
+            tb.lastUrl = url;
+            resizeYT(tb);
+            tb.frame.go(url);
+            tb.iframe.classList.add('p2tra');
+            if (!tb.isA1) {
+                tb.url = url;
                 addrInput.value = url;
                 updateLockIcon(url);
-                try { tab.title.textContent = new URL(url).hostname; } catch(e) { tab.title.textContent = url; }
-                applyFavicon(tab, url);
+                try { tb.title.textContent = new URL(url).hostname; } catch(e) { tb.title.textContent = url; }
+                applyFavicon(tb, url);
             }
         } catch(err) {
             console.error(err);
@@ -562,10 +518,10 @@ function navigateTab(url, tabId) {
     executeNav();
 }
 
-function openSettings(tab) {
-    if (!tab.settingsPage) {
-        tab.settingsPage = document.createElement('div');
-        tab.settingsPage.className = 'akf3h';
+function openSettings(tb) {
+    if (!tb.settingsPage) {
+        tb.settingsPage = document.createElement('div');
+        tb.settingsPage.className = 'akf3h';
         
         var wrap = document.createElement('div');
         wrap.className = 'i2965';
@@ -576,13 +532,13 @@ function openSettings(tab) {
         backBtn.className = 'btix6';
         backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
         backBtn.onclick = function() {
-            tab.url = '';
-            tab.title.textContent = 'n3w t3b';
-            showNewTab(tab);
-            activateTab(tab.id);
+            tb.url = '';
+            tb.title.textContent = 'n3w t3b';
+            showNewTb(tb);
+            activateTb(tb.id);
             addrInput.value = '';
             document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-globe"></i>';
-            clearFavicon(tab);
+            clearFavicon(tb);
         };
         var tt = document.createElement('div');
         tt.className = 'd6yw8';
@@ -619,21 +575,6 @@ function openSettings(tab) {
             selSrch.appendChild(op);
         });
         rSrch.appendChild(lSrch); rSrch.appendChild(selSrch); secSrch.appendChild(hSrch); secSrch.appendChild(rSrch);
-
-        var lBe = document.createElement('div');
-        lBe.className = 'h7lt9'; lBe.innerHTML = '<div class="wbq5w">backend</div><div class="h8k83"></div>';
-        var selBe = document.createElement('select');
-        selBe.className = 'ktqkv';
-        [{v:'default',n:'SJ v2 (default)'},{v:'ultrev',n:'U(V) 3.2.10'}].forEach(function(o) {
-            var op = document.createElement('option');
-            op.value = o.v; op.textContent = o.n;
-            if (o.v === backendMode) op.selected = true;
-            selBe.appendChild(op);
-        });
-        var rBe = document.createElement('div');
-        rBe.className = 'cu3hm';
-        rBe.appendChild(lBe); rBe.appendChild(selBe); secNet.appendChild(rBe);
-
         var secAct = document.createElement('div');
         secAct.className = 'cjxl3';
         var hAct = document.createElement('div');
@@ -649,32 +590,30 @@ function openSettings(tab) {
             if (v && v.startsWith('wss://')) { w1spServer = v; localStorage.setItem(storagew1sp, v); }
             searchEngine = selSrch.value;
             localStorage.setItem(storageSearch, searchEngine);
-            backendMode = selBe.value;
-            localStorage.setItem(storageBackend, backendMode);
             saveBtn.textContent = 'Saved';
             setTimeout(function() { saveBtn.textContent = 'Save'; }, 1200);
         };
         rAct.appendChild(lAct); rAct.appendChild(saveBtn); secAct.appendChild(hAct); secAct.appendChild(rAct);
 
         wrap.appendChild(hd); wrap.appendChild(secNet); wrap.appendChild(secSrch); wrap.appendChild(secAct);
-        tab.settingsPage.appendChild(wrap);
-        viewRoot.appendChild(tab.settingsPage);
+        tb.settingsPage.appendChild(wrap);
+        viewRoot.appendChild(tb.settingsPage);
     }
     
-    tabs.forEach(function(t) {
+    tbs.forEach(function(t) {
         t.iframe.classList.remove('p2tra');
-        if (t.newTabPage) t.newTabPage.style.display = 'none';
+        if (t.newTbPage) t.newTbPage.style.display = 'none';
         if (t.settingsPage) t.settingsPage.classList.remove('p2tra');
     });
-    tab.settingsPage.classList.add('p2tra');
-    tab.iframe.classList.remove('p2tra');
-    if (tab.newTabPage) tab.newTabPage.style.display = 'none';
+    tb.settingsPage.classList.add('p2tra');
+    tb.iframe.classList.remove('p2tra');
+    if (tb.newTbPage) tb.newTbPage.style.display = 'none';
     addrInput.value = settingsUrl;
-    tab.url = settingsUrl;
-    tab.title.textContent = 's3ttin7gs';
+    tb.url = settingsUrl;
+    tb.title.textContent = 's3ttin7gs';
     document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-gear"></i>';
-    activeTabId = tab.id;
-    clearFavicon(tab);
+    activeTbId = tb.id;
+    clearFavicon(tb);
 }
 
 // Event Listeners
@@ -739,55 +678,55 @@ addrInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         var val = addrInput.value.trim();
-        var tab = tabs.get(activeTabId);
-        if (!val || !tab) return;
+        var tb = tbs.get(activeTbId);
+        if (!val || !tb) return;
         showLoad();
         if (val === settingsUrl || val === page50000 || val === page50001 || val === page50002 || val.startsWith('education://')) {
-            tab.url = settingsUrl; tab.title.textContent = 's3ttin7gs'; openSettings(tab); return;
+            tb.url = settingsUrl; tb.title.textContent = 's3ttin7gs'; openSettings(tb); return;
         }
         var parsed = parseInput(val);
         if (!parsed) return;
-        tab.url = parsed;
-        tab.title.textContent = parsed.replace(/^https?:\/\//,'').split('/')[0] || val;
-        hideNewTab(tab);
-        navigateTab(parsed, activeTabId);
+        tb.url = parsed;
+        tb.title.textContent = parsed.replace(/^https?:\/\//,'').split('/')[0] || val;
+        hideNewTb(tb);
+        navigateTb(parsed, activeTbId);
     }
 });
 
-plusBtn.onclick = function() { createTab(); };
-backBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && ((t.frame && t.frame.go) || t.isUV)) { try { t.iframe.contentWindow.history.back(); } catch(e){} } };
-fwdBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && ((t.frame && t.frame.go) || t.isUV)) { try { t.iframe.contentWindow.history.forward(); } catch(e){} } };
-reloadBtn.onclick = function() { var t = tabs.get(activeTabId); if (t && t.url) navigateTab(t.url, activeTabId); };
+plusBtn.onclick = function() { createTb(); };
+backBtn.onclick = function() { var t = tbs.get(activeTbId); if (t && ((t.frame && t.frame.go))) { try { t.iframe.contentWindow.history.back(); } catch(e){} } };
+fwdBtn.onclick = function() { var t = tbs.get(activeTbId); if (t && ((t.frame && t.frame.go))) { try { t.iframe.contentWindow.history.forward(); } catch(e){} } };
+reloadBtn.onclick = function() { var t = tbs.get(activeTbId); if (t && t.url) navigateTb(t.url, activeTbId); };
 starBtn.onclick = function() { var i = starBtn.querySelector('i'); i.classList.toggle('fa-regular'); i.classList.toggle('fa-solid'); };
-settingsBtn.onclick = function() { var t = tabs.get(activeTabId); if (t) { t.url = settingsUrl; t.title.textContent = 's3ttin7gs'; openSettings(t); } };
+settingsBtn.onclick = function() { var t = tbs.get(activeTbId); if (t) { t.url = settingsUrl; t.title.textContent = 's3ttin7gs'; openSettings(t); } };
 
 document.getElementById('sidebar-game').onclick = function() {
-    var id = createTab();
-    var t = tabs.get(id);
-    if (t) { t.iframe.src = gamesUrl; t.url = gamesPath; t.title.textContent = 'g@mez'; addrInput.value = gamesPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTab(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
+    var id = createTb();
+    var t = tbs.get(id);
+    if (t) { t.iframe.src = gamesUrl; t.url = gamesPath; t.title.textContent = 'g@mez'; addrInput.value = gamesPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTb(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
 };
 
 document.getElementById('sidebar-chat').onclick = function() {
-    var id = createTab();
-    var t = tabs.get(id);
-    if (t) { t.iframe.src = chatUrl; t.url = chatPath; t.title.textContent = 'ch@t'; addrInput.value = chatPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTab(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
+    var id = createTb();
+    var t = tbs.get(id);
+    if (t) { t.iframe.src = chatUrl; t.url = chatPath; t.title.textContent = 'ch@t'; addrInput.value = chatPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTb(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
 };
 
 document.getElementById('sidebar-a1').onclick = function() {
-    var id = createTab();
-    var t = tabs.get(id);
-    if (t) { t.isA1 = true; navigateTab(a1ActualUrl, id); t.url = a1Url; t.title.textContent = 'A1'; addrInput.value = a1Url; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; clearFavicon(t); }
+    var id = createTb();
+    var t = tbs.get(id);
+    if (t) { t.isA1 = true; navigateTb(a1ActualUrl, id); t.url = a1Url; t.title.textContent = 'A1'; addrInput.value = a1Url; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; clearFavicon(t); }
 };
 
 // Online Counter
 (function() {
     var el = document.getElementById('use-count'), n = document.getElementById('use-count-n');
     var id;
-    try { id = localStorage.getItem('k_7lxbla9yjw'); } catch(e) {}
+    try { id = localStorage.getItem('z938fafhp'); } catch(e) {}
     if (!id || !/^[A-Za-z0-9_-]{16,64}$/.test(id)) {
         var b = crypto.getRandomValues(new Uint8Array(16));
         id = Array.prototype.map.call(b, function(x) { return ('0' + x.toString(16)).slice(-2); }).join('');
-        try { localStorage.setItem('k_7lxbla9yjw', id); } catch(e) {}
+        try { localStorage.setItem('z938fafhp', id); } catch(e) {}
     }
     var delay = 1000;
     function connect() {
@@ -798,7 +737,7 @@ document.getElementById('sidebar-a1').onclick = function() {
     connect();
 })();
 
-createTab();
+createTb();
 })();
 </script>
 </body>
