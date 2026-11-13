@@ -336,19 +336,11 @@ function createTb(startUrl) {
 
     var newTbPage = document.createElement('div');
     newTbPage.className = 'zzbzi';
-    var svgNS = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("class", "x7p4d");
-    svg.setAttribute("viewBox", "0 0 60 20");
-    var rect = document.createElementNS(svgNS, "rect");
-    rect.setAttribute("width", "100%"); rect.setAttribute("height", "100%"); rect.setAttribute("fill", "#000"); rect.setAttribute("rx", "4");
-    var text = document.createElementNS(svgNS, "text");
-    text.setAttribute("x", "50%"); text.setAttribute("y", "55%"); text.setAttribute("fill", "#fff");
-    text.setAttribute("font-family", "system-ui,sans-serif"); text.setAttribute("font-size", "12");
-    text.setAttribute("font-weight", "600"); text.setAttribute("text-anchor", "middle");
-    text.setAttribute("dominant-baseline", "middle"); text.setAttribute("letter-spacing", "0.5");
-    text.textContent = "zaka";
-    svg.appendChild(rect); svg.appendChild(text);
+    var svg = document.createElement("img");
+    svg.className = "x7p4d";
+    svg.src = "/img/logo.svg";
+    svg.alt = "";
+    svg.draggable = false;
     
     var grid = document.createElement('div');
     grid.className = 'zf54t';
