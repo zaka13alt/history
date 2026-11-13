@@ -35,7 +35,7 @@
         #d8k7n i { transform: translateX(-1px); }
         #gkj56 i { transform: translateX(1px); }
         .xosdi { position: relative; flex: 1; height: 34px; display: flex; align-items: center; min-width: 0; }
-        .p0usr { width: 100%; height: 34px; padding: 0 42px 0 38px; border: 1px solid rgba(255,255,255,0.07); border-radius: 9px; outline: none; background: #1b1b1b; color: #eee; font-size: 13px; }
+        .p0usr { width: 100%; height: 34px; padding: 0 42px 0 38px; border: 1px solid rgba(255,255,255,0.07); border-radius: 11px; outline: none; background: #1b1b1b; color: #eee; font-size: 13px; }
         .p0usr:focus { background: #202020; border-color: #444; }
         #m7rrm { position: absolute; left: 13px; z-index: 2; color: #777; font-size: 12px; pointer-events: none; }
         #eufqd { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
@@ -44,13 +44,14 @@
         #uzt0y { width: 100%; flex: 1; background: #000; position: relative; overflow: hidden; }
         .wo515 { width: 100%; height: 100%; display: none; border: 0; background: #000; position: absolute; top: 0; left: 0; }
         .wo515.p2tra { display: block; }
-        .zzbzi { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; position: absolute; top: 0; left: 0; z-index: 5; padding: 40px 20px; overflow-y: auto; }
+        .zzbzi { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(1100px 760px at 50% 18%, #151515, #000 62%); position: absolute; top: 0; left: 0; z-index: 5; padding: 40px 20px; overflow-y: auto; }
         .x7p4d { width: 160px; margin-bottom: 40px; flex-shrink: 0; }
         .zf54t { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px 22px; max-width: 600px; width: 100%; }
-        .zql1q { display: flex; flex-direction: column; align-items: center; gap: 9px; cursor: pointer; padding: 4px; border-radius: 12px; }
-        .zql1q:hover { background: rgba(255,255,255,0.04); }
-        .yyaep { width: 58px; height: 58px; border-radius: 14px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #555; overflow: hidden; flex-shrink: 0; }
-        .yyaep img { width: 30px; height: 30px; max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+        .zql1q { display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; padding: 6px; border-radius: 14px; transition: transform 0.15s; }
+        .zql1q:hover .yyaep { background: #1d1d1d; border-color: rgba(255,255,255,0.16); transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.5); }
+        .zql1q:hover .irf6u { color: #ddd; }
+        .yyaep { width: 60px; height: 60px; border-radius: 18px; background: #141414; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #555; overflow: hidden; flex-shrink: 0; transition: background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s; }
+        .yyaep img { width: 30px; height: 30px; max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
         .irf6u { font-size: 11.5px; color: #999; text-align: center; max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .l1-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.12s ease; pointer-events: none; }
         .l1-overlay.active { opacity: 1; pointer-events: auto; }
@@ -83,7 +84,7 @@
         .use-count.on { display: inline-flex; }
         @media (max-width: 600px) {
             .zf54t { grid-template-columns: repeat(4, 1fr); }
-            .yyaep { width: 52px; height: 52px; }
+            .yyaep { width: 56px; height: 56px; }
             .g8sm0 { width: 160px; }
             #sidebar { width: 50px; }
             .sidebar-btn { width: 35px; height: 35px; }
