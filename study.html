@@ -325,7 +325,7 @@ function createTb(startUrl) {
 
     var title = document.createElement('span');
     title.className = 't9f20';
-    title.textContent = startUrl || 'n3w t3b';
+    title.textContent = startUrl || 'NewT';
     tbEl.appendChild(title);
 
     var closeBtn = document.createElement('button');
@@ -531,7 +531,7 @@ function openSettings(tb) {
         backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
         backBtn.onclick = function() {
             tb.url = '';
-            tb.title.textContent = 'n3w t3b';
+            tb.title.textContent = 'NewT';
             showNewTb(tb);
             activateTb(tb.id);
             addrInput.value = '';
