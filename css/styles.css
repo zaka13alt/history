@@ -5,8 +5,7 @@
             --text-dim: #888; --sidebar-bg: #0b0b0b; --sidebar-icon: #5e5e5e; --sidebar-icon-hover: #cccccc;
         }
         html, body { width: 100%; height: 100%; overflow: hidden; background: #000; color: var(--text-primary); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { display: flex; align-items: center; justify-content: center; }
-        #app { display: flex; width: calc(100% - 56px); height: calc(100% - 56px); max-width: 1320px; max-height: 840px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-subtle); box-shadow: 0 24px 70px rgba(0,0,0,0.55); }
+        #app { display: flex; width: 100%; height: 100%; }
         #sidebar { width: 56px; height: 100%; background: var(--sidebar-bg); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; align-items: center; padding: 15px 0 13px; gap: 10px; flex-shrink: 0; z-index: 20; }
         .sidebar-btn { width: 38px; height: 38px; border: 0; border-radius: 10px; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--sidebar-icon); padding: 0; transition: background 0.15s, transform 0.1s; }
         .sidebar-btn img { width: 17px; height: 17px; filter: brightness(0) invert(0.4); transition: filter 0.15s; }
