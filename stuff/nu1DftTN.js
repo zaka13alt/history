@@ -1,10 +1,10 @@
-// Test frontend for @mercuryworkshop/K4q9p2Xv 2.0.67-alpha.2 + K4q9p2Xv-controller 0.0.14 (AGPL-3.0, vendored unmodified in ./lib).
+// Test frontend for @mercuryworkshop/K5qkWTpA 2.0.67-alpha.2 + K5qkWTpA-controller 0.0.14 (AGPL-3.0, vendored unmodified in ./lib).
 // The transport is chosen at runtime (?transport=epoxy|libcurl).
 
 const WISP_URL = 'wss://api.zaka13.com/api/';
 const TRANSPORT = new URLSearchParams(location.search).get('transport') || 'epoxy';
 
-// optional per-run overrides of K4q9p2Xv's feature flags, e.g. ?flags=sourcemaps:0,encapsulateWorkers:0
+// optional per-run overrides of K5qkWTpA's feature flags, e.g. ?flags=sourcemaps:0,encapsulateWorkers:0
 function flagOverrides() {
     const raw = new URLSearchParams(location.search).get('flags');
     const flags = {};
@@ -14,9 +14,9 @@ function flagOverrides() {
     }
     return flags;
 }
-// everything is derived from where this page is served, so it works from /K4q9p2Xv/ or from inside the folder
+// everything is derived from where this page is served, so it works from /K5qkWTpA/ or from inside the folder
 const BASE = new URL('./', location.href).pathname;
-const PREFIX = BASE + 'nZ970vr4/';
+const PREFIX = BASE + 'TxRQenir/';
 
 // WORKAROUND (YouTube only): a proxied YouTube watch page crashes the renderer (ERR_STATUS_BREAKPOINT / "Aw, Snap") as soon as
 // the video buffers when the iframe's CSS layout width reaches ~1000px. The iframe's layout width is therefore
@@ -113,18 +113,18 @@ async function registerServiceWorker() {
 async function init() {
     status.textContent = 'starting…';
     const serviceworker = await registerServiceWorker();
-    const { Controller } = $K4q9p2XvController;
-    const Transport = (await import(TRANSPORT === 'epoxy' ? './LyzaHBeO/SwzzeJZG.mjs' : './LyzaHBeO/bPmJsQ5I.mjs')).default;
+    const { Controller } = $K5qkWTpAController;
+    const Transport = (await import(TRANSPORT === 'epoxy' ? './loz2PSkv/SwzzeJZG.mjs' : './loz2PSkv/bPmJsQ5I.mjs')).default;
     const transport = new Transport({ wisp: WISP_URL });
     const controller = new Controller({
         serviceworker,
         transport,
-        K4q9p2XvConfig: { flags: flagOverrides() },
+        K5qkWTpAConfig: { flags: flagOverrides() },
         config: {
             prefix: PREFIX,
-            K4q9p2XvPath: BASE + 'LyzaHBeO/3euG74Zc.js',
-            injectPath: BASE + 'LyzaHBeO/tgD2nbJS.js',
-            wasmPath: BASE + 'LyzaHBeO/jCC9IUDB.wasm',
+            K5qkWTpAPath: BASE + 'loz2PSkv/3euG74Zc.js',
+            injectPath: BASE + 'loz2PSkv/tgD2nbJS.js',
+            wasmPath: BASE + 'loz2PSkv/jCC9IUDB.wasm',
         },
     });
     await controller.wait();

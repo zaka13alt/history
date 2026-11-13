@@ -1,4 +1,4 @@
-importScripts('/stuff/LyzaHBeO/WBv0kYC0.js');
+importScripts('/stuff/loz2PSkv/WBv0kYC0.js');
 importScripts("/js/h.js");
  
 const blockedKeywords = _c.theBadKeywords;
@@ -17,7 +17,7 @@ function h7568(str) {
  
 function h7561(url) {
 	const match = new URL(url).pathname.match(
-		/^\/nZ970vr4\/[a-z0-9]+\/[a-z0-9]+\/(.*)$/i
+		/^\/TxRQenir\/[a-z0-9]+\/[a-z0-9]+\/(.*)$/i
 	);
 	if (!match) return null;
 	try {
@@ -51,7 +51,7 @@ async function handleRequest(event) {
 	// /bootstrap/assetswcptnsl0/25ei521o/https%3A%2F%2Fexample.com
  
 	const match = new URL(url).pathname.match(
-		/^\/nZ970vr4\/[a-z0-9]+\/[a-z0-9]+\/(.*)$/i
+		/^\/TxRQenir\/[a-z0-9]+\/[a-z0-9]+\/(.*)$/i
 	);
  
 	if (match) {
@@ -79,7 +79,7 @@ async function handleRequest(event) {
 		}
 	}
  
-	return $K4q9p2XvController.route(event);
+	return $K5qkWTpAController.route(event);
 }
  
 self.addEventListener("fetch", (event) => {
@@ -88,7 +88,7 @@ self.addEventListener("fetch", (event) => {
 	// 
 	if (h7568(url) || h7568(h7561(url))) return;
  
-	if ($K4q9p2XvController.shouldRoute(event)) {
+	if ($K5qkWTpAController.shouldRoute(event)) {
 		event.respondWith(handleRequest(event));
 	}
 });

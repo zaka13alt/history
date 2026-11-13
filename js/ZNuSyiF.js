@@ -146,7 +146,7 @@
     }
 
     window.zakaNewWindowPlugin = function (onOpen) {
-        var MP = window.$K4q9p2XvController && window.$K4q9p2XvController.ManagedPlugin;
+        var MP = window.$K5qkWTpAController && window.$K5qkWTpAController.ManagedPlugin;
         if (!MP) return null;
         class NewWindowPlugin extends MP {
             constructor() { super("zaka-new-window", []); }
