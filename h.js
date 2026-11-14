@@ -64,5 +64,6 @@ let _c = {
 		"callgirl",
 		"yapchat",
 		"yap.chat",
+		"vidizzy",
 	],
 };
