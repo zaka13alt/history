@@ -35,8 +35,34 @@ const roleOf = (u) => {
 };
 const rankOf = (u) => RANK[roleOf(u)];
 
-const BAD_WORDS = ["fuck", "shit", "bitch", "asshole", "cunt", "nigger", "faggot"];
-const badRe = BAD_WORDS.length ? new RegExp(String.raw`\b(` + BAD_WORDS.join("|") + String.raw`)\b`, "gi") : null;
+const BAD_WORDS = [
+  // slurs
+  "nigger", "nigga", "nignog", "coon", "jigaboo", "porchmonkey", "faggot", "fag",
+  "dyke", "tranny", "shemale", "chink", "gook", "spic", "spick", "wetback",
+  "beaner", "kike", "wop", "dago", "paki", "raghead", "towelhead", "sandnigger",
+  "retard", "tard", "spaz", "mongoloid", "cripple", "midget", "redskin", "injun",
+  "chinaman", "negro", "honky",
+  // profanity
+  "fuck", "motherfucker", "fucker", "fuckboy", "fuckwit", "fuckface", "clusterfuck",
+  "shit", "bullshit", "shitty", "bitch", "asshole", "ass", "jackass", "dumbass",
+  "cunt", "bastard", "dick", "dickhead", "dickwad", "piss", "prick", "slut",
+  "whore", "hoe", "thot", "skank", "douche", "douchebag", "twat", "wanker",
+  "bollocks", "arse", "arsehole", "goddamn",
+  // nsfw / sexual
+  "tit", "titty", "titties", "boob", "boobies", "booty", "pussy", "pussies",
+  "cock", "cum", "cumshot", "cumming", "dildo", "blowjob", "handjob", "rimjob",
+  "anal", "penis", "vagina", "clit", "clitoris", "boner", "horny", "orgasm",
+  "orgy", "nude", "nudes", "porn", "porno", "pornhub", "xxx", "bdsm", "milf",
+  "dilf", "gangbang", "deepthroat", "creampie", "bukkake", "fap", "jizz",
+  "jerkoff", "masturbate", "ejaculate", "hentai", "coochie", "smut", "sex",
+  "rape", "raping", "rapist", "molest", "incest", "bestiality", "pedo", "pedophile",
+];
+// Leading \b prevents matching inside innocent words (Scunthorpe, cockpit, analysis,
+// Montenegro, class, cumbersome); optional suffix group catches common inflections
+// (plurals, -ing/-ed/-er) without listing every variant.
+const badRe = BAD_WORDS.length
+  ? new RegExp(String.raw`\b(` + BAD_WORDS.join("|") + String.raw`)(?:s|es|ed|d|ing|in|er|ers|y|ies|z|zes)?\b`, "gi")
+  : null;
 
 function clean(s, max) {
   return String(s == null ? "" : s)
