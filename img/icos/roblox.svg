@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Roblox">
+  <mask id="rbx">
+    <rect width="512" height="512" fill="#000"/>
+    <rect x="92" y="92" width="328" height="328" rx="28" transform="rotate(-10 256 256)" fill="#fff"/>
+    <rect x="214" y="214" width="84" height="84" transform="rotate(-10 256 256)" fill="#000"/>
+  </mask>
+  <rect width="512" height="512" fill="#e8eaed" mask="url(#rbx)"/>
+</svg>

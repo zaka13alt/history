@@ -4,3 +4,7 @@ node/chat-mod.json
 node/users.json
 node/_testserver.mjs
 .claude/
+
+# webblox: huge Roblox engine binary (served from disk on the live box, else CDN fallback)
+blox/engine/WebClient.wasm
+blox/engine/WebClient.wasm.gz

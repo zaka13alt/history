@@ -350,9 +350,42 @@ http://d1vajlb5xnngpm.cloudfront.net {
 }
 
 # HTTPS and on-demand TLS
+(blox_site) {
+	# webblox (Roblox web client) at /blox/. Cross-origin isolated so the engine's
+	# SharedArrayBuffer/pthreads work. Engine content not on disk falls back to
+	# Roblox's CDN (the boot files + gzipped wasm are pinned locally).
+	header /blox/* {
+		Cross-Origin-Opener-Policy "same-origin"
+		Cross-Origin-Embedder-Policy "require-corp"
+		Cross-Origin-Resource-Policy "same-origin"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Cache-Control "no-cache"
+	}
+	handle /blox/* {
+		root * /usr/share/caddy
+		@engineCdn {
+			path /blox/engine/*
+			not file
+		}
+		handle @engineCdn {
+			uri strip_prefix /blox/engine
+			reverse_proxy https://setup.rbxcdn.com {
+				rewrite /webclient/version-1ef59424f70d4932-RobloxWebClient{http.request.uri.path}
+			}
+		}
+		handle {
+			file_server {
+				precompressed gzip
+			}
+		}
+	}
+}
+
 :443 {
 	import deny_hosts
 	import ip_gate
+	import blox_site
 	import proxy_routes
 	import itcode_site
 

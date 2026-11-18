@@ -30,6 +30,9 @@
         <button class="sidebar-btn" id="sidebar-chat" title="ch@t" aria-label="ch@t">
             <img src="/img/chat.svg" alt="ch@t">
         </button>
+        <button class="sidebar-btn" id="sidebar-roblox" title="robl0x" aria-label="robl0x">
+            <img src="/img/icos/roblox.svg" alt="robl0x">
+        </button>
         <div class="sidebar-sep"></div>
         <button class="sidebar-btn" id="sidebar-settings" title="s3ttin7gs" aria-label="s3ttin7gs">
             <i class="fa-solid fa-gear" style="font-size:15px;"></i>
@@ -76,6 +79,7 @@
 <script src="/stuff/loz2PSkv/3euG74Zc.js"></script>
 <script src="/stuff/loz2PSkv/xNHsqV3x.js"></script>
 <script src="/stuff/loz2PSkv/C22VhTU9.js"></script>
+<script src="/blox/webblox-launch.js"></script>
 <script src="/js/ZNuSyiF.js?v=055848f6"></script>
 <script src="/.assets/index-nDtXnT.js"></script>
 <script src="/.assets/index-O1CBil.js"></script>
@@ -114,10 +118,10 @@ try {
 }
 
 (function() {
-    var roblox = {name:"robl0x", url:"https://nowgg.fun/apps/a/19900/b.html", icon:"fa-solid fa-gamepad"};
-    var flag = "dck9n709p";
+    // Remove the old now.gg Roblox shortcut (replaced by the sidebar Roblox icon + /blox/).
+    var flag = "rbxshrm1";
     if(localStorage.getItem(flag)) return;
-    if(!shortcuts.some(function(s){return s.url === roblox.url})) shortcuts.push(roblox);
+    shortcuts = shortcuts.filter(function(s){return !/nowgg\.fun\/apps\/a\/19900/i.test(s.url || "")});
     try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
 })();
 
@@ -284,6 +288,10 @@ function buildTbPlugins(tb) {
     if (!U) return [];
     var plugins = [];
     try {
+        // Roblox: turn roblox.com's Play button into the /blox/ web client (webblox).
+        if (window.webbloxLaunch && U.ManagedPlugin) {
+            try { plugins.push(window.webbloxLaunch.create(U.ManagedPlugin, '/blox/')); } catch (e) { console.error('blox plugin failed', e); }
+        }
         // Cache GET/HEAD responses in Cache Storage (respects cache-control).
         if (U.HttpCachePlugin) plugins.push(new U.HttpCachePlugin());
        
@@ -712,6 +720,21 @@ document.getElementById('sidebar-a1').onclick = function() {
     var id = createTb();
     var t = tbs.get(id);
     if (t) { t.isA1 = true; navigateTb(a1ActualUrl, id); t.url = a1Url; t.title.textContent = 'A1'; addrInput.value = a1Url; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; clearFavicon(t); }
+};
+
+document.getElementById('sidebar-roblox').onclick = function() {
+    var id = createTb();
+    var t = tbs.get(id);
+    if (!t) return;
+    // Roblox needs a .ROBLOSECURITY session, read from the proxy's cookie jar.
+    // Sign in on roblox.com first; the webblox plugin then turns Play into /blox/.
+    var go = confirm('Sign in to roblox.com first.\n\nOK: open roblox.com to sign in \u2014 then press Play on any game and it launches here.\nCancel: open the Roblox launcher now.');
+    if (go) {
+        navigateTb('https://www.roblox.com/login', id);
+        t.url = 'https://www.roblox.com/login'; t.title.textContent = 'robl0x'; addrInput.value = 'roblox.com'; clearFavicon(t);
+    } else {
+        window.open('/blox/', '_blank');
+    }
 };
 
 // Online Counter
