@@ -723,9 +723,18 @@ document.getElementById('sidebar-a1').onclick = function() {
 };
 
 document.getElementById('sidebar-roblox').onclick = function() {
-    // Open the standalone Roblox page (scramjet roblox.com login + webblox player)
-    // in its own window. Served from /blox/ so it's same-origin with the cookie jar.
-    window.open('/blox/standalone.html', '_blank');
+    var id = createTb();
+    var t = tbs.get(id);
+    if (!t) return;
+    // Roblox needs a .ROBLOSECURITY session, read from the proxy's cookie jar.
+    // Sign in on roblox.com first; the webblox plugin then turns Play into /blox/.
+    var go = confirm('Sign in to roblox.com first.\n\nOK: open roblox.com to sign in \u2014 then press Play on any game and it launches here.\nCancel: open the Roblox launcher now.');
+    if (go) {
+        navigateTb('https://www.roblox.com/login', id);
+        t.url = 'https://www.roblox.com/login'; t.title.textContent = 'robl0x'; addrInput.value = 'roblox.com'; clearFavicon(t);
+    } else {
+        window.open('/blox/', '_blank');
+    }
 };
 
 // Online Counter
