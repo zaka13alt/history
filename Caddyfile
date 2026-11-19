@@ -354,7 +354,11 @@ http://d1vajlb5xnngpm.cloudfront.net {
 	# webblox (Roblox web client) at /blox/. Cross-origin isolated so the engine's
 	# SharedArrayBuffer/pthreads work. Engine content not on disk falls back to
 	# Roblox's CDN (the boot files + gzipped wasm are pinned locally).
-	header /blox/* {
+	@bloxiso {
+		path /blox/*
+		not path /blox/standalone.html
+	}
+	header @bloxiso {
 		Cross-Origin-Opener-Policy "same-origin"
 		Cross-Origin-Embedder-Policy "require-corp"
 		Cross-Origin-Resource-Policy "same-origin"
