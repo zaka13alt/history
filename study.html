@@ -21,8 +21,8 @@
 <body>
 <div id="app">
     <aside id="sidebar">
-        <button class="sidebar-btn" id="sidebar-game" title="g@mez" aria-label="g@mez">
-            <img src="/img/16zx3U.svg" alt="g@mez">
+        <button class="sidebar-btn" id="sidebar-game" title="zaka" aria-label="zaka">
+            <img src="/img/16zx3U.svg" alt="zaka">
         </button>
         <button class="sidebar-btn" id="sidebar-a1" title="A1" aria-label="A1">
             <img src="/img/7262146-200.png" alt="A1">
@@ -707,7 +707,7 @@ settingsBtn.onclick = function() { var t = tbs.get(activeTbId); if (t) { t.url =
 document.getElementById('sidebar-game').onclick = function() {
     var id = createTb();
     var t = tbs.get(id);
-    if (t) { t.iframe.src = gamesUrl; t.url = gamesPath; t.title.textContent = 'g@mez'; addrInput.value = gamesPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTb(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
+    if (t) { t.iframe.src = gamesUrl; t.url = gamesPath; t.title.textContent = 'zaka'; addrInput.value = gamesPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTb(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
 };
 
 document.getElementById('sidebar-chat').onclick = function() {
