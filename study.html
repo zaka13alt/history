@@ -21,7 +21,7 @@
 <body>
 <div id="app">
     <aside id="sidebar">
-        <button class="sidebar-btn" id="sidebar-game" title="zaka" aria-label="zaka">
+        <button class="sidebar-btn" id="sidebar-zaka" title="zaka" aria-label="zaka">
             <img src="/img/16zx3U.svg" alt="zaka">
         </button>
         <button class="sidebar-btn" id="sidebar-a1" title="A1" aria-label="A1">
@@ -155,8 +155,8 @@ var settingsUrl = "education://settings";
 var page50000 = "50000";
 var page50001 = "50001";
 var page50002 = "50002";
-var gamesPath = "/g";
-var gamesUrl = "/g.html";
+var zakasPath = "/g";
+var zakasUrl = "/g.html";
 var chatPath = "/chat";
 var chatUrl = "/chat.html";
 var a1Url = "/a";
@@ -704,10 +704,10 @@ reloadBtn.onclick = function() { var t = tbs.get(activeTbId); if (t && t.url) na
 starBtn.onclick = function() { var i = starBtn.querySelector('i'); i.classList.toggle('fa-regular'); i.classList.toggle('fa-solid'); };
 settingsBtn.onclick = function() { var t = tbs.get(activeTbId); if (t) { t.url = settingsUrl; t.title.textContent = 's3ttin7gs'; openSettings(t); } };
 
-document.getElementById('sidebar-game').onclick = function() {
+document.getElementById('sidebar-zaka').onclick = function() {
     var id = createTb();
     var t = tbs.get(id);
-    if (t) { t.iframe.src = gamesUrl; t.url = gamesPath; t.title.textContent = 'zaka'; addrInput.value = gamesPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTb(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
+    if (t) { t.iframe.src = zakasUrl; t.url = zakasPath; t.title.textContent = 'zaka'; addrInput.value = zakasPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTb(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
 };
 
 document.getElementById('sidebar-chat').onclick = function() {
@@ -728,7 +728,7 @@ document.getElementById('sidebar-roblox').onclick = function() {
     if (!t) return;
     // Roblox needs a .ROBLOSECURITY session, read from the proxy's cookie jar.
     // Sign in on roblox.com first; the webblox plugin then turns Play into /blox/.
-    var go = confirm('Sign in to roblox.com first.\n\nOK: open roblox.com to sign in \u2014 then press Play on any game and it launches here.\nCancel: open the Roblox launcher now.');
+    var go = confirm('Sign in to roblox.com first.\n\nOK: open roblox.com to sign in \u2014 then press Play on any zaka and it launches here.\nCancel: open the Roblox launcher now.');
     if (go) {
         navigateTb('https://www.roblox.com/login', id);
         t.url = 'https://www.roblox.com/login'; t.title.textContent = 'robl0x'; addrInput.value = 'roblox.com'; clearFavicon(t);
