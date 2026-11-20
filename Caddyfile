@@ -394,6 +394,15 @@ http://d1vajlb5xnngpm.cloudfront.net {
 	}
 }
 
+# Direct-IP probes over HTTPS (SNI = the raw server IP): present a throwaway
+# self-signed cert from Caddy's internal CA -- never the real itcode.vip cert --
+# and 403 everything, so scanning the bare IP reveals nothing. `tls internal`
+# also stops on-demand ACME from firing for the IP (which would only fail).
+https://135.148.218.234 {
+	tls internal
+	respond "Forbidden" 403
+}
+
 :443 {
 	# Access log: Host + client IP + path + status for every HTTPS request, so
 	# rogue/copycat domains (e.g. itcode.lat) and the IPs hitting them can be
