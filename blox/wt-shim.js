@@ -19,6 +19,7 @@ import { openWispUdp } from "/blox/wisp-udp.js";
 
 let wasmReady = null;
 let WISP_URL = null;
+let NativeWebTransport = null; // the realm's real WebTransport, for non-game URLs
 
 export async function installBloxWebTransport(opts) {
   WISP_URL = opts.wispUrl;
@@ -26,6 +27,7 @@ export async function installBloxWebTransport(opts) {
   // explicit wasm URL only if given.
   wasmReady = opts.wasmUrl ? init(opts.wasmUrl) : init();
   await wasmReady;
+  if (globalThis.WebTransport !== BloxWebTransport) NativeWebTransport = globalThis.WebTransport;
   globalThis.WebTransport = BloxWebTransport;
 }
 
@@ -56,12 +58,19 @@ function parseSni(host) {
 }
 
 class BloxWebTransport {
-  constructor(url) {
+  constructor(url, opts) {
+    const u = new URL(url);
+    let j;
+    try { j = parseSni(u.hostname); }
+    catch (e) {
+      // Not a game qdmux URL (engine probe / other endpoint). Delegate to the
+      // real WebTransport so the engine never sees "no available transport".
+      console.log("[blox] non-qdmux WebTransport -> native:", url);
+      return new NativeWebTransport(url, opts);
+    }
     // If this logs during a join, the engine built its transport on THIS realm
     // and it is genuinely proxied through blox-wt (not a native/direct dial).
     console.log("[blox] BloxWebTransport constructed — PROXIED through blox-wt:", url);
-    const u = new URL(url);
-    const j = parseSni(u.hostname);
     const path = u.pathname + u.search; // /wt?X-Rbx-Capabilities=...
 
     this.closed = new Promise((res, rej) => { this._closeRes = res; this._closeRej = rej; });

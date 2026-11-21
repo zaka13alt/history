@@ -633,6 +633,7 @@ let wasm_bindgen = (function(exports) {
 
   var wasmReady = null;
   var WISP_URL = null;
+  var NATIVE_WT = null; // the realm's real WebTransport, for non-game URLs
 
   // ---- wisp-udp (classic) ----
   var T_CONNECT = 1, T_DATA = 2, T_CONTINUE = 3, T_CLOSE = 4, T_INFO = 5, SID = 1;
@@ -689,10 +690,17 @@ let wasm_bindgen = (function(exports) {
   function u8(chunk) { return chunk instanceof Uint8Array ? chunk : new Uint8Array(chunk); }
 
   // ---- BloxWebTransport (classic) ----
-  function BloxWebTransport(url) {
+  function BloxWebTransport(url, opts) {
+    var u = new URL(url), j;
+    try { j = parseSni(u.hostname); }
+    catch (e) {
+      // Not a game qdmux URL (engine probe / other endpoint). Delegate to the
+      // real WebTransport so the engine never sees "no available transport".
+      console.log("[blox] (worker) non-qdmux WebTransport -> native:", url);
+      return new NATIVE_WT(url, opts);
+    }
     console.log("[blox] (worker) BloxWebTransport constructed — PROXIED through blox-wt:", url);
     var self2 = this;
-    var u = new URL(url); var j = parseSni(u.hostname);
     var path = u.pathname + u.search;
     this._closeRes = null; this._closeRej = null;
     this.closed = new Promise(function (res, rej) { self2._closeRes = res; self2._closeRej = rej; });
@@ -776,6 +784,7 @@ let wasm_bindgen = (function(exports) {
   self.__bloxInstallWT = function (wispUrl, wasmUrl) {
     WISP_URL = wispUrl || self.BLOX_WISP;
     if (!wasmReady) wasmReady = wasm_bindgen(wasmUrl || "/blox/blox_wt_bg.wasm");
+    if (self.WebTransport !== BloxWebTransport) NATIVE_WT = self.WebTransport;
     self.WebTransport = BloxWebTransport;
     return wasmReady;
   };
