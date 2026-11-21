@@ -99,7 +99,7 @@ class BloxWebTransport {
 
   async _start(j, path, readyRes, readyRej) {
     await wasmReady;
-    const conn = new QuicConn(j.sni, `${j.udmuxIp}:${j.rccPort}`, "RbxTransport");
+    const conn = new QuicConn(j.sni, `${j.udmuxIp}:${j.rccPort}`, "h3");
     conn.set_rupp(j.token, j.rccIp, j.rccPort);
     this._conn = conn;
     const udp = await openWispUdp(WISP_URL, j.udmuxIp, j.rccPort);

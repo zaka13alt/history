@@ -722,7 +722,7 @@ let wasm_bindgen = (function(exports) {
   BloxWebTransport.prototype._start = async function (j, path, readyRes, readyRej) {
     var self2 = this;
     await wasmReady;
-    var conn = new wasm_bindgen.QuicConn(j.sni, j.udmuxIp + ":" + j.rccPort, "RbxTransport");
+    var conn = new wasm_bindgen.QuicConn(j.sni, j.udmuxIp + ":" + j.rccPort, "h3");
     conn.set_rupp(j.token, j.rccIp, j.rccPort);
     this._conn = conn;
     var udp = await openWispUdp(WISP_URL, j.udmuxIp, j.rccPort);
