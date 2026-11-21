@@ -1,0 +1,28 @@
+[package]
+name = "blox-wt"
+version = "0.1.0"
+edition = "2021"
+description = "Client-side WASM QUIC transport for Roblox game joins (runs in the browser; server stays a dumb UDP relay)."
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+bytes = "1"
+# quinn-proto uses web_time::Instant on wasm (no std clock); match its type.
+web-time = "1"
+
+# M1: QUIC in wasm. default-features off so rustls doesn't pull aws-lc-rs
+# (won't build for wasm); use the ring provider instead.
+quinn-proto = { version = "0.11", default-features = false, features = ["rustls-ring"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "tls12"] }
+
+# ring's RNG on wasm32-unknown-unknown goes through the browser crypto via
+# getrandom's "js" backend.
+getrandom = { version = "0.2", features = ["js"] }
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"
