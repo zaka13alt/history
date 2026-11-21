@@ -14,7 +14,13 @@
 // roblox.com's Play button opens this page (integrations/scramjet/plugin.ts).
 
 const ROOT = new URL("./", import.meta.url);
-const ENGINE_BASE = new URL("engine", ROOT).href;
+// The engine binary is a JSPI build (its glue calls WebAssembly.Suspending).
+// Browsers without JSPI -- notably iOS Safari, and Chrome < 137 without the flag
+// -- can't run it, so point them at an ASYNCIFY build in engine-asyncify/ when
+// one is present. boot() verifies that build exists before using it and shows a
+// clear message otherwise (instead of a cryptic Suspending crash).
+const HAS_JSPI = typeof WebAssembly !== "undefined" && typeof WebAssembly.Suspending === "function";
+const ENGINE_BASE = new URL(HAS_JSPI ? "engine" : "engine-asyncify", ROOT).href;
 const WISP_KEY = "blox.wisp";
 const JAR_KEY = "blox.cookies";
 const MANUAL_KEY = "blox.manual";
@@ -626,6 +632,17 @@ async function boot() {
     Wrapped.prototype = NativeWorker.prototype;
     Wrapped.__bloxWrapped = true;
     try { window.Worker = Wrapped; } catch (_) {}
+  }
+  // No-JSPI browsers (iOS Safari, old Chrome) only work if an asyncify engine is
+  // actually present at engine-asyncify/. If it isn't, stop with a clear message
+  // rather than crashing deep in the engine on WebAssembly.Suspending.
+  if (!HAS_JSPI) {
+    let asyncifyOk = false;
+    try { asyncifyOk = (await fetch(`${ENGINE_BASE}/WasmPlayer.js`, { method: "HEAD" })).ok; } catch (_) {}
+    if (!asyncifyOk) {
+      say("This browser can't run Roblox games — it has no WebAssembly JSPI support. Open this on a desktop Chrome or Edge browser.");
+      return;
+    }
   }
   // What Roblox's WasmLoader.js leaves behind for WasmPlayer.js. channel null
   // keeps the engine on the production flags and channel.
