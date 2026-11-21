@@ -189,14 +189,20 @@ function qdmuxFqdn(joinScript) {
     }
   }
   if (token.length !== 32) return null;
-  const relay = String(udmux.Address).split(".").map(Number);
-  const machine = String(joinScript.MachineAddress).split(".").map(Number);
+  // Verified SNI derivation (upstream quic_bridge _sni/_rcc):
+  //   {tok}-{rccIp 8hex}-{NetStackPort 4hex}.{udmuxIp 8hex}.qdmux.roblox.com
+  // middle label = the RCC ip (ServerConnections[0].Address, else
+  // MachineAddress); trailing label = the UDMux ip AS-IS (no +1); port is
+  // zero-padded to 4 hex. (The old formula used MachineAddress for the middle,
+  // udmux.Address+1 for the trailing label, and an unpadded port — wrong.)
+  const rccIpStr = joinScript.ServerConnections?.[0]?.Address || joinScript.MachineAddress;
+  const udmuxIp = String(udmux.Address).split(".").map(Number);
+  const rccIp = String(rccIpStr || "").split(".").map(Number);
   const octets = (list) => list.length === 4 && list.every((n) => Number.isInteger(n) && n >= 0 && n <= 255);
-  if (!octets(relay) || !octets(machine)) return null;
-  relay[3] += 1;
-  if (relay[3] > 255) return null;
+  if (!octets(udmuxIp) || !octets(rccIp)) return null;
   const hex = (list) => list.map((n) => n.toString(16).padStart(2, "0")).join("");
-  return `${token}-${hex(machine)}-${Number(joinScript.NetStackPort).toString(16)}.${hex(relay)}.qdmux.roblox.com`;
+  const port = Number(joinScript.NetStackPort).toString(16).padStart(4, "0");
+  return `${token}-${hex(rccIp)}-${port}.${hex(udmuxIp)}.qdmux.roblox.com`;
 }
 
 function withGameFqdn(body) {
@@ -564,6 +570,18 @@ async function boot() {
   say("Checking your Roblox session…");
   await ensureSession();
   say("Starting…");
+  // Route the engine's WebTransport through blox-wt (client-side WASM QUIC
+  // over a wisp-UDP stream to epoxy udp:"direct"), instead of a native direct
+  // dial that filtered networks block. Guarded: any failure here falls back to
+  // the browser's native WebTransport, so a bad shim can't break joining more
+  // than it already is.
+  try {
+    const { installBloxWebTransport } = await import("/blox/wt-shim.js");
+    await installBloxWebTransport({ wispUrl: WISP });
+    console.log("[blox] WebTransport routed through blox-wt");
+  } catch (e) {
+    console.error("[blox] blox-wt install failed; using native WebTransport:", e);
+  }
   // What Roblox's WasmLoader.js leaves behind for WasmPlayer.js. channel null
   // keeps the engine on the production flags and channel.
   window.__wasmLoaderContext = { engineBase: ENGINE_BASE, channel: null, server: "prod" };

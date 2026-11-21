@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>blox-wt browser transport test</title>
+<style>body{font:16px system-ui;background:#0b1120;color:#e6edf7;padding:24px}
+#r{font-size:22px;font-weight:700;margin:16px 0}pre{color:#9fb0c6;white-space:pre-wrap}</style>
+</head>
+<body>
+<h1>blox-wt — browser QUIC over wisp-UDP</h1>
+<div id="r">running…</div>
+<pre id="log"></pre>
+<script type="module">
+import init, { QuicConn } from "/blox/blox_wt.js";
+import { openWispUdp } from "/blox/wisp-udp.js";
+
+const log = (m) => { document.getElementById("log").textContent += m + "\n"; };
+const done = (ok, m) => { const r = document.getElementById("r"); r.textContent = (ok?"✅ ":"❌ ")+m; r.style.color = ok?"#4ade80":"#f87171"; };
+
+// Public QUIC/h3 endpoint, reached via epoxy udp:"direct". No RUPP (plain QUIC).
+const HOST = "cloudflare-quic.com", PORT = 443, ALPN = "h3";
+
+try {
+  await init();
+  log("wasm: " + (await import("/blox/blox_wt.js")).blox_wt_version?.() );
+  const t0 = performance.now(), now = () => performance.now() - t0;
+  const conn = new QuicConn(HOST, "104.18.0.1:" + PORT, ALPN);
+  const udp = await openWispUdp((location.protocol==="https:"?"wss":"ws")+"://"+location.host+"/wisp/", HOST, PORT);
+  log("wisp-UDP stream open to " + HOST + ":" + PORT);
+
+  let finished = false, timer = null;
+  const finish = (ok, m) => { if (finished) return; finished = true; clearTimeout(timer); try{udp.close();}catch(_){ } done(ok, m); };
+  const events = () => { const e = conn.take_events(); if (!e) return; for (const l of e.split("\n")) { log("event: " + l); if (l==="connected") finish(true, "QUIC handshake completed in the browser over wisp-UDP"); if (l.startsWith("lost:")) finish(false, "connection lost: "+l.slice(5)); } };
+  const pump = () => { let dg; while ((dg = conn.next_transmit(now())) !== undefined) udp.send(dg); events(); const ms = conn.timeout_ms(now()); clearTimeout(timer); if (ms !== undefined) timer = setTimeout(()=>{conn.on_timeout(now());pump();}, Math.max(0,ms)); };
+  udp.onDatagram = (b) => { const r = conn.recv(now(), b); if (r) udp.send(r); pump(); };
+  udp.onClose = (reason) => finish(false, "wisp stream closed — " + (reason || "?"));
+  setTimeout(()=>finish(false, "timed out (no handshake in 15s)"), 15000);
+  pump();
+} catch (e) {
+  log("ERROR: " + (e && e.stack || e));
+  done(false, "exception: " + (e && e.message || e));
+}
+</script>
+</body>
+</html>
