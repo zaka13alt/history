@@ -258,21 +258,33 @@ function revive() {
 setInterval(revive, 15000);
 
 
-// YouTube Layout Hook
-var ytTbs = new Set();
-function isYouTube(url) { try { return /(^|\.)youtube\.com$/.test(new URL(url).hostname); } catch(e) { return false; } }
-function resizeYT(tb) {
-    var iframe = tb.iframe, parent = iframe.parentNode;
-    if (!parent) return;
-    var w = parent.clientWidth, h = parent.clientHeight;
-    var scale = tb.frame && tb.isYT && isYouTube(tb.lastUrl) && w > 980 ? w / 980 : 1;
-    if (scale === 1) { iframe.style.width = ''; iframe.style.height = ''; iframe.style.transform = ''; return; }
-    iframe.style.width = (w / scale) + 'px';
-    iframe.style.height = (h / scale) + 'px';
-    iframe.style.transformOrigin = '0 0';
-    iframe.style.transform = 'scale(' + scale + ')';
+// Skip the View Transitions API inside proxied pages. YouTube's SPA uses
+// document.startViewTransition and it misrenders/breaks layout under the proxy;
+// no-op the animation (run the DOM update immediately via skipTransition) instead
+// of the old iframe scale hack. Scramjet ManagedPlugin, same pattern as webblox.
+var _SkipVTPlugin = null;
+function skipViewTransitionsPlugin() {
+    var U = window.$K5qkWTpAUtils;
+    if (!U || !U.ManagedPlugin) return null;
+    if (!_SkipVTPlugin) {
+        _SkipVTPlugin = class extends U.ManagedPlugin {
+            constructor() { super('skip-view-transitions', []); }
+            install(host) {
+                super.install(host);
+                this.tap(host.hooks.init.post, function (ctx) {
+                    ctx.client.Proxy('Document.prototype.startViewTransition', {
+                        apply: function (c) {
+                            var t = c.call();
+                            if (t && t.skipTransition) t.skipTransition();
+                            c.return(t);
+                        }
+                    });
+                });
+            }
+        };
+    }
+    try { return new _SkipVTPlugin(); } catch (e) { console.error('skip-view-transitions plugin failed', e); return null; }
 }
-window.addEventListener('resize', function() { ytTbs.forEach(resizeYT); });
 
 // Tb Creation
 // Open a URL as a brand-new tb in zaka's own tb UI.
@@ -292,6 +304,9 @@ function buildTbPlugins(tb) {
         if (window.webbloxLaunch && U.ManagedPlugin) {
             try { plugins.push(window.webbloxLaunch.create(U.ManagedPlugin, '/blox/')); } catch (e) { console.error('blox plugin failed', e); }
         }
+        // Skip View Transitions inside proxied pages (fixes YouTube layout/render).
+        var svt = skipViewTransitionsPlugin();
+        if (svt) plugins.push(svt);
         // Cache GET/HEAD responses in Cache Storage (respects cache-control).
         if (U.HttpCachePlugin) plugins.push(new U.HttpCachePlugin());
        
@@ -501,11 +516,8 @@ function navigateTb(url, tbId) {
                 tb.frame = ctrl.createFrame(tb.iframe, { plugins: buildTbPlugins(tb) });
                 if (!tb.frame) throw new Error('createFrame returned null');
                 tb.controller = ctrl;
-                ytTbs.add(tb);
             }
-            tb.isYT = true;
             tb.lastUrl = url;
-            resizeYT(tb);
             tb.frame.go(url);
             tb.iframe.classList.add('p2tra');
             if (!tb.isA1) {
