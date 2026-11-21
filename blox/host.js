@@ -595,22 +595,21 @@ async function boot() {
   // em-pthread worker before its script runs, replacing self.WebTransport in
   // that realm too. Proven headless (blox/wt-worker-test.html): the worker's
   // WebTransport becomes BloxWebTransport and a QUIC handshake completes from
-  // the worker over wisp. Gated behind ?wt=worker (persisted); default off so it
-  // can't disturb the proven path, and any failure building the boot blob falls
-  // back to a native worker.
+  // the worker over wisp. ON by default; add ?wt=off to disable (persisted), with
+  // any failure building the boot blob falling back to a native worker.
   const workerMode = (() => {
     try {
       const v = new URLSearchParams(location.search).get("wt");
       if (v === "worker" || v === "off") localStorage.setItem("blox.wt", v);
-      return (localStorage.getItem("blox.wt") || "off") === "worker";
-    } catch (_) { return new URLSearchParams(location.search).get("wt") === "worker"; }
+      return (localStorage.getItem("blox.wt") || "worker") !== "off";
+    } catch (_) { return new URLSearchParams(location.search).get("wt") !== "off"; }
   })();
   const NativeWorker = window.Worker;
   if (NativeWorker && !NativeWorker.__bloxWrapped) {
     const origin = location.origin;
     const Wrapped = function (url, opts) {
       if (opts && opts.name === "em-pthread") {
-        console.log("[blox] em-pthread worker spawned" + (workerMode ? " — injecting blox-wt" : " (worker injection off; add ?wt=worker to route it through blox-wt)"));
+        console.log("[blox] em-pthread worker spawned" + (workerMode ? " — injecting blox-wt" : " (worker injection disabled via ?wt=off)"));
         if (workerMode && typeof url === "string") {
           try {
             const boot =
