@@ -582,6 +582,51 @@ async function boot() {
   } catch (e) {
     console.error("[blox] blox-wt install failed; using native WebTransport:", e);
   }
+  // The engine is an Emscripten classic-pthread build whose WebClient.js — where
+  // `new WebTransport` lives — re-runs inside each em-pthread worker, and it
+  // builds the game transport there, off this realm. So the main-thread shim
+  // above can't catch it; we inject a classic-worker copy of blox-wt into each
+  // em-pthread worker before its script runs, replacing self.WebTransport in
+  // that realm too. Proven headless (blox/wt-worker-test.html): the worker's
+  // WebTransport becomes BloxWebTransport and a QUIC handshake completes from
+  // the worker over wisp. Gated behind ?wt=worker (persisted); default off so it
+  // can't disturb the proven path, and any failure building the boot blob falls
+  // back to a native worker.
+  const workerMode = (() => {
+    try {
+      const v = new URLSearchParams(location.search).get("wt");
+      if (v === "worker" || v === "off") localStorage.setItem("blox.wt", v);
+      return (localStorage.getItem("blox.wt") || "off") === "worker";
+    } catch (_) { return new URLSearchParams(location.search).get("wt") === "worker"; }
+  })();
+  const NativeWorker = window.Worker;
+  if (NativeWorker && !NativeWorker.__bloxWrapped) {
+    const origin = location.origin;
+    const Wrapped = function (url, opts) {
+      if (opts && opts.name === "em-pthread") {
+        console.log("[blox] em-pthread worker spawned" + (workerMode ? " — injecting blox-wt" : " (worker injection off; add ?wt=worker to route it through blox-wt)"));
+        if (workerMode && typeof url === "string") {
+          try {
+            const boot =
+              'try{self.BLOX_WISP=' + JSON.stringify(WISP) + ';' +
+              'importScripts(' + JSON.stringify(origin + '/blox/blox-wt-worker.js') + ');' +
+              'self.__bloxInstallWT(' + JSON.stringify(WISP) + ',' + JSON.stringify(origin + '/blox/blox_wt_bg.wasm') + ');' +
+              'console.log("[blox] worker shim installed; self.WebTransport patched");' +
+              '}catch(e){console.error("[blox] worker shim failed; native WT in this worker:",e);}' +
+              'importScripts(' + JSON.stringify(url) + ');';
+            const bootUrl = URL.createObjectURL(new Blob([boot], { type: "text/javascript" }));
+            return new NativeWorker(bootUrl, opts);
+          } catch (e) {
+            console.error("[blox] worker injection failed; using native worker:", e);
+          }
+        }
+      }
+      return new NativeWorker(url, opts);
+    };
+    Wrapped.prototype = NativeWorker.prototype;
+    Wrapped.__bloxWrapped = true;
+    try { window.Worker = Wrapped; } catch (_) {}
+  }
   // What Roblox's WasmLoader.js leaves behind for WasmPlayer.js. channel null
   // keeps the engine on the production flags and channel.
   window.__wasmLoaderContext = { engineBase: ENGINE_BASE, channel: null, server: "prod" };

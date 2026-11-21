@@ -57,6 +57,9 @@ function parseSni(host) {
 
 class BloxWebTransport {
   constructor(url) {
+    // If this logs during a join, the engine built its transport on THIS realm
+    // and it is genuinely proxied through blox-wt (not a native/direct dial).
+    console.log("[blox] BloxWebTransport constructed — PROXIED through blox-wt:", url);
     const u = new URL(url);
     const j = parseSni(u.hostname);
     const path = u.pathname + u.search; // /wt?X-Rbx-Capabilities=...

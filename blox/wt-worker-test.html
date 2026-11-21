@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>blox-wt worker-injection test</title>
+<style>body{font:15px system-ui;background:#0b1120;color:#e6edf7;padding:24px}
+#r{font-size:20px;font-weight:700;margin:14px 0}pre{color:#9fb0c6;white-space:pre-wrap}</style>
+</head>
+<body>
+<h1>blox-wt — worker-realm injection</h1>
+<div id="r">running…</div>
+<pre id="log"></pre>
+<script>
+const log = (m) => { document.getElementById("log").textContent += m + "\n"; };
+const done = (ok, m) => { const r = document.getElementById("r"); r.textContent = (ok?"✅ ":"❌ ")+m; r.style.color = ok?"#4ade80":"#f87171"; };
+
+const WISP = (location.protocol==="https:"?"wss":"ws")+"://"+location.host+"/wisp/";
+const base = location.origin;
+
+// ---- 1. the SAME Worker-injection wrapper host.js uses (gated) ----
+const NativeWorker = window.Worker;
+window.Worker = function (url, opts) {
+  if (opts && opts.name === "em-pthread" && typeof url === "string") {
+    log("[wrapper] injecting blox-wt into em-pthread worker");
+    const boot =
+      'try{self.BLOX_WISP=' + JSON.stringify(WISP) + ';' +
+      'importScripts(' + JSON.stringify(base + '/blox/blox-wt-worker.js') + ');' +
+      'self.__bloxInstallWT(' + JSON.stringify(WISP) + ',' + JSON.stringify(base + '/blox/blox_wt_bg.wasm') + ');' +
+      '}catch(e){console.error("[blox] worker shim failed:",e);}' +
+      'importScripts(' + JSON.stringify(url) + ');';
+    const bootUrl = URL.createObjectURL(new Blob([boot], { type: "text/javascript" }));
+    return new NativeWorker(bootUrl, opts);
+  }
+  return new NativeWorker(url, opts);
+};
+
+// ---- 2. a synthetic "engine" worker (classic, like WebClient.js in worker
+//          mode): checks self.WebTransport, then runs a real QUIC handshake
+//          over wisp from the worker realm using the injected wasm binding. ----
+const engineSrc = `
+(async () => {
+  try {
+    const patched = typeof self.WebTransport === "function" && self.WebTransport.name === "BloxWebTransport";
+    postMessage({ step: "patched", patched, name: self.WebTransport && self.WebTransport.name });
+    if (!patched) { postMessage({ step: "done", ok: false, msg: "self.WebTransport NOT replaced in worker" }); return; }
+
+    await self.wasm_bindgen(${JSON.stringify(base)} + "/blox/blox_wt_bg.wasm");
+    postMessage({ step: "wasm", ver: self.wasm_bindgen.blox_wt_version && self.wasm_bindgen.blox_wt_version() });
+    const QuicConn = self.wasm_bindgen.QuicConn;
+
+    const T_CONNECT=1,T_DATA=2,T_CONTINUE=3,T_CLOSE=4,T_INFO=5,SID=1;
+    function openWispUdp(wispUrl, host, port){ return new Promise((resolve,reject)=>{
+      const ws=new WebSocket(wispUrl); ws.binaryType="arraybuffer";
+      const api={onDatagram:null,onClose:null,send,close,_ready:false}; let sent=false;
+      function frame(t,s,p){p=p||new Uint8Array(0);const b=new Uint8Array(5+p.length);const dv=new DataView(b.buffer);b[0]=t;dv.setUint32(1,s,true);b.set(p,5);return b;}
+      function connect(){if(sent)return;sent=true;const hb=new TextEncoder().encode(host);const p=new Uint8Array(3+hb.length);const dv=new DataView(p.buffer);p[0]=2;dv.setUint16(1,port,true);p.set(hb,3);ws.send(frame(T_CONNECT,SID,p));api._ready=true;resolve(api);}
+      function send(u){if(ws.readyState===1)ws.send(frame(T_DATA,SID,u));}
+      function close(){try{ws.send(frame(T_CLOSE,SID,new Uint8Array([2])));}catch(_){}try{ws.close();}catch(_){}}
+      ws.onerror=()=>reject(new Error("wisp ws error"));
+      ws.onclose=()=>{if(api.onClose)api.onClose("ws closed");if(!api._ready)reject(new Error("wisp closed before ready"));};
+      ws.onmessage=(ev)=>{const b=new Uint8Array(ev.data);if(b.length<5)return;const t=b[0];const dv=new DataView(b.buffer,b.byteOffset);const s=dv.getUint32(1,true);const pl=b.subarray(5);
+        if(t===T_INFO){ws.send(frame(T_INFO,0,new Uint8Array([2,0])));connect();}
+        else if(t===T_CONTINUE){connect();}
+        else if(t===T_DATA){if(s===SID&&api.onDatagram)api.onDatagram(pl);}
+        else if(t===T_CLOSE){if(api.onClose)api.onClose("wisp CLOSE 0x"+(pl[0]||0).toString(16));}};
+    });}
+
+    const t0=performance.now(), now=()=>performance.now()-t0;
+    const conn=new QuicConn("cloudflare-quic.com","104.18.0.1:443","h3");
+    const udp=await openWispUdp(WISP_URL_PLACEHOLDER, "cloudflare-quic.com", 443);
+    postMessage({ step: "wisp-open" });
+    let finished=false, timer=null;
+    const finish=(ok,msg)=>{ if(finished)return; finished=true; clearTimeout(timer); try{udp.close();}catch(_){ } postMessage({step:"done", ok, msg}); };
+    const events=()=>{ const e=conn.take_events(); if(!e)return; for(const l of e.split("\\n")){ postMessage({step:"event", line:l}); if(l==="connected")finish(true,"QUIC handshake completed INSIDE worker over wisp"); if(l.startsWith("lost:"))finish(false,"lost: "+l.slice(5)); } };
+    const pump=()=>{ let dg; while((dg=conn.next_transmit(now()))!==undefined)udp.send(dg); events(); const ms=conn.timeout_ms(now()); clearTimeout(timer); if(ms!==undefined)timer=setTimeout(()=>{conn.on_timeout(now());pump();},Math.max(0,ms)); };
+    udp.onDatagram=(b)=>{ const r=conn.recv(now(),b); if(r)udp.send(r); pump(); };
+    udp.onClose=(reason)=>finish(false,"wisp closed — "+(reason||"?"));
+    setTimeout(()=>finish(false,"timed out (no handshake in 15s)"),15000);
+    pump();
+  } catch (err) { postMessage({ step: "done", ok:false, msg: "worker error: " + String(err && err.stack || err) }); }
+})();
+`.replace("WISP_URL_PLACEHOLDER", JSON.stringify(WISP));
+
+const engineUrl = URL.createObjectURL(new Blob([engineSrc], { type: "text/javascript" }));
+const w = new Worker(engineUrl, { name: "em-pthread" });
+w.onmessage = (e) => {
+  const d = e.data;
+  if (d.step === "patched") log("worker self.WebTransport = " + d.name + "  (patched=" + d.patched + ")");
+  else if (d.step === "wasm") log("worker wasm loaded: " + d.ver);
+  else if (d.step === "wisp-open") log("worker wisp-UDP stream open");
+  else if (d.step === "event") log("worker event: " + d.line);
+  else if (d.step === "done") done(d.ok, d.msg);
+};
+w.onerror = (e) => { log("worker onerror: " + (e.message||e)); done(false, "worker error event"); };
+</script>
+</body>
+</html>
