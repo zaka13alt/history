@@ -170,7 +170,9 @@
     function setActiveChannel(ch) {
       channel = ch;
       titleEl.textContent = "#" + ch;
-      input.placeholder = "Message #" + ch + "  (try /help)";
+      var readOnly = (ch === "rules" && myRole !== "owner" && myRole !== "admin");
+      input.disabled = sendBtn.disabled = readOnly;
+      input.placeholder = readOnly ? "#rules is read-only — only staff can post here" : "Message #" + ch + "  (try /help)";
       Array.prototype.forEach.call(channelsEl.children, function (b) { b.classList.toggle("active", b.dataset.ch === ch); });
     }
     function switchChannel(ch) {

@@ -18,7 +18,7 @@ const HISTORY_FILE = new URL("chat-history.json", import.meta.url);
 const MOD_FILE = new URL("chat-mod.json", import.meta.url);
 
 // Text channels.
-const CHANNELS = ["general", "games", "proxies", "offtopic"];
+const CHANNELS = ["general", "rules", "games", "proxies", "offtopic"];
 const DEFAULT_CHANNEL = "general";
 
 // Hardcoded roles by lowercase username. Everyone else is a member.
@@ -90,6 +90,22 @@ export function createChat(auth) {
     }
   } catch {
     /* none yet */
+  }
+
+  // Read-only #rules channel: seed the community rules if empty (only admins/mods can post).
+  if (!histories.rules || histories.rules.length === 0) {
+    const rt = Date.now();
+    const rule = (i, text) => ({ type: "msg", channel: "rules", name: "📋 Rules", role: "owner", text, ts: rt + i });
+    histories.rules = [
+      rule(0, "Welcome! Please read the rules. Only admins and mods can post in this channel."),
+      rule(1, "1. No swearing or excessive profanity."),
+      rule(2, "2. No racial slurs, hate speech, or discrimination of any kind."),
+      rule(3, "3. No harassment, bullying, threats, or doxxing."),
+      rule(4, "4. No NSFW, sexual, or otherwise inappropriate content."),
+      rule(5, "5. No spamming, flooding, or advertising."),
+      rule(6, "6. No impersonating staff or other members."),
+      rule(7, "7. Be respectful. Breaking the rules results in a timeout or ban."),
+    ];
   }
 
   const bans = new Set(); // lowercase usernames
@@ -357,6 +373,11 @@ export function createChat(auth) {
 
       if (bans.has(username.toLowerCase())) {
         sysTo(ws, "You are banned.");
+        return;
+      }
+
+      if (ws.channel === "rules" && rankOf(username) < RANK.admin) {
+        sysTo(ws, "Only admins and mods can post in #rules.");
         return;
       }
 
