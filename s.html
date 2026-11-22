@@ -101,6 +101,7 @@ var w1spServer = localStorage.getItem(storagew1sp) || defaultw1sp;
 var searchEngine = localStorage.getItem(storageSearch) || defaultSearch;
 if(searchEngine.indexOf('%s') < 0) searchEngine = defaultSearch;
 
+function zka(s){var i="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",o="NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";return String(s==null?'':s).replace(/[A-Za-z]/g,function(c){return o[i.indexOf(c)];});}
 var shortcuts = [];
 try {
     var savedShortcuts = localStorage.getItem(storageShortcuts);
@@ -108,13 +109,14 @@ try {
     else throw new Error();
 } catch(e) {
    shortcuts = [
-        {name:"y0utube", url:"https://youtube.com", img:"/img/icos/youtube.png"},
-        {name:"disc0rd", url:"https://discord.com/app", img:"/img/icos/discord.png"},
-        {name:"tikt0k", url:"https://tiktok.com", img:"/img/icos/tiktok.ico"},
-        {name:"sp0tify", url:"https://spotify.com", img:"/img/icos/spotify.webp"},
-        {name:"snapch4t", url:"https://snapchat.com", img:"/img/icos/snapchat.svg"},
-        {name:"tw1tch", url:"https://twitch.tv", img:"/img/icos/twitch.ico"}
+        {name:"l0hghor", url:"uggcf://lbhghor.pbz", img:"/vzt/vpbf/lbhghor.cat"},
+        {name:"qvfp0eq", url:"uggcf://qvfpbeq.pbz/ncc", img:"/vzt/vpbf/qvfpbeq.cat"},
+        {name:"gvxg0x", url:"uggcf://gvxgbx.pbz", img:"/vzt/vpbf/gvxgbx.vpb"},
+        {name:"fc0gvsl", url:"uggcf://fcbgvsl.pbz", img:"/vzt/vpbf/fcbgvsl.jroc"},
+        {name:"fancpu4g", url:"uggcf://fancpung.pbz", img:"/vzt/vpbf/fancpung.fit"},
+        {name:"gj1gpu", url:"uggcf://gjvgpu.gi", img:"/vzt/vpbf/gjvgpu.vpb"}
     ];
+    shortcuts = shortcuts.map(function(s){ return {name:zka(s.name), url:zka(s.url), img:zka(s.img), icon:s.icon}; });
 }
 
 (function() {
@@ -451,13 +453,12 @@ function showNewTb(tb) {
     if (tb.settingsPage) tb.settingsPage.classList.remove('p2tra');
 }
 
-function zka(s){var i="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",o="NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";return String(s==null?'':s).replace(/[A-Za-z]/g,function(c){return o[i.indexOf(c)];});}
 function renderShortcuts(container, tb) {
     container.innerHTML = '';
     shortcuts.forEach(function(s) {
         var t = document.createElement('div');
         t.className = 'zql1q';
-        t.title = s.url;
+        t.title = zka(s.url);
         var ic = document.createElement('div');
         ic.className = 'yyaep';
         if (s.img) {
