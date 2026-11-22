@@ -14,6 +14,9 @@
         .hare7 i { color: #666; font-size: 11px; flex-shrink: 0; }
         .hare7 span { overflow: hidden; text-overflow: ellipsis; }
         .hare7:hover, .hare7.r0hni { background: #232323; color: #fff; }
+        /* ROT13 cloak font: shortcut labels are stored rot13'd in the DOM and mapped back visually by this font */
+        @font-face { font-family: 'zkc'; src: url('/stuff/fonts/core.ttf') format('truetype'); }
+        .irf6u { font-family: 'zkc' !important; }
     </style>
     
     
@@ -448,6 +451,7 @@ function showNewTb(tb) {
     if (tb.settingsPage) tb.settingsPage.classList.remove('p2tra');
 }
 
+function rot13(s){return String(s==null?'':s).replace(/[a-zA-Z]/g,function(c){var b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+13)%26+b);});}
 function renderShortcuts(container, tb) {
     container.innerHTML = '';
     shortcuts.forEach(function(s) {
@@ -460,7 +464,7 @@ function renderShortcuts(container, tb) {
             var iconImg = document.createElement('img');
             // Icons are hosted locally under /img/icos; use whatever src is given as-is.
             iconImg.src = s.img;
-            iconImg.alt = s.name;
+            iconImg.alt = rot13(s.name);
             ic.appendChild(iconImg);
         } else {
             var icon = document.createElement('i');
@@ -469,7 +473,7 @@ function renderShortcuts(container, tb) {
         }
         var name = document.createElement('div');
         name.className = 'irf6u';
-        name.textContent = s.name;
+        name.textContent = rot13(s.name);
         t.appendChild(ic); t.appendChild(name);
         t.addEventListener('click', function() {
             if (!tb) return;
