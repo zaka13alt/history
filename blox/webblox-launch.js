@@ -185,7 +185,7 @@
       const direct = parseGamesStart(absolute);
       if (direct) return direct;
       try {
-        const original = client.unrewriteUrl(absolute);
+        const original = client.unzakaiteUrl(absolute);
         return original === absolute ? null : parseGamesStart(original);
       } catch {
         return null;
