@@ -60,6 +60,14 @@
       .channels { width: 128px; }
     }
     .msg.system { white-space: pre-wrap; }
+    .msg { position: relative; }
+    .reply-btn { position: absolute; top: 3px; right: 5px; background: none; border: none; color: #999; cursor: pointer; opacity: 0; font-size: 13px; padding: 0 3px; }
+    .msg:hover .reply-btn { opacity: .75; }
+    .reply-q { font-size: 11px; color: #8a8a8a; border-left: 2px solid #5a5a5a; padding-left: 6px; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px; }
+    .typing { height: 15px; padding: 1px 13px; font-size: 12px; color: #888; font-style: italic; }
+    .reply-bar { display: flex; align-items: center; gap: 8px; padding: 6px 13px; font-size: 12px; color: #bbb; background: #1b1b1b; border-top: 1px solid rgba(255,255,255,.06); }
+    .reply-bar.hidden { display: none; }
+    .reply-bar .rx { cursor: pointer; color: #999; margin-left: auto; font-size: 16px; line-height: 1; }
   </style>
 </head>
 <body>
@@ -91,6 +99,8 @@
         <span class="hint" id="hint"></span>
       </div>
       <div class="chat-box" id="box"></div>
+      <div class="typing" id="typing"></div>
+      <div class="reply-bar hidden" id="reply-bar"></div>
       <div class="input-area">
         <input class="zui-input" id="msg" maxlength="500" placeholder="Message #general  (try /help)" autocomplete="off" aria-label="message">
         <button class="zui-btn" id="send">Send</button>
@@ -121,6 +131,7 @@
     var hintEl = document.getElementById("hint");
 
     var token = "", myName = "", myRole = "member", channel = "general";
+    var replyingTo = null, typers = {}, typingTO = null;
     try { token = localStorage.getItem("zaka_chat_token") || ""; myName = localStorage.getItem("zaka_chat_user") || ""; } catch (e) {}
 
     function save() { try { localStorage.setItem("zaka_chat_token", token); localStorage.setItem("zaka_chat_user", myName); } catch (e) {} }
@@ -197,9 +208,35 @@
         }
         el.appendChild(meta);
       }
+      if (m.reply && m.reply.name) {
+        var rq = document.createElement("div"); rq.className = "reply-q";
+        rq.textContent = "\u21A9 " + m.reply.name + ": " + m.reply.text;
+        el.appendChild(rq);
+      }
       var body = document.createElement("div"); body.textContent = m.text; el.appendChild(body);
+      var rbtn = document.createElement("button"); rbtn.className = "reply-btn"; rbtn.title = "reply"; rbtn.textContent = "\u21A9";
+      rbtn.onclick = function () { replyingTo = { name: m.name, text: m.text }; showReplyBar(); input.focus(); };
+      el.appendChild(rbtn);
       box.appendChild(el);
       if (stick) scroll();
+    }
+    function showReplyBar() {
+      if (!replyingTo) return;
+      var bar = document.getElementById("reply-bar"); bar.innerHTML = "";
+      var t = document.createElement("span");
+      t.textContent = "Replying to " + replyingTo.name + ": " + replyingTo.text.slice(0, 60);
+      var x = document.createElement("span"); x.className = "rx"; x.textContent = "\u00D7"; x.title = "cancel"; x.onclick = hideReplyBar;
+      bar.appendChild(t); bar.appendChild(x); bar.classList.remove("hidden");
+    }
+    function hideReplyBar() { replyingTo = null; var bar = document.getElementById("reply-bar"); if (bar) bar.classList.add("hidden"); }
+    function renderTyping() {
+      var el = document.getElementById("typing"); if (!el) return;
+      var now = Date.now();
+      Object.keys(typers).forEach(function (n) { if (now - typers[n] >= 3500) delete typers[n]; });
+      var names = Object.keys(typers);
+      el.textContent = !names.length ? "" : names.length === 1 ? names[0] + " is typing\u2026" : names.length === 2 ? names[0] + " and " + names[1] + " are typing\u2026" : "several people are typing\u2026";
+      if (typingTO) clearTimeout(typingTO);
+      if (names.length) typingTO = setTimeout(renderTyping, 1500);
     }
     function addSystem(text) {
       var el = document.createElement("div"); el.className = "msg system"; el.textContent = text; box.appendChild(el); scroll();
@@ -279,11 +316,15 @@
         } else if (data.type === "history") {
           if (data.channel && data.channel !== channel) return;
           box.innerHTML = "";
+          typers = {}; renderTyping();
           (data.messages || []).forEach(addMsg);
           scroll();
         } else if (data.type === "msg") {
           if (data.channel && data.channel !== channel) return;
+          if (typers[data.name]) { delete typers[data.name]; renderTyping(); }
           addMsg(data);
+        } else if (data.type === "typing") {
+          if (data.name && data.name !== myName && (!data.channel || data.channel === channel)) { typers[data.name] = Date.now(); renderTyping(); }
         } else if (data.type === "system") {
           addSystem(data.text);
         }
@@ -302,11 +343,21 @@
     function send() {
       var text = input.value.trim();
       if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
-      ws.send(JSON.stringify({ text: text }));
+      var payload = { text: text };
+      if (replyingTo) payload.reply = { name: replyingTo.name, text: replyingTo.text.slice(0, 120) };
+      ws.send(JSON.stringify(payload));
+      hideReplyBar();
       input.value = ""; input.focus();
     }
     sendBtn.onclick = send;
     input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); send(); } });
+    var lastTyping = 0;
+    input.addEventListener("input", function () {
+      var v = input.value;
+      if (!v || v[0] === "/" || !ws || ws.readyState !== WebSocket.OPEN) return;
+      var now = Date.now();
+      if (now - lastTyping > 1500) { lastTyping = now; ws.send(JSON.stringify({ type: "typing" })); }
+    });
 
     if (token && myName) { showChat(); connect(); }
     else { showAuth(); }

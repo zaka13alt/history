@@ -398,6 +398,12 @@ export function createChat(auth) {
         return;
       }
 
+      if (data.type === "typing") {
+        const tm = JSON.stringify({ type: "typing", name: ws.username, channel: ws.channel });
+        for (const c of wss.clients) if (c !== ws && c.readyState === c.OPEN && c.channel === ws.channel) c.send(tm);
+        return;
+      }
+
       const text = clean(data.text, MSG_MAX);
       if (!text) return;
 
@@ -429,6 +435,13 @@ export function createChat(auth) {
       }
       const now = Date.now();
 
+      let replyObj = null;
+      if (data.reply && typeof data.reply === "object") {
+        const rn = clean(data.reply.name, 40);
+        const rt = clean(data.reply.text, 120);
+        if (rn && rt) replyObj = { name: rn, text: maskWords(rt) };
+      }
+
       const message = {
         type: "msg",
         channel: ws.channel,
@@ -437,6 +450,7 @@ export function createChat(auth) {
         text: maskWords(text),
         ts: now,
       };
+      if (replyObj) message.reply = replyObj;
 
       const hist = histories[ws.channel];
       hist.push(message);
