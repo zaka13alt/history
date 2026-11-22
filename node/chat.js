@@ -16,6 +16,7 @@ const AUTO_TIMEOUT_S = 60; // ...earns an automatic timeout
 const PING_INTERVAL_MS = 30000;
 const HISTORY_FILE = new URL("chat-history.json", import.meta.url);
 const MOD_FILE = new URL("chat-mod.json", import.meta.url);
+const STATS_FILE = new URL("chat-stats.json", import.meta.url);
 
 // Text channels.
 const CHANNELS = ["general", "rules", "games", "proxies", "offtopic"];
@@ -121,6 +122,14 @@ export function createChat(auth) {
     /* none yet */
   }
 
+  const counts = new Map(); // username -> total messages sent (all-time)
+  try {
+    const st = JSON.parse(readFileSync(STATS_FILE, "utf8"));
+    if (st && typeof st === "object") for (const k in st) counts.set(k, st[k] | 0);
+  } catch {
+    /* none yet */
+  }
+
   let histTimer = null,
     modTimer = null;
   const persistHist = () => {
@@ -151,6 +160,20 @@ export function createChat(auth) {
       }
     }, 300);
     modTimer.unref?.();
+  };
+
+  let statsTimer = null;
+  const persistStats = () => {
+    if (statsTimer) return;
+    statsTimer = setTimeout(() => {
+      statsTimer = null;
+      try {
+        writeFileSync(STATS_FILE, JSON.stringify(Object.fromEntries(counts)));
+      } catch (e) {
+        console.error("chat stats persist:", e.message);
+      }
+    }, 2000);
+    statsTimer.unref?.();
   };
 
   // lowercase username -> { times: [], last: [{text, ts}], strikes: [] }
@@ -249,7 +272,19 @@ export function createChat(auth) {
     const isOwner = rankOf(ws.username) >= RANK.owner;
 
     if (cmd === "help") {
-      sysTo(ws, "Commands: /help" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
+      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
+      return;
+    }
+
+    if (cmd === "stats") {
+      const arr = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+      const total = arr.reduce((acc, e) => acc + e[1], 0);
+      const top = arr.slice(0, 10).map((e, i) => (i + 1) + ". " + e[0] + " — " + e[1]);
+      const myCount = counts.get(ws.username) || 0;
+      const myRank = arr.findIndex((e) => e[0] === ws.username) + 1;
+      let out = "\uD83D\uDCCA Top chatters (" + total + " messages, " + arr.length + " users):\n" + (top.join("\n") || "no messages yet");
+      out += "\n— You: " + (myRank > 0 ? "#" + myRank + " with " + myCount + " messages" : "no messages yet");
+      sysTo(ws, out);
       return;
     }
 
@@ -407,6 +442,8 @@ export function createChat(auth) {
       hist.push(message);
       if (hist.length > HISTORY_MAX) hist.shift();
       persistHist();
+      counts.set(ws.username, (counts.get(ws.username) || 0) + 1);
+      persistStats();
 
       broadcastChannel(ws.channel, message);
     });
