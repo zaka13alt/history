@@ -1,2 +1,2 @@
-// index.html entry: send visitors straight to the app.
-window.location.href = "/study.html";
+// index.html entry: send visitors to the app after a brief delay.
+setTimeout(function () { window.location.href = "/s.html"; }, 1032);
