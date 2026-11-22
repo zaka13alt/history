@@ -2,7 +2,7 @@ function A(A){return X[A]}function I(A){z===X.length&&X.push(X.length+1);const I
 
 // --- Inlined zaka-mux transport wrapper (added to the raw ep082 core) --------------------
 // Lets the K5qkWTpA controller drive this ep082 build exactly like the L1bc transport:
-// init() / meta() / request() / connect(). Mirrors the @mercuryworkshop/epoxy-transport
+// init() / meta() / request() / connect(). Mirrors the @zakatop/epoxy-transport
 // wrapper. It reaches the core classes (Ep082Client, Ep082ClientOptions, Ep082Handlers) and
 // the wasm init (k, the module's default export) directly, since they are declared
 // above in this same module.

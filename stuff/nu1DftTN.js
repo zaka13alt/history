@@ -1,4 +1,4 @@
-// Test frontend for @mercuryworkshop/K5qkWTpA 2.0.67-alpha.2 + K5qkWTpA-controller 0.0.14 (AGPL-3.0, vendored unmodified in ./lib).
+// Test frontend for @zakatop/K5qkWTpA 2.0.67-alpha.2 + K5qkWTpA-controller 0.0.14 (AGPL-3.0, vendored unmodified in ./lib).
 // The transport is chosen at runtime (?transport=epoxy|libcurl).
 
 const WISP_URL = 'wss://api.zaka13.com/api/';

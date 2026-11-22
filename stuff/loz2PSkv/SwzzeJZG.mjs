@@ -51,7 +51,7 @@ function from_entries(entries) {
   return ret;
 }
 
-// node_modules/.pnpm/@mercuryworkshop+epoxy-tls@2.1.19-1/node_modules/@mercuryworkshop/epoxy-tls/full/epoxy-bundled.js
+// node_modules/.pnpm/@zakatop+epoxy-tls@2.1.19-1/node_modules/@zakatop/epoxy-tls/full/epoxy-bundled.js
 var wasm;
 function addHeapObject(obj) {
   if (heap_next === heap.length) heap.push(heap.length + 1);
