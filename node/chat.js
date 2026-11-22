@@ -19,13 +19,13 @@ const MOD_FILE = new URL("chat-mod.json", import.meta.url);
 const STATS_FILE = new URL("chat-stats.json", import.meta.url);
 
 // Text channels.
-const CHANNELS = ["general", "rules", "games", "proxies", "offtopic"];
+const CHANNELS = ["general", "announcements", "rules", "games", "proxies", "offtopic"];
 const DEFAULT_CHANNEL = "general";
 
 // Hardcoded roles by lowercase username. Everyone else is a member.
 // Add more like: zaka: "owner", someadmin: "admin",
-const ROLES = { zakalol: "owner" };
-const RANK = { member: 0, admin: 1, owner: 2 };
+const ROLES = { zakalol: "owner", officialdomsxze: "coowner" };
+const RANK = { member: 0, admin: 1, coowner: 2, owner: 3 };
 
 // Users promoted with /mod (lowercase usernames), persisted in chat-mod.json.
 const mods = new Set();
@@ -417,7 +417,7 @@ export function createChat(auth) {
         return;
       }
 
-      if (ws.channel === "rules" && rankOf(username) < RANK.admin) {
+      if ((ws.channel === "rules" || ws.channel === "announcements") && rankOf(username) < RANK.admin) {
         sysTo(ws, "Only admins and mods can post in #rules.");
         return;
       }
@@ -451,6 +451,9 @@ export function createChat(auth) {
         ts: now,
       };
       if (replyObj) message.reply = replyObj;
+      if (rankOf(username) >= RANK.admin && /@(everyone|here)\b/i.test(text)) {
+        message.ping = /@everyone\b/i.test(text) ? "everyone" : "here";
+      }
 
       const hist = histories[ws.channel];
       hist.push(message);

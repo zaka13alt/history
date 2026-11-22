@@ -53,6 +53,8 @@
     .badge { font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; border-radius: 4px; padding: 1px 5px; margin-left: 5px; vertical-align: middle; }
     .badge.owner { background: rgba(255,196,0,.15); color: #ffce45; border: 1px solid rgba(255,196,0,.35); }
     .badge.admin { background: rgba(77,173,255,.15); color: var(--accent); border: 1px solid rgba(77,173,255,.35); }
+    .badge.coowner { background: rgba(255,215,0,.18); color: #ffd700; border: 1px solid rgba(255,215,0,.45); }
+    .msg.ping { background: rgba(255,215,0,.09); box-shadow: inset 2px 0 0 #ffd700; }
 
     @media (max-width: 640px) {
       body { padding: 0; }
@@ -182,7 +184,7 @@
     function setActiveChannel(ch) {
       channel = ch;
       titleEl.textContent = "#" + ch;
-      var readOnly = (ch === "rules" && myRole !== "owner" && myRole !== "admin");
+      var readOnly = ((ch === "rules" || ch === "announcements") && myRole !== "owner" && myRole !== "admin" && myRole !== "coowner");
       input.disabled = sendBtn.disabled = readOnly;
       input.placeholder = readOnly ? "#rules is read-only — only staff can post here" : "Message #" + ch + "  (try /help)";
       Array.prototype.forEach.call(channelsEl.children, function (b) { b.classList.toggle("active", b.dataset.ch === ch); });
@@ -203,8 +205,8 @@
       if (m.name !== myName) {
         var meta = document.createElement("div"); meta.className = "meta";
         meta.appendChild(document.createTextNode(m.name));
-        if (m.role === "owner" || m.role === "admin") {
-          var b = document.createElement("span"); b.className = "badge " + m.role; b.textContent = m.role; meta.appendChild(b);
+        if (m.role === "owner" || m.role === "admin" || m.role === "coowner") {
+          var b = document.createElement("span"); b.className = "badge " + m.role; b.textContent = m.role === "coowner" ? "co owner" : m.role; meta.appendChild(b);
         }
         el.appendChild(meta);
       }
@@ -217,6 +219,7 @@
       var rbtn = document.createElement("button"); rbtn.className = "reply-btn"; rbtn.title = "reply"; rbtn.textContent = "\u21A9";
       rbtn.onclick = function () { replyingTo = { name: m.name, text: m.text }; showReplyBar(); input.focus(); };
       el.appendChild(rbtn);
+      if (m.ping) { el.classList.add("ping"); if (m.name !== myName && document.hidden) flashPing(); }
       box.appendChild(el);
       if (stick) scroll();
     }
@@ -237,6 +240,14 @@
       el.textContent = !names.length ? "" : names.length === 1 ? names[0] + " is typing\u2026" : names.length === 2 ? names[0] + " and " + names[1] + " are typing\u2026" : "several people are typing\u2026";
       if (typingTO) clearTimeout(typingTO);
       if (names.length) typingTO = setTimeout(renderTyping, 1500);
+    }
+    var ORIG_TITLE = document.title, pingTO = null;
+    function flashPing() {
+      document.title = "\uD83D\uDCE2 ping!";
+      var restore = function () { document.title = ORIG_TITLE; window.removeEventListener("focus", restore); };
+      window.addEventListener("focus", restore);
+      if (pingTO) clearTimeout(pingTO);
+      pingTO = setTimeout(restore, 6000);
     }
     function addSystem(text) {
       var el = document.createElement("div"); el.className = "msg system"; el.textContent = text; box.appendChild(el); scroll();
@@ -311,8 +322,8 @@
           }
           whoEl.innerHTML = "";
           whoEl.appendChild(document.createTextNode("@" + myName));
-          if (myRole === "owner" || myRole === "admin") { var bb = document.createElement("span"); bb.className = "badge " + myRole; bb.textContent = myRole; whoEl.appendChild(bb); }
-          hintEl.textContent = (myRole === "owner" || myRole === "admin") ? "/help for mod commands" : "";
+          if (myRole === "owner" || myRole === "admin" || myRole === "coowner") { var bb = document.createElement("span"); bb.className = "badge " + myRole; bb.textContent = myRole === "coowner" ? "co owner" : myRole; whoEl.appendChild(bb); }
+          hintEl.textContent = (myRole === "owner" || myRole === "admin" || myRole === "coowner") ? "/help for mod commands" : "";
         } else if (data.type === "history") {
           if (data.channel && data.channel !== channel) return;
           box.innerHTML = "";
