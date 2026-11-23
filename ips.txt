@@ -1,19 +1,5 @@
-# ips.txt — all IP ranges Caddy blocks, one per line.
-# Mirror/export of the (ip_gate) snippet in Caddyfile; kept in sync when bans change.
-# Two independent lists with different scopes (see headers).
-
-# ============================================================
-# Site-wide bans  —  @gateBanned  →  abort on EVERY path
-# (banned chat raiders / abusers, added manually)
-# ============================================================
 2607:fb92:2b07:7d99::/64
 69.254.20.152/32
-
-# ============================================================
-# Datacenter / VPN / hosting ranges  —  @gateStudy + @gateRoot  →  403
-# Blocks these from '/' and the proxy pages (/study.html, /s.html).
-# 1759 ranges, applied identically to both gates.
-# ============================================================
 45.32.227.177
 67.226.220.0/24
 18.214.190.0/24
