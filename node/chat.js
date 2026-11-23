@@ -14,6 +14,19 @@ const STRIKE_WINDOW_MS = 30000; // this many spam strikes in the window...
 const STRIKE_MAX = 3;
 const AUTO_TIMEOUT_S = 60; // ...earns an automatic timeout
 const PING_INTERVAL_MS = 30000;
+// Raid / auto-mod tuning. Deliberately lenient on per-IP limits because many
+// legit users share one public IP (school/library NAT); the real defense is the
+// per-connection + cross-account detection below.
+const MAX_CONN_PER_IP = 25; // concurrent sockets from one IP
+const IP_JOIN_WINDOW_MS = 120000;
+const IP_JOIN_MAX = 15; // >this distinct users from one IP in the window => soft throttle
+const IP_THROTTLE_MS = 600000; // 10 min soft connection throttle
+const RAID_JOIN_WINDOW_MS = 60000;
+const RAID_JOIN_MAX = 8; // >this distinct NEW accounts joining in 60s => raid mode
+const RAID_MSG_WINDOW_MS = 12000;
+const RAID_MSG_MAX = 35; // >this messages chat-wide in 12s => raid mode
+const RAID_MODE_MS = 300000; // raid mode holds for 5 min (sliding)
+const RAID_NEW_MS = 600000; // an account is "new" for 10 min after first seen
 const HISTORY_FILE = new URL("chat-history.json", import.meta.url);
 const MOD_FILE = new URL("chat-mod.json", import.meta.url);
 const STATS_FILE = new URL("chat-stats.json", import.meta.url);
@@ -76,6 +89,36 @@ function clean(s, max) {
 function maskWords(s) {
   return badRe ? s.replace(badRe, (m) => "*".repeat(m.length)) : s;
 }
+// Content-based spam: a short token repeated to fill length, or very low
+// character diversity over length. Catches raid floods like "niggernigger...",
+// "676767...", "aaaaaa..." regardless of what the token is.
+function isFloodSpam(t) {
+  const s = String(t).replace(/\s+/g, "");
+  if (s.length < 20) return false;
+  if (new Set(s.toLowerCase()).size <= 4) return true;
+  for (let p = 1; p <= 16; p++) {
+    if (s.length / p < 4) break;
+    const unit = s.slice(0, p);
+    if (unit.repeat(Math.ceil(s.length / p)).slice(0, s.length) === s) return true;
+  }
+  return false;
+}
+
+// Disguised-slur detection. The display mask (badRe) is \b-anchored, so it misses
+// concatenated/spaced/leet slurs ("niggernigger", "n i g g e r", "n1gger"). This
+// undoes leetspeak + separators + stretched repeats, then substring-matches a
+// curated set of unambiguous slurs for an automatic timeout.
+const LEET = { "0": "o", "1": "i", "!": "i", "|": "i", "3": "e", "4": "a", "@": "a", "5": "s", "$": "s", "7": "t", "8": "b", "9": "g", "+": "t", "(": "c" };
+const HARD_SLURS = ["nigger", "nigga", "nignog", "faggot", "jigaboo", "porchmonkey", "sandnigger", "kike", "tranny", "shemale", "wetback", "beaner", "chinaman", "raghead", "towelhead"];
+function normSlur(s) {
+  let t = String(s).toLowerCase().replace(/[0-9@!$+|()]/g, (c) => LEET[c] || "");
+  return t.replace(/[^a-z]/g, "").replace(/(.)\1{2,}/g, "$1");
+}
+function hardSlurHit(s) {
+  const t = normSlur(s);
+  return HARD_SLURS.some((w) => t.includes(w));
+}
+
 
 export function createChat(auth) {
   const wss = new WebSocketServer({ noServer: true, maxPayload: 4096 });
@@ -113,6 +156,41 @@ export function createChat(auth) {
   const ipbans = new Set(); // banned ip keys (chat-level): /64 for ipv6, exact for ipv4
   const userIPs = new Map(); // lowercase username -> last-seen client ip (in-memory)
   const ipKey = (ip) => (ip && ip.includes(":") ? ip.split(":").slice(0, 4).join(":") + "::/64" : ip);
+  // --- auto-mod / raid state ---
+  const firstSeen = new Map(); // lowercase user -> first-seen ts (this process)
+  const ipJoins = new Map(); // ipKey -> [{ u, ts }]
+  const ipThrottle = new Map(); // ipKey -> expiry ts (soft connection throttle)
+  const recentJoins = []; // { u, ts } new-account joins (raid signal)
+  const recentMsgs = []; // message timestamps (raid signal)
+  const slowmode = new Map(); // channel -> seconds between messages
+  const slowLast = new Map(); // "channel|user" -> last post ts
+  const startupAt = Date.now();
+  let raidUntil = 0, raidForced = false, raidOn = false, lockdown = false;
+  const raidActive = () => raidForced || raidOn;
+  const isNewAccount = (u) => {
+    const t = firstSeen.get(String(u).toLowerCase());
+    return !t || Date.now() - t < RAID_NEW_MS;
+  };
+  function enterRaid() {
+    const was = raidActive();
+    raidUntil = Date.now() + RAID_MODE_MS;
+    raidOn = true;
+    if (!was) for (const ch of CHANNELS) sysChannel(ch, "⚠️ Raid protection ON — newer accounts can't post for a few minutes.");
+  }
+  function noteJoin(u) {
+    if (Date.now() - startupAt < 90000) return; // ignore the reconnect burst after a restart
+    const now = Date.now();
+    while (recentJoins.length && now - recentJoins[0].ts > RAID_JOIN_WINDOW_MS) recentJoins.shift();
+    if (isNewAccount(u)) recentJoins.push({ u: String(u).toLowerCase(), ts: now });
+    if (new Set(recentJoins.map((e) => e.u)).size > RAID_JOIN_MAX) enterRaid();
+  }
+  function noteMsg() {
+    const now = Date.now();
+    while (recentMsgs.length && now - recentMsgs[0] > RAID_MSG_WINDOW_MS) recentMsgs.shift();
+    recentMsgs.push(now);
+    if (now - startupAt > 90000 && recentMsgs.length > RAID_MSG_MAX) enterRaid();
+  }
+
   const timeouts = new Map(); // lowercase username -> expiry ts
 
   try {
@@ -200,6 +278,7 @@ export function createChat(auth) {
     if (s.times.length && now - s.times[s.times.length - 1] < MIN_GAP_MS) reason = "Slow down a little.";
     else if (s.times.length >= RATE_MAX) reason = "You're sending messages too fast.";
     else if (s.last.some((m) => m.text === norm)) reason = "Don't repeat the same message.";
+    else if (isFloodSpam(norm)) reason = "That looks like spam.";
 
     if (!reason) {
       s.times.push(now);
@@ -276,7 +355,7 @@ export function createChat(auth) {
     const isOwner = rankOf(ws.username) >= RANK.owner;
 
     if (cmd === "help") {
-      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user> | /ipban <user> | /ipunban <user> | /delete last <n>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
+      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user> | /ipban <user> | /ipunban <user> | /delete last <n> | /slowmode <sec> | /lockdown | /raidmode on|off" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
       return;
     }
 
@@ -289,6 +368,30 @@ export function createChat(auth) {
       let out = "\uD83D\uDCCA Top chatters (" + total + " messages, " + arr.length + " users):\n" + (top.join("\n") || "no messages yet");
       out += "\n— You: " + (myRank > 0 ? "#" + myRank + " with " + myCount + " messages" : "no messages yet");
       sysTo(ws, out);
+      return;
+    }
+
+    if (cmd === "lockdown") {
+      if (!isMod) { sysTo(ws, "Only mods can use that."); return; }
+      const a = String(parts[1] || "").toLowerCase();
+      lockdown = a === "on" ? true : a === "off" ? false : !lockdown;
+      sysChannel(ws.channel, "Lockdown " + (lockdown ? "ENABLED — only staff can post" : "disabled") + " by " + ws.username + ".");
+      return;
+    }
+
+    if (cmd === "raidmode") {
+      if (!isMod) { sysTo(ws, "Only mods can use that."); return; }
+      const a = String(parts[1] || "").toLowerCase();
+      if (a === "off") { raidForced = false; raidOn = false; raidUntil = 0; sysChannel(ws.channel, "Raid mode OFF (" + ws.username + ")."); }
+      else { raidForced = true; enterRaid(); sysChannel(ws.channel, "Raid mode forced ON by " + ws.username + "."); }
+      return;
+    }
+
+    if (cmd === "slowmode") {
+      if (!isMod) { sysTo(ws, "Only mods can use that."); return; }
+      const secs = Math.max(0, Math.min(300, parseInt(parts[1], 10) || 0));
+      if (secs) slowmode.set(ws.channel, secs); else slowmode.delete(ws.channel);
+      sysChannel(ws.channel, secs ? ("Slowmode: " + secs + "s between messages in #" + ws.channel + " (" + ws.username + ").") : ("Slowmode off in #" + ws.channel + " (" + ws.username + ")."));
       return;
     }
 
@@ -405,6 +508,9 @@ export function createChat(auth) {
   wss.on("connection", (ws, username, ip) => {
     ws.ip = ip || "";
     if (ip) userIPs.set(String(username).toLowerCase(), ip);
+    const _fs = String(username).toLowerCase();
+    if (!firstSeen.has(_fs)) firstSeen.set(_fs, Date.now());
+    noteJoin(_fs);
     ws.username = username;
     ws.role = roleOf(username);
     ws.channel = DEFAULT_CHANNEL;
@@ -473,6 +579,30 @@ export function createChat(auth) {
         return;
       }
 
+      if (lockdown && rankOf(username) < RANK.admin) {
+        sysTo(ws, "Chat is locked down — only staff can post right now.");
+        return;
+      }
+      if (raidActive() && rankOf(username) < RANK.admin && isNewAccount(username)) {
+        sysTo(ws, "Raid protection is on — newer accounts can't post for a few minutes.");
+        return;
+      }
+      {
+        const sm = slowmode.get(ws.channel) || 0;
+        if (sm && rankOf(username) < RANK.admin) {
+          const sk = ws.channel + "|" + username.toLowerCase();
+          const wait = sm * 1000 - (Date.now() - (slowLast.get(sk) || 0));
+          if (wait > 0) { sysTo(ws, "Slowmode: wait " + Math.ceil(wait / 1000) + "s."); return; }
+          slowLast.set(sk, Date.now());
+        }
+      }
+      if (hardSlurHit(text) && rankOf(username) < RANK.admin) {
+        timeouts.set(username.toLowerCase(), Date.now() + 300000);
+        persistMod();
+        sysTo(ws, "Auto-timeout 300s: slurs aren't allowed here.");
+        return;
+      }
+      noteMsg();
       const spamErr = checkSpam(username, text);
       if (spamErr) {
         sysTo(ws, spamErr);
@@ -512,6 +642,10 @@ export function createChat(auth) {
   });
 
   setInterval(() => {
+    if (raidOn && !raidForced && Date.now() >= raidUntil) {
+      raidOn = false;
+      for (const ch of CHANNELS) sysChannel(ch, "\u2705 Raid protection lifted.");
+    }
     for (const ws of wss.clients) {
       if (!ws.isAlive) {
         ws.terminate();
@@ -561,6 +695,22 @@ export function createChat(auth) {
     if (ip && ipbans.has(ipKey(ip))) {
       socket.end("HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n");
       return true;
+    }
+    // Per-IP backstop (generous; shared NATs are normal here). Rejects a single
+    // IP opening too many sockets at once or spinning up alts in a short burst.
+    const _k = ipKey(ip);
+    if (_k) {
+      const _now = Date.now();
+      const _reject = () => { socket.end("HTTP/1.1 429 Too Many Requests\r\nConnection: close\r\n\r\n"); return true; };
+      if ((ipThrottle.get(_k) || 0) > _now) return _reject();
+      let _conc = 0;
+      for (const c of wss.clients) if (c.ip && ipKey(c.ip) === _k) _conc++;
+      if (_conc >= MAX_CONN_PER_IP) return _reject();
+      const _lu = username.toLowerCase();
+      const _arr = (ipJoins.get(_k) || []).filter((e) => _now - e.ts < IP_JOIN_WINDOW_MS);
+      if (!_arr.some((e) => e.u === _lu)) _arr.push({ u: _lu, ts: _now });
+      ipJoins.set(_k, _arr);
+      if (new Set(_arr.map((e) => e.u)).size > IP_JOIN_MAX) { ipThrottle.set(_k, _now + IP_THROTTLE_MS); return _reject(); }
     }
     wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, username, ip));
     return true;
