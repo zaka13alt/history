@@ -62,7 +62,7 @@
 # client is in CF-Connecting-IP instead, so this matches on direct connections.
 (ip_gate) {
 	# Site-wide IP ban: abort banned ranges on every path (Caspianistuffer chat alts).
-	@gateBanned client_ip 2607:fb92:2b07:7d99::/64
+	@gateBanned client_ip 2607:fb92:2b07:7d99::/64 69.254.20.152/32
 	handle @gateBanned {
 		abort
 	}
