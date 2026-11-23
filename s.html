@@ -308,7 +308,35 @@ function buildTbPlugins(tb) {
         if (svt) plugins.push(svt);
         // Cache GET/HEAD responses in Cache Storage (respects cache-control).
         if (U.HttpCachePlugin) plugins.push(new U.HttpCachePlugin());
-       
+        if (U.EventHandlerPlugin) plugins.push(new U.EventHandlerPlugin());
+        if (U.EventHandlerPlugin && U.ManagedPlugin) {
+            var MidClickLinks = class extends U.ManagedPlugin {
+                constructor() { super('zaka-midclick-links', ['event-handler']); }
+                install(host) {
+                    super.install(host);
+                    this.tap(host.hooks.init.post, function () {
+                        var eh = host.plugins.find(function (p) { return p.name === 'event-handler'; });
+                        if (!eh) return;
+                        var attach = function (a) {
+                            eh.addEventListener(a, 'auxclick', function (ev) {
+                                if (ev.button === 1) { ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation(); openInNewTb(a.href); }
+                            });
+                        };
+                        var scan = function (root) {
+                            try { var as = root.querySelectorAll && root.querySelectorAll('a'); if (as) for (var i = 0; i < as.length; i++) attach(as[i]); } catch (e) {}
+                        };
+                        scan(window.document);
+                        try {
+                            new MutationObserver(function (muts) {
+                                muts.forEach(function (m) { m.addedNodes.forEach(function (n) { if (n.tagName === 'A') attach(n); else if (n.querySelectorAll) scan(n); }); });
+                            }).observe(window.document, { childList: true, subtree: true });
+                        } catch (e) {}
+                    }, { after: ['event-handler'] });
+                }
+            };
+            try { plugins.push(new MidClickLinks()); } catch (e) { console.error('midclick plugin failed', e); }
+        }
+
         // Links/navigations that would escape the gateway open as a new zaka tb.
         // The plugin 302-redirects the escaping window to whatever we return, so
         // never return the real URL (that loads it unproxied and leaks it); send
