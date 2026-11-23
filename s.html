@@ -488,8 +488,16 @@ function renderShortcuts(container, tb) {
     });
     var dc = document.createElement('a');
     dc.className = 'discord-link';
-    dc.href = '/frame/frame.html?g=aHR0cHM6Ly9kaXNjb3JkLmdnL1kyNkVVc3NQMw==';
-    dc.target = '_blank';
+    dc.href = '#';
+    dc.addEventListener('click', function(e) {
+        e.preventDefault();
+        var u = 'https://discord.gg/33fPjXZPd';
+        if (!tb) { openInNewTb(u); return; }
+        tb.url = u;
+        tb.title.textContent = 'discord';
+        hideNewTb(tb);
+        navigateTb(u, tb.id);
+    });
     var dci = document.createElement('img');
     dci.src = '/img/dc.svg';
     dci.alt = 'discord';
