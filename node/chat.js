@@ -110,11 +110,15 @@ export function createChat(auth) {
   }
 
   const bans = new Set(); // lowercase usernames
+  const ipbans = new Set(); // banned ip keys (chat-level): /64 for ipv6, exact for ipv4
+  const userIPs = new Map(); // lowercase username -> last-seen client ip (in-memory)
+  const ipKey = (ip) => (ip && ip.includes(":") ? ip.split(":").slice(0, 4).join(":") + "::/64" : ip);
   const timeouts = new Map(); // lowercase username -> expiry ts
 
   try {
     const mod = JSON.parse(readFileSync(MOD_FILE, "utf8"));
     if (mod && Array.isArray(mod.bans)) mod.bans.forEach((u) => bans.add(String(u).toLowerCase()));
+    if (mod && Array.isArray(mod.ipbans)) mod.ipbans.forEach((x) => ipbans.add(String(x)));
     if (mod && Array.isArray(mod.mods)) mod.mods.forEach((u) => mods.add(String(u).toLowerCase()));
     if (mod && mod.timeouts)
       for (const k in mod.timeouts) if (mod.timeouts[k] > Date.now()) timeouts.set(k, mod.timeouts[k]);
@@ -154,7 +158,7 @@ export function createChat(auth) {
         if (v > Date.now()) t[k] = v;
       });
       try {
-        writeFileSync(MOD_FILE, JSON.stringify({ bans: [...bans], mods: [...mods], timeouts: t }));
+        writeFileSync(MOD_FILE, JSON.stringify({ bans: [...bans], mods: [...mods], ipbans: [...ipbans], timeouts: t }));
       } catch (e) {
         console.error("chat mod persist:", e.message);
       }
@@ -272,7 +276,7 @@ export function createChat(auth) {
     const isOwner = rankOf(ws.username) >= RANK.owner;
 
     if (cmd === "help") {
-      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
+      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user> | /ipban <user> | /ipunban <user> | /delete last <n>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
       return;
     }
 
@@ -285,6 +289,45 @@ export function createChat(auth) {
       let out = "\uD83D\uDCCA Top chatters (" + total + " messages, " + arr.length + " users):\n" + (top.join("\n") || "no messages yet");
       out += "\n— You: " + (myRank > 0 ? "#" + myRank + " with " + myCount + " messages" : "no messages yet");
       sysTo(ws, out);
+      return;
+    }
+
+    if (cmd === "delete") {
+      if (!isMod) { sysTo(ws, "Only mods can use that."); return; }
+      if (String(parts[1] || "").toLowerCase() !== "last") { sysTo(ws, "Usage: /delete last <count>"); return; }
+      const hist = histories[ws.channel];
+      const n = Math.min(Math.max(parseInt(parts[2], 10) || 0, 0), hist.length);
+      if (!n) { sysTo(ws, "Usage: /delete last <count>"); return; }
+      hist.splice(hist.length - n, n);
+      persistHist();
+      broadcastChannel(ws.channel, { type: "history", channel: ws.channel, messages: hist });
+      sysChannel(ws.channel, ws.username + " deleted the last " + n + " message(s).");
+      return;
+    }
+
+    if (cmd === "ipban" || cmd === "ipunban") {
+      if (!isMod) { sysTo(ws, "Only mods can use that."); return; }
+      const target = parts[1];
+      if (!target) { sysTo(ws, "Usage: /" + cmd + " <user>"); return; }
+      const tl = target.toLowerCase();
+      if (cmd === "ipban") {
+        if (rankOf(target) >= rankOf(ws.username)) { sysTo(ws, "You can't moderate " + target + "."); return; }
+        const ip = userIPs.get(tl);
+        if (!ip) { sysTo(ws, "No known IP for " + target + " (they haven't connected since the last restart)."); return; }
+        const key = ipKey(ip);
+        ipbans.add(key);
+        bans.add(tl);
+        persistMod();
+        let kicked = 0;
+        for (const c of wss.clients) if (c.ip && ipKey(c.ip) === key) { try { c.close(4003, "ip-banned"); kicked++; } catch (e) {} }
+        sysChannel(ws.channel, target + " was IP-banned by " + ws.username + ".");
+        sysTo(ws, "IP-banned " + target + " (" + key + "); kicked " + kicked + " connection(s).");
+      } else {
+        const ip = userIPs.get(tl) || target;
+        ipbans.delete(ipKey(ip));
+        persistMod();
+        sysTo(ws, "Removed IP ban for " + ipKey(ip) + ".");
+      }
       return;
     }
 
@@ -359,7 +402,9 @@ export function createChat(auth) {
     sysTo(ws, "Unknown command: /" + cmd + " (try /help)");
   }
 
-  wss.on("connection", (ws, username) => {
+  wss.on("connection", (ws, username, ip) => {
+    ws.ip = ip || "";
+    if (ip) userIPs.set(String(username).toLowerCase(), ip);
     ws.username = username;
     ws.role = roleOf(username);
     ws.channel = DEFAULT_CHANNEL;
@@ -512,7 +557,12 @@ export function createChat(auth) {
 
     // Upgrade even when banned so the connection handler can close with 4003,
     // allowing the client to distinguish a ban from an expired/invalid session.
-    wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, username));
+    const ip = String(req.headers["x-real-client-ip"] || req.headers["x-forwarded-for"] || "").split(",")[0].trim();
+    if (ip && ipbans.has(ipKey(ip))) {
+      socket.end("HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n");
+      return true;
+    }
+    wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, username, ip));
     return true;
   }
 

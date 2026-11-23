@@ -106,6 +106,7 @@
 	@chat path /chat /chat/*
 	handle @chat {
 		reverse_proxy localhost:3000 {
+			header_up X-Real-Client-IP {client_ip}
 			transport http {
 				read_timeout 0
 				write_timeout 0
