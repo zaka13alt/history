@@ -8,13 +8,11 @@
     <link rel="preload" href="/css/styles.css?v=11" as="style" />
     <link rel="stylesheet" href="/css/styles.css?v=11">
     <style>
-        /* address-bar suggestions: inline so a stale cached styles.css can never leave this markup unstyled */
         #p1tl9 { display: none; position: absolute; top: 38px; left: 0; right: 0; z-index: 1000; padding: 5px; background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.55); }
         .hare7 { display: flex; align-items: center; gap: 11px; height: 32px; padding: 0 11px; border-radius: 7px; color: #ddd; font-size: 13px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .hare7 i { color: #666; font-size: 11px; flex-shrink: 0; }
         .hare7 span { overflow: hidden; text-overflow: ellipsis; }
         .hare7:hover, .hare7.r0hni { background: #232323; color: #fff; }
-        /* cloak font: labels are stored scrambled in the DOM and mapped back visually by this glyph font */
         @font-face { font-family: 'zkc'; src: url('/stuff/fonts/core.ttf') format('truetype'); }
         .irf6u { font-family: 'zkc' !important; }
     </style>
@@ -117,7 +115,6 @@ try {
 }
 
 (function() {
-    // Remove the old now.gg Roblox shortcut (replaced by the sidebar Roblox icon + /blox/).
     var flag = "rbxshrm1";
     if(localStorage.getItem(flag)) return;
     shortcuts = shortcuts.filter(function(s){return !/nowgg\.fun\/apps\/a\/19900/i.test(s.url || "")});
@@ -212,7 +209,6 @@ function clearFavicon(tb) {
     tb.faviconImg.style.display = 'none';
 }
 
-// SJ controller, built once per w13p server.
 var sjW1sp = null, sjReady = null;
 function sj(w1sp) {
     if (sjReady && sjW1sp === w1sp) return sjReady;
@@ -244,8 +240,6 @@ function sj(w1sp) {
     return sjReady;
 }
 
-// zaka's service worker is killed when idle and then 404s proxied
-// requests; ping every registration periodically to keep the workers alive.
 function revive() {
     if (!navigator.serviceWorker) return;
     navigator.serviceWorker.getRegistrations().then(function (regs) {
@@ -257,10 +251,6 @@ function revive() {
 setInterval(revive, 15000);
 
 
-// Skip the View Transitions API inside proxied pages. YouTube's SPA uses
-// document.startViewTransition and it misrenders/breaks layout under the proxy;
-// no-op the animation (run the DOM update immediately via skipTransition) instead
-// of the old iframe scale hack. Scramjet ManagedPlugin, same pattern as webblox.
 var _SkipVTPlugin = null;
 function skipViewTransitionsPlugin() {
     var U = window.$K5qkWTpAUtils;
@@ -285,28 +275,20 @@ function skipViewTransitionsPlugin() {
     try { return new _SkipVTPlugin(); } catch (e) { console.error('skip-view-transitions plugin failed', e); return null; }
 }
 
-// Tb Creation
-// Open a URL as a brand-new tb in zaka's own tb UI.
 function openInNewTb(url) {
     try { createTb(String(url)); } catch (e) { console.error(e); }
 }
 
-// New-window guard lives in /js/ZNuSyiF.js (tb iframes have no allow-popups).
-// Per-frame zkaaajet plugins from $K5qkWTpAUtils. Fresh instances per frame so
-// each one's callbacks can close over its own tb.
 function buildTbPlugins(tb) {
     var U = window.$K5qkWTpAUtils;
     if (!U) return [];
     var plugins = [];
     try {
-        // Roblox: turn roblox.com's Play button into the /blox/ web client (webblox).
         if (window.webbloxLaunch && U.ManagedPlugin) {
             try { plugins.push(window.webbloxLaunch.create(U.ManagedPlugin, '/blox/')); } catch (e) { console.error('blox plugin failed', e); }
         }
-        // Skip View Transitions inside proxied pages (fixes YouTube layout/render).
         var svt = skipViewTransitionsPlugin();
         if (svt) plugins.push(svt);
-        // Cache GET/HEAD responses in Cache Storage (respects cache-control).
         if (U.HttpCachePlugin) plugins.push(new U.HttpCachePlugin());
         if (U.EventHandlerPlugin) plugins.push(new U.EventHandlerPlugin());
         if (U.EventHandlerPlugin && U.ManagedPlugin) {
@@ -337,17 +319,12 @@ function buildTbPlugins(tb) {
             try { plugins.push(new MidClickLinks()); } catch (e) { console.error('midclick plugin failed', e); }
         }
 
-        // Links/navigations that would escape the gateway open as a new zaka tb.
-        // The plugin 302-redirects the escaping window to whatever we return, so
-        // never return the real URL (that loads it unproxied and leaks it); send
-        // that window to a same-origin page that just closes itself.
         if (U.CatchEscapedLinksPlugin) plugins.push(new U.CatchEscapedLinksPlugin(function (escapedUrl) {
             openInNewTb(String(escapedUrl));
             return location.origin + '/__/escaped.html';
         }));
         var nw = window.zakaNewWindowPlugin && window.zakaNewWindowPlugin(openInNewTb);
         if (nw) plugins.push(nw);
-        // Keep the address bar in sync with the frame's real URL (clicks, history, redirects).
         if (U.UrlWatcherPlugin) plugins.push(new U.UrlWatcherPlugin(function (realUrl) {
             if (!tb) return;
             tb.url = realUrl;
@@ -488,7 +465,6 @@ function renderShortcuts(container, tb) {
         ic.className = 'yyaep';
         if (s.img) {
             var iconImg = document.createElement('img');
-            // Icons are hosted locally under /img/icos; use whatever src is given as-is.
             iconImg.src = s.img;
             iconImg.alt = zka(s.name);
             ic.appendChild(iconImg);
@@ -659,8 +635,6 @@ function openSettings(tb) {
     clearFavicon(tb);
 }
 
-// Event Listeners
-// Search suggestions (/s/<query> -> Google suggest via Caddy)
 (function () {
     var box = document.getElementById('p1tl9');
     var items = [], sel = -1, typed = '', timer = 0, ctrl = null;
@@ -765,8 +739,6 @@ document.getElementById('sidebar-roblox').onclick = function() {
     var id = createTb();
     var t = tbs.get(id);
     if (!t) return;
-    // Roblox needs a .ROBLOSECURITY session, read from the proxy's cookie jar.
-    // Sign in on roblox.com first; the webblox plugin then turns Play into /blox/.
     var go = confirm('Sign in to roblox.com first.\n\nOK: open roblox.com to sign in \u2014 then press Play on any zaka and it launches here.\nCancel: open the Roblox launcher now.');
     if (go) {
         navigateTb('https://www.roblox.com/login', id);
@@ -776,7 +748,6 @@ document.getElementById('sidebar-roblox').onclick = function() {
     }
 };
 
-// Online Counter
 (function() {
     var el = document.getElementById('use-count'), n = document.getElementById('use-count-n');
     var id;
