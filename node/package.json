@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "detect-port": "^2.1.0",
-    "epoxy-server-node": "2.0.0",
+    "epoxy-server-node": "file:epoxy-fixed.tgz",
     "ws": "^8.18.0"
   }
 }
