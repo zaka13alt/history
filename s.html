@@ -82,17 +82,17 @@
 <script>
 (function(){"use strict";
 
-var defaultw1sp = "wss://" + window.location.host + "/api/";
+var defaultzkw = "wss://" + window.location.host + "/api/";
 var defaultSearch = "https://duckduckgo.com/search?q=%s";
 var storageShortcuts = "0oqk8yp9d";
-var storagew1sp = "z8v0ba4i0";
+var storagezkw = "z8v0ba4i0";
 var storageSearch = "sfjlx5jda";
 
-var tbs = new Map();
-var activeTbId = null;
-var tbCounter = 0;
+var zkls = new Map();
+var activeZklId = null;
+var zklCounter = 0;
 
-var w1spServer = localStorage.getItem(storagew1sp) || defaultw1sp;
+var zkwServer = localStorage.getItem(storagezkw) || defaultzkw;
 var searchEngine = localStorage.getItem(storageSearch) || defaultSearch;
 if(searchEngine.indexOf('%s') < 0) searchEngine = defaultSearch;
 
@@ -135,7 +135,7 @@ try {
     try { localStorage.setItem(storageShortcuts, JSON.stringify(shortcuts)); localStorage.setItem(flag, "1"); } catch(e){}
 })();
 
-var tbBar = document.getElementById("o6k9n");
+var zklBar = document.getElementById("o6k9n");
 var viewRoot = document.getElementById("uzt0y");
 var addrInput = document.getElementById("z5blg");
 var plusBtn = document.getElementById("c85v1");
@@ -190,9 +190,9 @@ function loadFavicon(img, pageUrl, onFail) {
     next();
 }
 
-function applyFavicon(tb, url) {
-    if (!tb || !tb.faviconImg) return;
-    var img = tb.faviconImg;
+function applyFavicon(zkl, url) {
+    if (!zkl || !zkl.faviconImg) return;
+    var img = zkl.faviconImg;
     if (!faviconCandidates(url).length) { img.style.display = 'none'; return; }
     img.style.display = 'block';
     loadFavicon(img, url, function () { img.style.display = 'none'; });
@@ -203,18 +203,18 @@ function updateLockIcon(url) {
     document.getElementById('m7rrm').innerHTML = '<i class="fa-solid ' + icon + '"></i>';
 }
 
-function clearFavicon(tb) {
-    if (!tb || !tb.faviconImg) return;
-    tb.faviconImg.src = '';
-    tb.faviconImg.style.display = 'none';
+function clearFavicon(zkl) {
+    if (!zkl || !zkl.faviconImg) return;
+    zkl.faviconImg.src = '';
+    zkl.faviconImg.style.display = 'none';
 }
 
-var sjW1sp = null, sjReady = null;
-function sj(w1sp) {
-    if (sjReady && sjW1sp === w1sp) return sjReady;
-    sjW1sp = w1sp;
+var sjZkw = null, sjReady = null;
+function sj(zkw) {
+    if (sjReady && sjZkw === zkw) return sjReady;
+    sjZkw = zkw;
     sjReady = (async function () {
-        var transportClient = new window.libbyTransport.libbyClient({w1p: w1sp});
+        var transportClient = new window.libbyTransport.libbyClient({w1p: zkw});
         await transportClient.init();
         var swReg = await navigator.serviceWorker.register('/HHbaN.js', {scope: '/', updateViaCache: 'none'});
         var activeWorker = swReg.active || await new Promise(function(resolve) {
@@ -236,7 +236,7 @@ function sj(w1sp) {
         await ctrl.wait();
         return ctrl;
     })();
-    sjReady.catch(function () { if (sjW1sp === w1sp) sjReady = null; });
+    sjReady.catch(function () { if (sjZkw === zkw) sjReady = null; });
     return sjReady;
 }
 
@@ -275,11 +275,11 @@ function skipViewTransitionsPlugin() {
     try { return new _SkipVTPlugin(); } catch (e) { console.error('skip-view-transitions plugin failed', e); return null; }
 }
 
-function openInNewTb(url) {
-    try { createTb(String(url)); } catch (e) { console.error(e); }
+function openInNewZkl(url) {
+    try { createZkl(String(url)); } catch (e) { console.error(e); }
 }
 
-function buildTbPlugins(tb) {
+function buildZklPlugins(zkl) {
     var U = window.$K5qkWTpAUtils;
     if (!U) return [];
     var plugins = [];
@@ -301,7 +301,7 @@ function buildTbPlugins(tb) {
                         if (!eh) return;
                         var attach = function (a) {
                             eh.addEventListener(a, 'auxclick', function (ev) {
-                                if (ev.button === 1) { ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation(); openInNewTb(a.href); }
+                                if (ev.button === 1) { ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation(); openInNewZkl(a.href); }
                             });
                         };
                         var scan = function (root) {
@@ -320,54 +320,54 @@ function buildTbPlugins(tb) {
         }
 
         if (U.CatchEscapedLinksPlugin) plugins.push(new U.CatchEscapedLinksPlugin(function (escapedUrl) {
-            openInNewTb(String(escapedUrl));
+            openInNewZkl(String(escapedUrl));
             return location.origin + '/__/escaped.html';
         }));
-        var nw = window.zakaNewWindowPlugin && window.zakaNewWindowPlugin(openInNewTb);
+        var nw = window.zakaNewWindowPlugin && window.zakaNewWindowPlugin(openInNewZkl);
         if (nw) plugins.push(nw);
         if (U.UrlWatcherPlugin) plugins.push(new U.UrlWatcherPlugin(function (realUrl) {
-            if (!tb) return;
-            tb.url = realUrl;
-            if (activeTbId !== tb.id || tb.isA1) return;
+            if (!zkl) return;
+            zkl.url = realUrl;
+            if (activeZklId !== zkl.id || zkl.isA1) return;
             addrInput.value = realUrl;
             updateLockIcon(realUrl);
-            try { tb.title.textContent = new URL(realUrl).hostname; } catch (e) { tb.title.textContent = realUrl; }
-            applyFavicon(tb, realUrl);
+            try { zkl.title.textContent = new URL(realUrl).hostname; } catch (e) { zkl.title.textContent = realUrl; }
+            applyFavicon(zkl, realUrl);
         }));
     } catch (e) { console.error('plugin setup failed', e); }
     return plugins;
 }
 
-function createTb(startUrl) {
-    var id = ++tbCounter;
-    var tbEl = document.createElement('div');
-    tbEl.className = 'm0jap';
-    tbEl.draggable = true;
-    tbEl.dataset.tbId = id;
+function createZkl(startUrl) {
+    var id = ++zklCounter;
+    var zklEl = document.createElement('div');
+    zklEl.className = 'm0jap';
+    zklEl.draggable = true;
+    zklEl.dataset.zklId = id;
 
     var favImg = document.createElement('img');
-    favImg.className = 'tb-favicon';
+    favImg.className = 'zkl-favicon';
     favImg.style.display = 'none';
-    tbEl.appendChild(favImg);
+    zklEl.appendChild(favImg);
 
     var title = document.createElement('span');
     title.className = 't9f20';
     title.textContent = startUrl || 'NewT';
-    tbEl.appendChild(title);
+    zklEl.appendChild(title);
 
     var closeBtn = document.createElement('button');
     closeBtn.className = 'q1jap';
     closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-    closeBtn.onclick = function(e) { e.stopPropagation(); closeTb(id); };
-    tbEl.appendChild(closeBtn);
-    tbEl.onclick = function() { activateTb(id); };
+    closeBtn.onclick = function(e) { e.stopPropagation(); closeZkl(id); };
+    zklEl.appendChild(closeBtn);
+    zklEl.onclick = function() { activateZkl(id); };
 
     var iframe = document.createElement('iframe');
     iframe.className = 'wo515';
     iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
 
-    var newTbPage = document.createElement('div');
-    newTbPage.className = 'zzbzi';
+    var newZklPage = document.createElement('div');
+    newZklPage.className = 'zzbzi';
     var svg = document.createElement("img");
     svg.className = "x7p4d";
     svg.src = "/img/logo.svg";
@@ -376,86 +376,86 @@ function createTb(startUrl) {
     
     var grid = document.createElement('div');
     grid.className = 'zf54t';
-    newTbPage.appendChild(svg);
-    newTbPage.appendChild(grid);
+    newZklPage.appendChild(svg);
+    newZklPage.appendChild(grid);
 
-    tbBar.insertBefore(tbEl, plusBtn);
+    zklBar.insertBefore(zklEl, plusBtn);
     viewRoot.appendChild(iframe);
-    viewRoot.appendChild(newTbPage);
+    viewRoot.appendChild(newZklPage);
 
-    var tb = { id: id, tb: tbEl, iframe: iframe, title: title, url: startUrl || '', newTbPage: newTbPage, settingsPage: null, shortcutsContainer: grid, frame: null, w1sp: w1spServer, isA1: false, faviconImg: favImg };
-    tbs.set(id, tb);
-    renderShortcuts(grid, tb);
-    activateTb(id);
+    var zkl = { id: id, zkl: zklEl, iframe: iframe, title: title, url: startUrl || '', newZklPage: newZklPage, settingsPage: null, shortcutsContainer: grid, frame: null, zkw: zkwServer, isA1: false, faviconImg: favImg };
+    zkls.set(id, zkl);
+    renderShortcuts(grid, zkl);
+    activateZkl(id);
 
     if (startUrl) {
         if (startUrl === settingsUrl || startUrl === page50000 || startUrl === page50001 || startUrl === page50002) {
-            openSettings(tb);
+            openSettings(zkl);
         } else {
-            navigateTb(startUrl, id);
+            navigateZkl(startUrl, id);
         }
     }
     return id;
 }
 
-function closeTb(id) {
-    var tb = tbs.get(id);
-    if (!tb) return;
-    var wasActive = activeTbId === id;
-    tb.tb.remove();
-    tb.iframe.remove();
-    if (tb.newTbPage) tb.newTbPage.remove();
-    if (tb.settingsPage) tb.settingsPage.remove();
-    tbs.delete(id);
-    if (tbs.size === 0) { createTb(); return; }
+function closeZkl(id) {
+    var zkl = zkls.get(id);
+    if (!zkl) return;
+    var wasActive = activeZklId === id;
+    zkl.zkl.remove();
+    zkl.iframe.remove();
+    if (zkl.newZklPage) zkl.newZklPage.remove();
+    if (zkl.settingsPage) zkl.settingsPage.remove();
+    zkls.delete(id);
+    if (zkls.size === 0) { createZkl(); return; }
     if (wasActive) {
-        var keys = Array.from(tbs.keys());
+        var keys = Array.from(zkls.keys());
         var idx = keys.indexOf(id);
-        activateTb(keys[Math.max(0, idx - 1)]);
+        activateZkl(keys[Math.max(0, idx - 1)]);
     }
 }
 
-function activateTb(id) {
-    var tb = tbs.get(id);
-    if (!tb) return;
-    tbs.forEach(function(t) {
-        t.tb.classList.remove('a0tu7');
+function activateZkl(id) {
+    var zkl = zkls.get(id);
+    if (!zkl) return;
+    zkls.forEach(function(t) {
+        t.zkl.classList.remove('a0tu7');
         t.iframe.classList.remove('p2tra');
-        if (t.newTbPage) t.newTbPage.style.display = 'none';
+        if (t.newZklPage) t.newZklPage.style.display = 'none';
         if (t.settingsPage) t.settingsPage.classList.remove('p2tra');
     });
-    tb.tb.classList.add('a0tu7');
-    activeTbId = id;
+    zkl.zkl.classList.add('a0tu7');
+    activeZklId = id;
     
-    if (tb.url === settingsUrl || tb.url === page50000 || tb.url === page50001 || tb.url === page50002) {
-        openSettings(tb);
-    } else if (tb.isA1) {
-        tb.iframe.classList.add('p2tra');
+    if (zkl.url === settingsUrl || zkl.url === page50000 || zkl.url === page50001 || zkl.url === page50002) {
+        openSettings(zkl);
+    } else if (zkl.isA1) {
+        zkl.iframe.classList.add('p2tra');
         addrInput.value = a1Url;
         document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>';
-    } else if (tb.url) {
-        tb.iframe.classList.add('p2tra');
-        addrInput.value = tb.url;
-        updateLockIcon(tb.url);
+    } else if (zkl.url) {
+        zkl.iframe.classList.add('p2tra');
+        addrInput.value = zkl.url;
+        updateLockIcon(zkl.url);
     } else {
-        if (tb.newTbPage) tb.newTbPage.style.display = 'flex';
+        if (zkl.newZklPage) zkl.newZklPage.style.display = 'flex';
         addrInput.value = '';
         document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-globe"></i>';
     }
 }
 
-function hideNewTb(tb) {
-    if (tb.newTbPage) tb.newTbPage.style.display = 'none';
-    tb.iframe.classList.remove('p2tra');
-    if (tb.settingsPage) tb.settingsPage.classList.remove('p2tra');
+function hideNewZkl(zkl) {
+    if (zkl.newZklPage) zkl.newZklPage.style.display = 'none';
+    zkl.iframe.classList.remove('p2tra');
+    if (zkl.settingsPage) zkl.settingsPage.classList.remove('p2tra');
 }
 
-function showNewTb(tb) {
-    if (tb.newTbPage) tb.newTbPage.style.display = 'flex';
-    if (tb.settingsPage) tb.settingsPage.classList.remove('p2tra');
+function showNewZkl(zkl) {
+    if (zkl.newZklPage) zkl.newZklPage.style.display = 'flex';
+    if (zkl.settingsPage) zkl.settingsPage.classList.remove('p2tra');
 }
 
-function renderShortcuts(container, tb) {
+function renderShortcuts(container, zkl) {
     container.innerHTML = '';
     shortcuts.forEach(function(s) {
         var t = document.createElement('div');
@@ -478,11 +478,11 @@ function renderShortcuts(container, tb) {
         name.textContent = zka(s.name);
         t.appendChild(ic); t.appendChild(name);
         t.addEventListener('click', function() {
-            if (!tb) return;
-            tb.url = s.url;
-            tb.title.textContent = s.name;
-            hideNewTb(tb);
-            navigateTb(s.url, tb.id);
+            if (!zkl) return;
+            zkl.url = s.url;
+            zkl.title.textContent = s.name;
+            hideNewZkl(zkl);
+            navigateZkl(s.url, zkl.id);
         });
         container.appendChild(t);
     });
@@ -492,11 +492,11 @@ function renderShortcuts(container, tb) {
     dc.addEventListener('click', function(e) {
         e.preventDefault();
         var u = 'https://discord.gg/33fPjXZPd';
-        if (!tb) { openInNewTb(u); return; }
-        tb.url = u;
-        tb.title.textContent = 'discord';
-        hideNewTb(tb);
-        navigateTb(u, tb.id);
+        if (!zkl) { openInNewZkl(u); return; }
+        zkl.url = u;
+        zkl.title.textContent = 'discord';
+        hideNewZkl(zkl);
+        navigateZkl(u, zkl.id);
     });
     var dci = document.createElement('img');
     dci.src = '/img/dc.svg';
@@ -514,29 +514,29 @@ function parseInput(input) {
     return searchEngine.replace('%s', encodeURIComponent(val));
 }
 
-function navigateTb(url, tbId) {
-    var tb = tbs.get(tbId);
-    if (!tb) return;
-    hideNewTb(tb);
+function navigateZkl(url, zklId) {
+    var zkl = zkls.get(zklId);
+    if (!zkl) return;
+    hideNewZkl(zkl);
     
     var executeNav = async function() {
         try {
-            tb.iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
-            var ctrl = await sj(w1spServer);
-            if (!tb.frame || tb.controller !== ctrl) {
-                tb.frame = ctrl.createFrame(tb.iframe, { plugins: buildTbPlugins(tb) });
-                if (!tb.frame) throw new Error('createFrame returned null');
-                tb.controller = ctrl;
+            zkl.iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-storage-access-by-user-activation');
+            var ctrl = await sj(zkwServer);
+            if (!zkl.frame || zkl.controller !== ctrl) {
+                zkl.frame = ctrl.createFrame(zkl.iframe, { plugins: buildZklPlugins(zkl) });
+                if (!zkl.frame) throw new Error('createFrame returned null');
+                zkl.controller = ctrl;
             }
-            tb.lastUrl = url;
-            tb.frame.go(url);
-            tb.iframe.classList.add('p2tra');
-            if (!tb.isA1) {
-                tb.url = url;
+            zkl.lastUrl = url;
+            zkl.frame.go(url);
+            zkl.iframe.classList.add('p2tra');
+            if (!zkl.isA1) {
+                zkl.url = url;
                 addrInput.value = url;
                 updateLockIcon(url);
-                try { tb.title.textContent = new URL(url).hostname; } catch(e) { tb.title.textContent = url; }
-                applyFavicon(tb, url);
+                try { zkl.title.textContent = new URL(url).hostname; } catch(e) { zkl.title.textContent = url; }
+                applyFavicon(zkl, url);
             }
         } catch(err) {
             console.error(err);
@@ -545,10 +545,10 @@ function navigateTb(url, tbId) {
     executeNav();
 }
 
-function openSettings(tb) {
-    if (!tb.settingsPage) {
-        tb.settingsPage = document.createElement('div');
-        tb.settingsPage.className = 'akf3h';
+function openSettings(zkl) {
+    if (!zkl.settingsPage) {
+        zkl.settingsPage = document.createElement('div');
+        zkl.settingsPage.className = 'akf3h';
         
         var wrap = document.createElement('div');
         wrap.className = 'i2965';
@@ -559,13 +559,13 @@ function openSettings(tb) {
         backBtn.className = 'btix6';
         backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
         backBtn.onclick = function() {
-            tb.url = '';
-            tb.title.textContent = 'NewT';
-            showNewTb(tb);
-            activateTb(tb.id);
+            zkl.url = '';
+            zkl.title.textContent = 'NewT';
+            showNewZkl(zkl);
+            activateZkl(zkl.id);
             addrInput.value = '';
             document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-globe"></i>';
-            clearFavicon(tb);
+            clearFavicon(zkl);
         };
         var tt = document.createElement('div');
         tt.className = 'd6yw8';
@@ -581,7 +581,7 @@ function openSettings(tb) {
         var lNet = document.createElement('div');
         lNet.className = 'h7lt9'; lNet.innerHTML = '<div class="wbq5w">w13p</div><div class="h8k83">self explanitory</div>';
         var inpNet = document.createElement('input');
-        inpNet.className = 'g8sm0'; inpNet.type = 'text'; inpNet.value = w1spServer; inpNet.placeholder = 'wss://w13p.example.com/api/';
+        inpNet.className = 'g8sm0'; inpNet.type = 'text'; inpNet.value = zkwServer; inpNet.placeholder = 'wss://w13p.example.com/api/';
         rNet.appendChild(lNet); rNet.appendChild(inpNet); secNet.appendChild(hNet); secNet.appendChild(rNet);
 
         var secSrch = document.createElement('div');
@@ -614,7 +614,7 @@ function openSettings(tb) {
         saveBtn.className = 'ujz8a'; saveBtn.textContent = 'Save';
         saveBtn.onclick = function() {
             var v = inpNet.value.trim();
-            if (v && v.startsWith('wss://')) { w1spServer = v; localStorage.setItem(storagew1sp, v); }
+            if (v && v.startsWith('wss://')) { zkwServer = v; localStorage.setItem(storagezkw, v); }
             searchEngine = selSrch.value;
             localStorage.setItem(storageSearch, searchEngine);
             saveBtn.textContent = 'Saved';
@@ -623,24 +623,24 @@ function openSettings(tb) {
         rAct.appendChild(lAct); rAct.appendChild(saveBtn); secAct.appendChild(hAct); secAct.appendChild(rAct);
 
         wrap.appendChild(hd); wrap.appendChild(secNet); wrap.appendChild(secSrch); wrap.appendChild(secAct);
-        tb.settingsPage.appendChild(wrap);
-        viewRoot.appendChild(tb.settingsPage);
+        zkl.settingsPage.appendChild(wrap);
+        viewRoot.appendChild(zkl.settingsPage);
     }
     
-    tbs.forEach(function(t) {
+    zkls.forEach(function(t) {
         t.iframe.classList.remove('p2tra');
-        if (t.newTbPage) t.newTbPage.style.display = 'none';
+        if (t.newZklPage) t.newZklPage.style.display = 'none';
         if (t.settingsPage) t.settingsPage.classList.remove('p2tra');
     });
-    tb.settingsPage.classList.add('p2tra');
-    tb.iframe.classList.remove('p2tra');
-    if (tb.newTbPage) tb.newTbPage.style.display = 'none';
+    zkl.settingsPage.classList.add('p2tra');
+    zkl.iframe.classList.remove('p2tra');
+    if (zkl.newZklPage) zkl.newZklPage.style.display = 'none';
     addrInput.value = settingsUrl;
-    tb.url = settingsUrl;
-    tb.title.textContent = 's3ttin7gs';
+    zkl.url = settingsUrl;
+    zkl.title.textContent = 's3ttin7gs';
     document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-gear"></i>';
-    activeTbId = tb.id;
-    clearFavicon(tb);
+    activeZklId = zkl.id;
+    clearFavicon(zkl);
 }
 
 (function () {
@@ -703,53 +703,53 @@ addrInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
         e.preventDefault();
         var val = addrInput.value.trim();
-        var tb = tbs.get(activeTbId);
-        if (!val || !tb) return;
+        var zkl = zkls.get(activeZklId);
+        if (!val || !zkl) return;
         showLoad();
         if (val === settingsUrl || val === page50000 || val === page50001 || val === page50002 || val.startsWith('education://')) {
-            tb.url = settingsUrl; tb.title.textContent = 's3ttin7gs'; openSettings(tb); return;
+            zkl.url = settingsUrl; zkl.title.textContent = 's3ttin7gs'; openSettings(zkl); return;
         }
         var parsed = parseInput(val);
         if (!parsed) return;
-        tb.url = parsed;
-        tb.title.textContent = parsed.replace(/^https?:\/\//,'').split('/')[0] || val;
-        hideNewTb(tb);
-        navigateTb(parsed, activeTbId);
+        zkl.url = parsed;
+        zkl.title.textContent = parsed.replace(/^https?:\/\//,'').split('/')[0] || val;
+        hideNewZkl(zkl);
+        navigateZkl(parsed, activeZklId);
     }
 });
 
-plusBtn.onclick = function() { createTb(); };
-backBtn.onclick = function() { var t = tbs.get(activeTbId); if (t && ((t.frame && t.frame.go))) { try { t.iframe.contentWindow.history.back(); } catch(e){} } };
-fwdBtn.onclick = function() { var t = tbs.get(activeTbId); if (t && ((t.frame && t.frame.go))) { try { t.iframe.contentWindow.history.forward(); } catch(e){} } };
-reloadBtn.onclick = function() { var t = tbs.get(activeTbId); if (t && t.url) navigateTb(t.url, activeTbId); };
+plusBtn.onclick = function() { createZkl(); };
+backBtn.onclick = function() { var t = zkls.get(activeZklId); if (t && ((t.frame && t.frame.go))) { try { t.iframe.contentWindow.history.back(); } catch(e){} } };
+fwdBtn.onclick = function() { var t = zkls.get(activeZklId); if (t && ((t.frame && t.frame.go))) { try { t.iframe.contentWindow.history.forward(); } catch(e){} } };
+reloadBtn.onclick = function() { var t = zkls.get(activeZklId); if (t && t.url) navigateZkl(t.url, activeZklId); };
 starBtn.onclick = function() { var i = starBtn.querySelector('i'); i.classList.toggle('fa-regular'); i.classList.toggle('fa-solid'); };
-settingsBtn.onclick = function() { var t = tbs.get(activeTbId); if (t) { t.url = settingsUrl; t.title.textContent = 's3ttin7gs'; openSettings(t); } };
+settingsBtn.onclick = function() { var t = zkls.get(activeZklId); if (t) { t.url = settingsUrl; t.title.textContent = 's3ttin7gs'; openSettings(t); } };
 
 document.getElementById('sidebar-zaka').onclick = function() {
-    var id = createTb();
-    var t = tbs.get(id);
-    if (t) { t.iframe.src = zakasUrl; t.url = zakasPath; t.title.textContent = 'zaka'; addrInput.value = zakasPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTb(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
+    var id = createZkl();
+    var t = zkls.get(id);
+    if (t) { t.iframe.src = zakasUrl; t.url = zakasPath; t.title.textContent = 'zaka'; addrInput.value = zakasPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewZkl(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
 };
 
 document.getElementById('sidebar-chat').onclick = function() {
-    var id = createTb();
-    var t = tbs.get(id);
-    if (t) { t.iframe.src = chatUrl; t.url = chatPath; t.title.textContent = 'ch@t'; addrInput.value = chatPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewTb(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
+    var id = createZkl();
+    var t = zkls.get(id);
+    if (t) { t.iframe.src = chatUrl; t.url = chatPath; t.title.textContent = 'ch@t'; addrInput.value = chatPath; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; hideNewZkl(t); t.iframe.classList.add('p2tra'); clearFavicon(t); }
 };
 
 document.getElementById('sidebar-a1').onclick = function() {
-    var id = createTb();
-    var t = tbs.get(id);
-    if (t) { t.isA1 = true; navigateTb(a1ActualUrl, id); t.url = a1Url; t.title.textContent = 'A1'; addrInput.value = a1Url; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; clearFavicon(t); }
+    var id = createZkl();
+    var t = zkls.get(id);
+    if (t) { t.isA1 = true; navigateZkl(a1ActualUrl, id); t.url = a1Url; t.title.textContent = 'A1'; addrInput.value = a1Url; document.getElementById('m7rrm').innerHTML = '<i class="fa-solid fa-lock"></i>'; clearFavicon(t); }
 };
 
 document.getElementById('sidebar-roblox').onclick = function() {
-    var id = createTb();
-    var t = tbs.get(id);
+    var id = createZkl();
+    var t = zkls.get(id);
     if (!t) return;
     var go = confirm('Sign in to roblox.com first.\n\nOK: open roblox.com to sign in \u2014 then press Play on any zaka and it launches here.\nCancel: open the Roblox launcher now.');
     if (go) {
-        navigateTb('https://www.roblox.com/login', id);
+        navigateZkl('https://www.roblox.com/login', id);
         t.url = 'https://www.roblox.com/login'; t.title.textContent = 'robl0x'; addrInput.value = 'roblox.com'; clearFavicon(t);
     } else {
         window.open('/blox/', '_blank');
@@ -774,7 +774,7 @@ document.getElementById('sidebar-roblox').onclick = function() {
     connect();
 })();
 
-createTb();
+createZkl();
 })();
 </script>
 </body>
