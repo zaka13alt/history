@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 // moderation commands (/ban, /timeout, ...). Auth (username) comes from auth.js.
 const MSG_MAX = 500;
 const HISTORY_MAX = 50;
+const DM_MAX = 60;
 // Anti-spam (per user, shared across all their tabs/sockets).
 const RATE_WINDOW_MS = 5000; // at most RATE_MAX messages per window
 const RATE_MAX = 5;
@@ -30,6 +31,7 @@ const RAID_NEW_MS = 600000; // an account is "new" for 10 min after first seen
 const HISTORY_FILE = new URL("chat-history.json", import.meta.url);
 const MOD_FILE = new URL("chat-mod.json", import.meta.url);
 const STATS_FILE = new URL("chat-stats.json", import.meta.url);
+const DM_FILE = new URL("chat-dms.json", import.meta.url);
 
 // Text channels.
 const CHANNELS = ["general", "announcements", "rules", "games", "proxies", "offtopic"];
@@ -43,19 +45,20 @@ const RANK = { member: 0, admin: 1, coowner: 2, owner: 3 };
 // Users promoted with /mod (lowercase usernames), persisted in chat-mod.json.
 const mods = new Set();
 
-const roleOf = (u) => {
-  const k = String(u).toLowerCase();
-  return ROLES[k] || (mods.has(k) ? "admin" : "member");
-};
-const rankOf = (u) => RANK[roleOf(u)];
-
 const ranks = new Map();
 const userRanks = new Map();
-const displayRoleOf = (u) => {
+const dms = new Map();
+const roleOf = (u) => {
   const k = String(u).toLowerCase();
-  const base = roleOf(u);
-  if (base === "member" && userRanks.has(k) && ranks.has(userRanks.get(k))) return ranks.get(userRanks.get(k));
-  return base;
+  if (ROLES[k]) return ROLES[k];
+  if (mods.has(k)) return "admin";
+  const r = userRanks.get(k);
+  if (r && ranks.has(r)) return ranks.get(r);
+  return "member";
+};
+const rankOf = (u) => {
+  const r = RANK[roleOf(u)];
+  return r != null ? r : RANK.admin;
 };
 
 const BAD_WORDS = [
@@ -223,6 +226,47 @@ export function createChat(auth) {
     /* none yet */
   }
 
+  try {
+    const d = JSON.parse(readFileSync(DM_FILE, "utf8"));
+    if (d && typeof d === "object") for (const [k, v] of Object.entries(d)) if (Array.isArray(v)) dms.set(k, v.slice(-DM_MAX));
+  } catch {
+    /* none yet */
+  }
+  let dmTimer = null;
+  const persistDm = () => {
+    if (dmTimer) return;
+    dmTimer = setTimeout(() => {
+      dmTimer = null;
+      try {
+        writeFileSync(DM_FILE, JSON.stringify(Object.fromEntries(dms)));
+      } catch (e) {
+        console.error("chat dm persist:", e.message);
+      }
+    }, 400);
+    dmTimer.unref?.();
+  };
+  const pairKey = (a, b) => [String(a).toLowerCase(), String(b).toLowerCase()].sort().join("|");
+  const sendToUser = (username, obj) => {
+    const u = String(username).toLowerCase();
+    const m = JSON.stringify(obj);
+    for (const c of wss.clients) if (c.username && c.username.toLowerCase() === u && c.readyState === c.OPEN) c.send(m);
+  };
+  const dmConvos = (username) => {
+    const u = String(username).toLowerCase();
+    const out = [];
+    for (const [key, arr] of dms) {
+      if (!arr.length) continue;
+      const pair = key.split("|");
+      if (!pair.includes(u)) continue;
+      const otherLc = pair[0] === u ? pair[1] : pair[0];
+      const last = arr[arr.length - 1];
+      const other = last.from.toLowerCase() === otherLc ? last.from : last.to;
+      out.push({ user: other, last: last.text, ts: last.ts });
+    }
+    out.sort((a, b) => b.ts - a.ts);
+    return out;
+  };
+
   let histTimer = null,
     modTimer = null;
   const persistHist = () => {
@@ -351,7 +395,7 @@ export function createChat(auth) {
   // Push a role change to all of a user's open sockets.
   function refreshRole(username) {
     const u = username.toLowerCase();
-    const role = displayRoleOf(username);
+    const role = roleOf(username);
     for (const c of wss.clients)
       if (c.username && c.username.toLowerCase() === u) {
         c.role = role;
@@ -575,7 +619,7 @@ export function createChat(auth) {
     if (!firstSeen.has(_fs)) firstSeen.set(_fs, Date.now());
     noteJoin(_fs);
     ws.username = username;
-    ws.role = displayRoleOf(username);
+    ws.role = roleOf(username);
     ws.channel = DEFAULT_CHANNEL;
     ws.isAlive = true;
 
@@ -592,7 +636,7 @@ export function createChat(auth) {
       return;
     }
 
-    sendTo(ws, { type: "welcome", channels: CHANNELS, channel: ws.channel, role: ws.role, username });
+    sendTo(ws, { type: "welcome", channels: CHANNELS, channel: ws.channel, role: ws.role, username, dms: dmConvos(username) });
     sendTo(ws, { type: "history", channel: ws.channel, messages: histories[ws.channel] });
 
     ws.on("message", (rawBuf) => {
@@ -613,8 +657,52 @@ export function createChat(auth) {
       }
 
       if (data.type === "typing") {
+        if (data.to) {
+          const toLc = String(data.to).toLowerCase();
+          if (toLc !== ws.username.toLowerCase()) sendToUser(data.to, { type: "typing", name: ws.username, dm: ws.username });
+          return;
+        }
         const tm = JSON.stringify({ type: "typing", name: ws.username, channel: ws.channel });
         for (const c of wss.clients) if (c !== ws && c.readyState === c.OPEN && c.channel === ws.channel) c.send(tm);
+        return;
+      }
+
+      if (data.type === "profile") {
+        const u = clean(data.user, 24);
+        if (!u) return;
+        const ul = u.toLowerCase();
+        let online = false;
+        for (const c of wss.clients) if (c.username && c.username.toLowerCase() === ul && c.readyState === c.OPEN) { online = true; break; }
+        sendTo(ws, { type: "profile", user: u, role: roleOf(u), messages: counts.get(u) || 0, online, since: firstSeen.get(ul) || 0 });
+        return;
+      }
+
+      if (data.type === "dmopen") {
+        const other = clean(data.user, 24);
+        if (!other || other.toLowerCase() === ws.username.toLowerCase()) return;
+        sendTo(ws, { type: "dmhistory", user: other, messages: dms.get(pairKey(ws.username, other)) || [] });
+        return;
+      }
+
+      if (data.type === "dm") {
+        if (bans.has(ws.username.toLowerCase())) { sysTo(ws, "You are banned."); return; }
+        const to = clean(data.to, 24);
+        const dtext = clean(data.text, MSG_MAX);
+        if (!to || !dtext) return;
+        if (to.toLowerCase() === ws.username.toLowerCase()) { sysTo(ws, "You can't DM yourself."); return; }
+        const exp = timedOut(ws.username);
+        if (exp) { sysTo(ws, "You are timed out for " + Math.ceil((exp - Date.now()) / 1000) + "s."); return; }
+        const spamErr = checkSpam(ws.username, dtext);
+        if (spamErr) { sysTo(ws, spamErr); return; }
+        const dm = { type: "dm", from: ws.username, to, text: maskWords(dtext), ts: Date.now() };
+        const key = pairKey(ws.username, to);
+        const arr = dms.get(key) || [];
+        arr.push(dm);
+        if (arr.length > DM_MAX) arr.shift();
+        dms.set(key, arr);
+        persistDm();
+        sendToUser(to, dm);
+        sendToUser(ws.username, dm);
         return;
       }
 
