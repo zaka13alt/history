@@ -437,10 +437,11 @@ export function createChat(auth) {
     const parts = raw.slice(1).trim().split(/\s+/);
     const cmd = (parts[0] || "").toLowerCase();
     const isMod = rankOf(ws.username) >= RANK.admin;
+    const isCoowner = rankOf(ws.username) >= RANK.coowner;
     const isOwner = rankOf(ws.username) >= RANK.owner;
 
     if (cmd === "help") {
-      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user> | /ipban <user> | /ipunban <user> | /delete last <n> | /slowmode <sec> | /lockdown | /raidmode on|off | /rank add <rank> | /rank remove <rank> | /rank add user <user> <rank> | /rank delete user <user>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
+      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user> | /ipban <user> | /ipunban <user> | /delete last <n> | /slowmode <sec> | /lockdown | /raidmode on|off" : "") + (isCoowner ? " | /rank add <rank> | /rank remove <rank> | /rank add user <user> <rank> | /rank delete user <user>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
       return;
     }
 
@@ -588,7 +589,7 @@ export function createChat(auth) {
       return;
     }
     if (cmd === "rank") {
-      if (!isMod) { sysTo(ws, "Only mods can use that."); return; }
+      if (!isCoowner) { sysTo(ws, "Only the owner and co-owners can manage ranks."); return; }
       const sub = String(parts[1] || "").toLowerCase();
       const isUser = String(parts[2] || "").toLowerCase() === "user";
       if (sub === "add" && isUser) {
