@@ -28,7 +28,6 @@
 <script src="/stuff/loz2PSkv/xNHsqV3x.js"></script>
 <script src="/js/ZNuSyiF.js"></script>
 <script src="/.assets/index-nDtXnT.js"></script>
-<script src="/.assets/index-O1CBil.js"></script>
 
 <script>
 (function () {
@@ -69,13 +68,12 @@
         } catch (e) {}
     }
 
-    // ss backend: libby transport + cf solver, same as study.html.
+    // ss backend: libby transport, same as study.html.
     async function bootss() {
         await cleanupSW("/HHbaN.js");
 
         var transportClient = new window.libbyTransport.libbyClient({ w1p: w1sp });
         await transportClient.init();
-        var wrappedTransport = window.cfSolver.wrap(transportClient);
 
         var swReg = await navigator.serviceWorker.register("/HHbaN.js", { scope: "/", updateViaCache: "none" });
         var activeWorker = swReg.active || await new Promise(function (resolve) {
@@ -87,7 +85,7 @@
 
         var ctrl = new window.$K5qkWTpAController.Controller({
             serviceworker: activeWorker,
-            transport: wrappedTransport,
+            transport: transportClient,
             config: {
                 prefix: "/TxRQenir/",
                 K5qkWTpAPath: "/stuff/loz2PSkv/3euG74Zc.js",
