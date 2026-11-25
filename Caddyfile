@@ -80,7 +80,7 @@
 		path /
 	}
 	handle @gateRoot {
-		rewrite * /itcode.html
+		rewrite * /itcode-decoy.html
 		root * /usr/share/caddy
 		file_server
 	}
@@ -92,7 +92,7 @@
 	}
 	@dynDecoy header X-Zk-Decoy 1
 	handle @dynDecoy {
-		rewrite * /itcode.html
+		rewrite * /itcode-decoy.html
 		root * /usr/share/caddy
 		file_server
 	}
