@@ -138,7 +138,7 @@ function hardSlurHit(s) {
 
 
 export function createChat(auth) {
-  const wss = new WebSocketServer({ noServer: true, maxPayload: 4096 });
+  const wss = new WebSocketServer({ noServer: true, maxPayload: 131072 });
   const histories = {};
   CHANNELS.forEach((c) => (histories[c] = []));
 
