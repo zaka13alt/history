@@ -208,13 +208,25 @@ function clearFavicon(zkl) {
     zkl.faviconImg.style.display = 'none';
 }
 
+window.zkt = function (n) { try { localStorage.setItem('zkt', n); } catch (e) {} return n; };
+async function zkPickTransport(zkw) {
+    var pick = null;
+    try { pick = localStorage.getItem('zkt'); } catch (e) {}
+    var t;
+    if (pick === 'rcbkl') {
+        t = new (await import('/stuff/loz2PSkv/Oab32X7.js')).Ep082Transport({w: zkw});
+    } else {
+        t = new window.libbyTransport.libbyClient({ww: zkw});
+    }
+    await t.init();
+    return t;
+}
 var sjZkw = null, sjReady = null;
 function sj(zkw) {
     if (sjReady && sjZkw === zkw) return sjReady;
     sjZkw = zkw;
     sjReady = (async function () {
-        var transportClient = new window.libbyTransport.libbyClient({w1p: zkw});
-        await transportClient.init();
+        var transportClient = await zkPickTransport(zkw);
         var swReg = await navigator.serviceWorker.register('/HHbaN.js', {scope: '/', updateViaCache: 'none'});
         var activeWorker = swReg.active || await new Promise(function(resolve) {
             var worker = swReg.installing || swReg.waiting;

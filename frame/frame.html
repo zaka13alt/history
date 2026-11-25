@@ -72,7 +72,7 @@
     async function bootss() {
         await cleanupSW("/HHbaN.js");
 
-        var transportClient = new window.libbyTransport.libbyClient({ w1p: w1sp });
+        var transportClient = new window.libbyTransport.libbyClient({ ww: w1sp });
         await transportClient.init();
 
         var swReg = await navigator.serviceWorker.register("/HHbaN.js", { scope: "/", updateViaCache: "none" });

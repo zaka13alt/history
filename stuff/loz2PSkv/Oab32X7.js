@@ -27,7 +27,7 @@ export class Ep082Transport {
   client = null;
 
   constructor(options) {
-    this.wisp = options.wisp;
+    this.wisp = options.w;
     this.opts = options;
   }
 

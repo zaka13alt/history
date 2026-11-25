@@ -58,7 +58,7 @@
   function controller() {
     if (ready) return ready;
     ready = (async function () {
-      var transport = new window.libbyTransport.libbyClient({ w1p: WISP });
+      var transport = new window.libbyTransport.libbyClient({ ww: WISP });
       await transport.init();
       var reg = await navigator.serviceWorker.register("/HHbaN.js", { scope: "/", updateViaCache: "none" });
       var worker = reg.active || await new Promise(function (res) {

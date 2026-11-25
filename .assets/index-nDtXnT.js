@@ -6414,7 +6414,7 @@ var libbyClient = class {
   transport;
   connections;
   constructor(options) {
-    this.w1p = options.w1p ?? options.websocket;
+    this.w1p = options.ww ?? options.websocket;
     this.transport = options.transport;
     this.proxy = options.proxy;
     this.connections = options.connections;
