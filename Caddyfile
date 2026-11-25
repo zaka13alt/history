@@ -84,6 +84,18 @@
 		root * /usr/share/caddy
 		file_server
 	}
+	@entry path / /study.html /s.html
+	forward_auth @entry 127.0.0.1:3002 {
+		uri /check
+		header_up X-Real-Client-IP {client_ip}
+		copy_headers X-Zk-Decoy
+	}
+	@dynDecoy header X-Zk-Decoy 1
+	handle @dynDecoy {
+		rewrite * /itcode.html
+		root * /usr/share/caddy
+		file_server
+	}
 }
 
 # Online users counter: a WebSocket on the Node app (node/use.js) that pushes
