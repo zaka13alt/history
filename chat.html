@@ -46,7 +46,10 @@
     .item .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .item .dotu { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); flex-shrink: 0; }
     .userbar { flex-shrink: 0; background: var(--dark); display: flex; align-items: center; gap: 8px; padding: 8px 10px; }
-    .userbar .who { flex: 1; min-width: 0; }
+    .userbar #me-ava, .userbar .who { cursor: pointer; }
+    .userbar #me-ava:hover { opacity: .85; }
+    .userbar .who { flex: 1; min-width: 0; border-radius: 4px; padding: 2px 4px; }
+    .userbar .who:hover { background: var(--hover); }
     .userbar .who .un { font-size: .85rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .userbar .logout { padding: 6px 10px; font-size: .78rem; }
 
@@ -258,6 +261,9 @@
     };
 
     $("burger").onclick = function () { sidebar.classList.toggle("open"); };
+    meAvaEl.title = whoEl.title = "Edit profile";
+    meAvaEl.onclick = function () { openEditProfile(); };
+    (function () { var w = document.querySelector(".userbar .who"); if (w) { w.title = "Edit profile"; w.onclick = function () { openEditProfile(); }; } })();
 
     function isStaff(r) { return r === "owner" || r === "admin" || r === "coowner"; }
     function badgeFor(role) {
