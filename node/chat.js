@@ -43,7 +43,7 @@ const DEFAULT_CHANNEL = "general";
 
 // Hardcoded roles by lowercase username. Everyone else is a member.
 // Add more like: zaka: "owner", someadmin: "admin",
-const ROLES = { zakalol: "owner", officialdomsxze: "coowner" };
+const ROLES = { zakalol: "owner" };
 const RANK = { member: 0, admin: 1, coowner: 2, owner: 3 };
 
 // Users promoted with /mod (lowercase usernames), persisted in chat-mod.json.
