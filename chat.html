@@ -15,7 +15,7 @@
     body { background: var(--dark); color: var(--text); font-family: "gg sans", "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif; font-size: 15px; -webkit-font-smoothing: antialiased; }
     .hidden { display: none !important; }
     button { font-family: inherit; cursor: pointer; }
-    .btn { border: 0; border-radius: 4px; background: var(--accent); color: #fff; font-weight: 500; font-size: .9rem; padding: 10px 16px; transition: background .15s; }
+    .btn { border: 0; border-radius: 4px; background: var(--accent); color: #fff; font-weight: 500; font-size: .9rem; padding: 10px 16px; transition: background .15s; cursor: pointer; display: inline-block; text-align: center; }
     .btn:hover { background: var(--accent-h); }
     .btn.ghost { background: transparent; color: var(--text); }
     .btn.ghost:hover { background: var(--hover); }
@@ -76,7 +76,11 @@
     .cont:hover .ctime { opacity: 1; }
     .group.ping, .cont.ping { background: rgba(250,166,26,.08); box-shadow: inset 2px 0 0 #faa61a; }
     .sys { padding: 4px 16px; color: var(--muted); font-size: .84rem; white-space: pre-wrap; }
-    .reply-q { font-size: .78rem; color: var(--muted); border-left: 2px solid var(--dim); padding-left: 7px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
+    .reply-q { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--muted); margin: 0 0 3px 2px; position: relative; max-width: 480px; }
+    .reply-q::before { content: ""; position: absolute; left: -44px; bottom: 50%; width: 36px; height: 9px; border-left: 2px solid #4b4d52; border-top: 2px solid #4b4d52; border-top-left-radius: 7px; }
+    .reply-q .avatar { width: 16px !important; height: 16px !important; font-size: 9px !important; }
+    .reply-q .rqname { color: #c9ccd1; font-weight: 500; flex-shrink: 0; }
+    .reply-q .rqtext { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .85; }
     .reply-btn { position: absolute; top: -8px; right: 10px; border: 0; background: var(--side); color: var(--muted); border-radius: 5px; padding: 2px 7px; opacity: 0; font-size: .8rem; }
     .group:hover .reply-btn, .cont:hover .reply-btn { opacity: 1; }
     .reply-btn:hover { color: var(--text); }
@@ -87,7 +91,14 @@
     .badge.coowner { background: rgba(255,215,0,.16); color: #ffd84d; }
     .badge.rank { background: rgba(195,166,255,.16); color: #c3a6ff; }
 
-    .typing { height: 20px; padding: 0 16px; font-size: .78rem; color: var(--muted); font-style: italic; }
+    .typing { height: 24px; padding: 0 16px; font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: 7px; }
+    .typing.empty { visibility: hidden; }
+    .typing b { color: var(--text); font-weight: 600; }
+    .tdots { display: inline-flex; gap: 3px; }
+    .tdots i { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); animation: tbounce 1.3s infinite ease-in-out; }
+    .tdots i:nth-child(2) { animation-delay: .18s; }
+    .tdots i:nth-child(3) { animation-delay: .36s; }
+    @keyframes tbounce { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-4px); opacity: 1; } }
     .reply-bar { display: flex; align-items: center; gap: 8px; padding: 6px 16px; font-size: .78rem; color: var(--muted); background: var(--side); }
     .reply-bar .rx { margin-left: auto; cursor: pointer; font-size: 1.1rem; line-height: 1; }
     .composer { padding: 0 16px 20px; }
@@ -104,7 +115,16 @@
     .pop .pname { font-size: 1.2rem; font-weight: 700; margin-top: 6px; }
     .pop .prow { color: var(--muted); font-size: .8rem; margin-top: 8px; display: flex; gap: 6px; align-items: center; }
     .pop .pbtn { margin-top: 14px; width: 100%; }
-    .scrim { position: fixed; inset: 0; z-index: 55; }
+    .pop .pbio { color: var(--text); font-size: .85rem; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.08); white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere; }
+    .scrim { position: fixed; inset: 0; z-index: 55; background: rgba(0,0,0,.4); }
+    .modal { position: fixed; z-index: 60; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 360px; max-width: calc(100vw - 32px); background: #313338; border-radius: 10px; box-shadow: 0 8px 36px rgba(0,0,0,.6); padding: 22px; }
+    .modal .mh { font-size: 1.15rem; font-weight: 700; margin-bottom: 16px; }
+    .modal .mpv { display: flex; justify-content: center; margin-bottom: 12px; }
+    .modal .mrow { display: flex; gap: 10px; justify-content: center; }
+    .modal .mrow .btn { padding: 8px 14px; font-size: .85rem; }
+    .modal .mlabel { display: block; font-size: .72rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin: 16px 0 6px; letter-spacing: .3px; }
+    .modal .mta { width: 100%; resize: vertical; min-height: 66px; font-family: inherit; font-size: .9rem; }
+    .modal .mact { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
 
     .messages::-webkit-scrollbar, .nav::-webkit-scrollbar { width: 8px; }
     .messages::-webkit-scrollbar-thumb, .nav::-webkit-scrollbar-thumb { background: #1a1b1e; border-radius: 4px; }
@@ -182,6 +202,7 @@
     var view = { kind: "channel", id: "general" };
     var channels = [], dmList = [], unread = {};
     var replyingTo = null, typers = {}, typingTO = null, groupCtx = { name: null, ts: 0 };
+    var pfpCache = {}, bioCache = {}, profKnown = {}, myBio = "", myPfp = "";
     try { token = localStorage.getItem("zaka_chat_token") || ""; myName = localStorage.getItem("zaka_chat_user") || ""; } catch (e) {}
 
     function save() { try { localStorage.setItem("zaka_chat_token", token); localStorage.setItem("zaka_chat_user", myName); } catch (e) {} }
@@ -190,12 +211,22 @@
     function showChat() { authCard.classList.add("hidden"); shell.classList.remove("hidden"); input.focus(); }
 
     function hue(s) { var h = 0; s = String(s || ""); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h % 360; }
-    function makeAvatar(name, size) {
-      var a = document.createElement("span"); a.className = "avatar";
-      a.style.width = a.style.height = size + "px"; a.style.fontSize = Math.round(size * 0.42) + "px";
-      a.style.background = "hsl(" + hue(name) + ",52%,46%)";
-      a.textContent = (String(name).trim()[0] || "?");
-      return a;
+    function paintAvatar(a, name, size) {
+      a.className = "avatar"; a.style.width = a.style.height = size + "px";
+      a.dataset.user = String(name).toLowerCase(); a.dataset.size = size;
+      var pfp = pfpCache[String(name).toLowerCase()];
+      if (pfp) { a.textContent = ""; a.style.backgroundColor = "#000"; a.style.backgroundImage = 'url("' + pfp + '")'; a.style.backgroundSize = "cover"; a.style.backgroundPosition = "center"; }
+      else { a.style.backgroundImage = ""; a.style.background = "hsl(" + hue(name) + ",52%,46%)"; a.style.fontSize = Math.round(size * 0.42) + "px"; a.textContent = (String(name).trim()[0] || "?"); }
+    }
+    function makeAvatar(name, size) { var a = document.createElement("span"); paintAvatar(a, name, size); maybeFetch(name); return a; }
+    function maybeFetch(name) {
+      var lc = String(name).toLowerCase();
+      if (profKnown[lc] || !ws || ws.readyState !== WebSocket.OPEN) return;
+      profKnown[lc] = 1; ws.send(JSON.stringify({ type: "profile", user: name }));
+    }
+    function refreshAvatars(name) {
+      var lc = String(name).toLowerCase(), all = document.getElementsByClassName("avatar");
+      for (var i = 0; i < all.length; i++) if (all[i].dataset.user === lc) paintAvatar(all[i], name, +all[i].dataset.size || 32);
     }
     function fmtTime(ts) { try { return new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); } catch (e) { return ""; } }
     function fmtFull(ts) { try { return new Date(ts).toLocaleString(); } catch (e) { return ""; } }
@@ -322,7 +353,13 @@
         el = document.createElement("div"); el.className = "group";
         var av = makeAvatar(name, 40); av.onclick = function (e) { showProfile(name, e); }; el.appendChild(av);
         var gb = document.createElement("div"); gb.className = "gbody";
-        if (opts.reply && opts.reply.name) { var rq = document.createElement("div"); rq.className = "reply-q"; rq.textContent = "↩ " + opts.reply.name + ": " + opts.reply.text; gb.appendChild(rq); }
+        if (opts.reply && opts.reply.name) {
+          var rq = document.createElement("div"); rq.className = "reply-q";
+          rq.appendChild(makeAvatar(opts.reply.name, 16));
+          var rqn = document.createElement("span"); rqn.className = "rqname"; rqn.textContent = opts.reply.name; rq.appendChild(rqn);
+          var rqt = document.createElement("span"); rqt.className = "rqtext"; rqt.textContent = opts.reply.text; rq.appendChild(rqt);
+          gb.appendChild(rq);
+        }
         var hd = document.createElement("div"); hd.className = "ghead";
         var nm = document.createElement("span"); nm.className = "gname"; nm.textContent = name; nm.onclick = function (e) { showProfile(name, e); }; hd.appendChild(nm);
         var bg = badgeFor(role); if (bg) hd.appendChild(bg);
@@ -366,7 +403,18 @@
       var now = Date.now();
       Object.keys(typers).forEach(function (n) { if (now - typers[n] >= 3500) delete typers[n]; });
       var names = Object.keys(typers);
-      el.textContent = !names.length ? "" : names.length === 1 ? names[0] + " is typing…" : names.length === 2 ? names[0] + " and " + names[1] + " are typing…" : "several people are typing…";
+      el.innerHTML = "";
+      if (!names.length) { el.classList.add("empty"); }
+      else {
+        el.classList.remove("empty");
+        var dots = document.createElement("span"); dots.className = "tdots"; dots.appendChild(document.createElement("i")); dots.appendChild(document.createElement("i")); dots.appendChild(document.createElement("i")); el.appendChild(dots);
+        var txt = document.createElement("span");
+        var b1 = document.createElement("b"); b1.textContent = names[0];
+        if (names.length === 1) { txt.appendChild(b1); txt.appendChild(document.createTextNode(" is typing…")); }
+        else if (names.length === 2) { var b2 = document.createElement("b"); b2.textContent = names[1]; txt.appendChild(b1); txt.appendChild(document.createTextNode(" and ")); txt.appendChild(b2); txt.appendChild(document.createTextNode(" are typing…")); }
+        else { txt.appendChild(document.createTextNode("several people are typing…")); }
+        el.appendChild(txt);
+      }
       if (typingTO) clearTimeout(typingTO);
       if (names.length) typingTO = setTimeout(renderTyping, 1500);
     }
@@ -393,7 +441,7 @@
       var pop = document.createElement("div"); pop.className = "pop"; pop.id = "pop";
       var col = "hsl(" + hue(p.user) + ",52%,46%)";
       var banner = document.createElement("div"); banner.className = "banner"; banner.style.background = col; pop.appendChild(banner);
-      var av = makeAvatar(p.user, 76); av.className = "avatar pava"; av.style.background = col; pop.appendChild(av);
+      var av = makeAvatar(p.user, 76); av.classList.add("pava"); pop.appendChild(av);
       var body = document.createElement("div"); body.className = "pbody";
       var nm = document.createElement("div"); nm.className = "pname"; nm.textContent = p.user;
       var bg = badgeFor(p.role); if (bg) { bg.style.marginLeft = "8px"; nm.appendChild(bg); }
@@ -401,10 +449,15 @@
       var r1 = document.createElement("div"); r1.className = "prow"; r1.textContent = (p.online ? "🟢 Online" : "⚫ Offline"); body.appendChild(r1);
       var r2 = document.createElement("div"); r2.className = "prow"; r2.textContent = p.messages + " messages sent"; body.appendChild(r2);
       if (p.since) { var r3 = document.createElement("div"); r3.className = "prow"; r3.textContent = "Seen since " + fmtFull(p.since); body.appendChild(r3); }
+      if (p.bio) { var rb = document.createElement("div"); rb.className = "pbio"; rb.textContent = p.bio; body.appendChild(rb); }
       if (p.user.toLowerCase() !== myName.toLowerCase()) {
         var btn = document.createElement("button"); btn.className = "btn pbtn"; btn.textContent = "Message";
         btn.onclick = function () { closePop(); openDM(p.user); };
         body.appendChild(btn);
+      } else {
+        var eb = document.createElement("button"); eb.className = "btn ghost pbtn"; eb.textContent = "Edit Profile";
+        eb.onclick = function () { closePop(); openEditProfile(); };
+        body.appendChild(eb);
       }
       pop.appendChild(body); document.body.appendChild(pop);
       var w = 280, h = pop.offsetHeight || 230;
@@ -412,7 +465,52 @@
       pop.style.left = Math.max(10, x) + "px"; pop.style.top = Math.max(10, y) + "px";
     }
     function closePopOnly() { var p = $("pop"); if (p) p.remove(); }
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePop(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closePop(); closeEdit(); } });
+
+    function downscale(file, cb) {
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function () {
+        var S = 96, c = document.createElement("canvas"); c.width = c.height = S;
+        var ctx = c.getContext("2d");
+        var s = Math.min(img.width, img.height), sx = (img.width - s) / 2, sy = (img.height - s) / 2;
+        ctx.drawImage(img, sx, sy, s, s, 0, 0, S, S);
+        URL.revokeObjectURL(url);
+        try { cb(c.toDataURL("image/jpeg", 0.82)); } catch (e) { cb(""); }
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); cb(""); };
+      img.src = url;
+    }
+    function closeEdit() { var m = $("editmodal"); if (m) m.remove(); var s = $("escrim"); if (s) s.remove(); }
+    function openEditProfile() {
+      closePop(); closeEdit();
+      var tempPfp = myPfp;
+      var scrim = document.createElement("div"); scrim.className = "scrim"; scrim.id = "escrim"; scrim.onclick = closeEdit; document.body.appendChild(scrim);
+      var m = document.createElement("div"); m.className = "modal"; m.id = "editmodal";
+      var h = document.createElement("div"); h.className = "mh"; h.textContent = "Edit Profile"; m.appendChild(h);
+      var pv = document.createElement("div"); pv.className = "mpv"; m.appendChild(pv);
+      function paintPv() {
+        pv.innerHTML = ""; var a = document.createElement("span"); a.className = "avatar"; a.style.width = a.style.height = "80px";
+        if (tempPfp) { a.style.backgroundColor = "#000"; a.style.backgroundImage = 'url("' + tempPfp + '")'; a.style.backgroundSize = "cover"; a.style.backgroundPosition = "center"; }
+        else { a.style.background = "hsl(" + hue(myName) + ",52%,46%)"; a.style.fontSize = "34px"; a.textContent = (myName[0] || "?"); }
+        pv.appendChild(a);
+      }
+      paintPv();
+      var row = document.createElement("div"); row.className = "mrow";
+      var up = document.createElement("label"); up.className = "btn ghost"; up.textContent = "Upload image";
+      var fi = document.createElement("input"); fi.type = "file"; fi.accept = "image/*"; fi.style.display = "none";
+      fi.onchange = function () { if (fi.files && fi.files[0]) downscale(fi.files[0], function (d) { if (d && d.length <= 30000) { tempPfp = d; paintPv(); } else if (d) alert("That image is too large after processing — try another."); else alert("Couldn't read that image."); }); };
+      up.appendChild(fi);
+      var rm = document.createElement("button"); rm.className = "btn ghost"; rm.textContent = "Remove"; rm.onclick = function () { tempPfp = ""; paintPv(); };
+      row.appendChild(up); row.appendChild(rm); m.appendChild(row);
+      var bl = document.createElement("label"); bl.className = "mlabel"; bl.textContent = "About me"; m.appendChild(bl);
+      var ta = document.createElement("textarea"); ta.className = "fld mta"; ta.maxLength = 200; ta.value = myBio; ta.placeholder = "Tell people about yourself"; m.appendChild(ta);
+      var act = document.createElement("div"); act.className = "mact";
+      var cancel = document.createElement("button"); cancel.className = "btn ghost"; cancel.textContent = "Cancel"; cancel.onclick = closeEdit;
+      var saveb = document.createElement("button"); saveb.className = "btn"; saveb.textContent = "Save";
+      saveb.onclick = function () { if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: "setprofile", bio: ta.value, pfp: tempPfp })); closeEdit(); };
+      act.appendChild(cancel); act.appendChild(saveb); m.appendChild(act);
+      document.body.appendChild(m); ta.focus();
+    }
 
     var ws = null, delay = 1000, reconnectTimer = null;
     function wsUrl() { var proto = location.protocol === "https:" ? "wss://" : "ws://"; return proto + location.host + "/chat?token=" + encodeURIComponent(token); }
@@ -449,7 +547,7 @@
         var data; try { data = JSON.parse(e.data); } catch (_) { return; }
         if (data.type === "welcome") {
           myRole = data.role || "member"; channels = data.channels || []; dmList = data.dms || []; unread = {};
-          renderChannels(); renderDMs(); updateWhoBar();
+          renderChannels(); renderDMs(); updateWhoBar(); maybeFetch(myName);
           openChannel(data.channel || "general");
         } else if (data.type === "role") {
           myRole = data.role || "member"; updateWhoBar(); setComposerEnabled();
@@ -477,8 +575,17 @@
           if (data.dm) { if (view.kind === "dm" && data.name.toLowerCase() === view.user.toLowerCase()) { typers[data.name] = Date.now(); renderTyping(); } }
           else if (data.name && data.name !== myName && view.kind === "channel" && (!data.channel || data.channel === view.id)) { typers[data.name] = Date.now(); renderTyping(); }
         } else if (data.type === "profile") {
-          if (view.kind === "dm" && data.user.toLowerCase() === view.user.toLowerCase()) presEl.classList.toggle("on", !!data.online);
+          var lcp = data.user.toLowerCase();
+          profKnown[lcp] = 1; pfpCache[lcp] = data.pfp || ""; bioCache[lcp] = data.bio || "";
+          if (lcp === myName.toLowerCase()) { myBio = data.bio || ""; myPfp = data.pfp || ""; }
+          refreshAvatars(data.user);
+          if (view.kind === "dm" && lcp === view.user.toLowerCase()) presEl.classList.toggle("on", !!data.online);
           renderProfile(data);
+        } else if (data.type === "profileupdate") {
+          var lcu = data.user.toLowerCase();
+          pfpCache[lcu] = data.pfp || ""; bioCache[lcu] = data.bio || ""; profKnown[lcu] = 1;
+          if (lcu === myName.toLowerCase()) { myBio = data.bio || ""; myPfp = data.pfp || ""; updateWhoBar(); }
+          refreshAvatars(data.user);
         } else if (data.type === "system") {
           addSystem(data.text);
         }

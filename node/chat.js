@@ -6,6 +6,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 const MSG_MAX = 500;
 const HISTORY_MAX = 50;
 const DM_MAX = 60;
+const BIO_MAX = 200;
+const PFP_MAX = 30000;
 // Anti-spam (per user, shared across all their tabs/sockets).
 const RATE_WINDOW_MS = 5000; // at most RATE_MAX messages per window
 const RATE_MAX = 5;
@@ -32,6 +34,7 @@ const HISTORY_FILE = new URL("chat-history.json", import.meta.url);
 const MOD_FILE = new URL("chat-mod.json", import.meta.url);
 const STATS_FILE = new URL("chat-stats.json", import.meta.url);
 const DM_FILE = new URL("chat-dms.json", import.meta.url);
+const PROFILE_FILE = new URL("chat-profiles.json", import.meta.url);
 
 // Text channels.
 const CHANNELS = ["general", "announcements", "rules", "games", "proxies", "offtopic"];
@@ -48,6 +51,7 @@ const mods = new Set();
 const ranks = new Map();
 const userRanks = new Map();
 const dms = new Map();
+const profiles = new Map();
 const roleOf = (u) => {
   const k = String(u).toLowerCase();
   if (ROLES[k]) return ROLES[k];
@@ -265,6 +269,31 @@ export function createChat(auth) {
     }
     out.sort((a, b) => b.ts - a.ts);
     return out;
+  };
+
+  try {
+    const pr = JSON.parse(readFileSync(PROFILE_FILE, "utf8"));
+    if (pr && typeof pr === "object") for (const [k, v] of Object.entries(pr)) if (v && typeof v === "object") profiles.set(String(k).toLowerCase(), { bio: String(v.bio || "").slice(0, BIO_MAX), pfp: String(v.pfp || "").slice(0, PFP_MAX) });
+  } catch {
+    /* none yet */
+  }
+  let profTimer = null;
+  const persistProfile = () => {
+    if (profTimer) return;
+    profTimer = setTimeout(() => {
+      profTimer = null;
+      try {
+        writeFileSync(PROFILE_FILE, JSON.stringify(Object.fromEntries(profiles)));
+      } catch (e) {
+        console.error("chat profile persist:", e.message);
+      }
+    }, 500);
+    profTimer.unref?.();
+  };
+  const profOf = (u) => profiles.get(String(u).toLowerCase()) || { bio: "", pfp: "" };
+  const broadcastAll = (obj) => {
+    const m = JSON.stringify(obj);
+    for (const c of wss.clients) if (c.readyState === c.OPEN) c.send(m);
   };
 
   let histTimer = null,
@@ -673,7 +702,18 @@ export function createChat(auth) {
         const ul = u.toLowerCase();
         let online = false;
         for (const c of wss.clients) if (c.username && c.username.toLowerCase() === ul && c.readyState === c.OPEN) { online = true; break; }
-        sendTo(ws, { type: "profile", user: u, role: roleOf(u), messages: counts.get(u) || 0, online, since: firstSeen.get(ul) || 0 });
+        const pr = profOf(u);
+        sendTo(ws, { type: "profile", user: u, role: roleOf(u), messages: counts.get(u) || 0, online, since: firstSeen.get(ul) || 0, bio: pr.bio, pfp: pr.pfp });
+        return;
+      }
+
+      if (data.type === "setprofile") {
+        const bio = maskWords(clean(data.bio, BIO_MAX));
+        let pfp = typeof data.pfp === "string" ? data.pfp : "";
+        if (pfp && !(pfp.startsWith("data:image/") && pfp.length <= PFP_MAX)) pfp = "";
+        profiles.set(ws.username.toLowerCase(), { bio, pfp });
+        persistProfile();
+        broadcastAll({ type: "profileupdate", user: ws.username, bio, pfp });
         return;
       }
 
