@@ -122,8 +122,11 @@
     .scrim { position: fixed; inset: 0; z-index: 55; background: rgba(0,0,0,.4); }
     .modal { position: fixed; z-index: 60; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 360px; max-width: calc(100vw - 32px); background: #313338; border-radius: 10px; box-shadow: 0 8px 36px rgba(0,0,0,.6); padding: 22px; }
     .modal .mh { font-size: 1.15rem; font-weight: 700; margin-bottom: 16px; }
-    .modal .mpv { display: flex; justify-content: center; margin-bottom: 12px; }
-    .modal .mrow { display: flex; gap: 10px; justify-content: center; }
+    .modal .mcard { border-radius: 8px; overflow: hidden; background: #2b2d31; margin-bottom: 6px; }
+    .modal .mcard .mbanner { height: 80px; }
+    .modal .mcard .mava { margin: -38px 0 10px 16px; border: 5px solid #2b2d31; }
+    .modal .mcolor { width: 46px; height: 38px; padding: 2px; border: 0; background: var(--dark); border-radius: 4px; cursor: pointer; }
+    .modal .mrow { display: flex; gap: 10px; align-items: center; }
     .modal .mrow .btn { padding: 8px 14px; font-size: .85rem; }
     .modal .mlabel { display: block; font-size: .72rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin: 16px 0 6px; letter-spacing: .3px; }
     .modal .mta { width: 100%; resize: vertical; min-height: 66px; font-family: inherit; font-size: .9rem; }
@@ -205,7 +208,7 @@
     var view = { kind: "channel", id: "general" };
     var channels = [], dmList = [], unread = {};
     var replyingTo = null, typers = {}, typingTO = null, groupCtx = { name: null, ts: 0 };
-    var pfpCache = {}, bioCache = {}, profKnown = {}, myBio = "", myPfp = "";
+    var pfpCache = {}, bioCache = {}, profKnown = {}, myBio = "", myPfp = "", myBanner = "";
     try { token = localStorage.getItem("zaka_chat_token") || ""; myName = localStorage.getItem("zaka_chat_user") || ""; } catch (e) {}
 
     function save() { try { localStorage.setItem("zaka_chat_token", token); localStorage.setItem("zaka_chat_user", myName); } catch (e) {} }
@@ -446,7 +449,11 @@
       var scrim = document.createElement("div"); scrim.className = "scrim"; scrim.id = "scrim"; scrim.onclick = closePop; document.body.appendChild(scrim);
       var pop = document.createElement("div"); pop.className = "pop"; pop.id = "pop";
       var col = "hsl(" + hue(p.user) + ",52%,46%)";
-      var banner = document.createElement("div"); banner.className = "banner"; banner.style.background = col; pop.appendChild(banner);
+      var banner = document.createElement("div"); banner.className = "banner";
+      if (p.banner && p.banner.charAt(0) === "#") banner.style.background = p.banner;
+      else if (p.banner) { banner.style.backgroundColor = "#000"; banner.style.backgroundImage = 'url("' + p.banner + '")'; banner.style.backgroundSize = "cover"; banner.style.backgroundPosition = "center"; }
+      else banner.style.background = col;
+      pop.appendChild(banner);
       var av = makeAvatar(p.user, 76); av.classList.add("pava"); pop.appendChild(av);
       var body = document.createElement("div"); body.className = "pbody";
       var nm = document.createElement("div"); nm.className = "pname"; nm.textContent = p.user;
@@ -473,13 +480,14 @@
     function closePopOnly() { var p = $("pop"); if (p) p.remove(); }
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closePop(); closeEdit(); } });
 
-    function downscale(file, cb) {
+    function downscaleTo(file, W, H, cb) {
       var img = new Image(), url = URL.createObjectURL(file);
       img.onload = function () {
-        var S = 96, c = document.createElement("canvas"); c.width = c.height = S;
+        var c = document.createElement("canvas"); c.width = W; c.height = H;
         var ctx = c.getContext("2d");
-        var s = Math.min(img.width, img.height), sx = (img.width - s) / 2, sy = (img.height - s) / 2;
-        ctx.drawImage(img, sx, sy, s, s, 0, 0, S, S);
+        var scale = Math.max(W / img.width, H / img.height);
+        var dw = img.width * scale, dh = img.height * scale;
+        ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
         URL.revokeObjectURL(url);
         try { cb(c.toDataURL("image/jpeg", 0.82)); } catch (e) { cb(""); }
       };
@@ -489,31 +497,52 @@
     function closeEdit() { var m = $("editmodal"); if (m) m.remove(); var s = $("escrim"); if (s) s.remove(); }
     function openEditProfile() {
       closePop(); closeEdit();
-      var tempPfp = myPfp;
+      var tempPfp = myPfp, tempBanner = myBanner;
       var scrim = document.createElement("div"); scrim.className = "scrim"; scrim.id = "escrim"; scrim.onclick = closeEdit; document.body.appendChild(scrim);
       var m = document.createElement("div"); m.className = "modal"; m.id = "editmodal";
       var h = document.createElement("div"); h.className = "mh"; h.textContent = "Edit Profile"; m.appendChild(h);
-      var pv = document.createElement("div"); pv.className = "mpv"; m.appendChild(pv);
-      function paintPv() {
-        pv.innerHTML = ""; var a = document.createElement("span"); a.className = "avatar"; a.style.width = a.style.height = "80px";
-        if (tempPfp) { a.style.backgroundColor = "#000"; a.style.backgroundImage = 'url("' + tempPfp + '")'; a.style.backgroundSize = "cover"; a.style.backgroundPosition = "center"; }
-        else { a.style.background = "hsl(" + hue(myName) + ",52%,46%)"; a.style.fontSize = "34px"; a.textContent = (myName[0] || "?"); }
-        pv.appendChild(a);
+
+      var card = document.createElement("div"); card.className = "mcard";
+      var mb = document.createElement("div"); mb.className = "mbanner"; card.appendChild(mb);
+      var mav = document.createElement("span"); mav.className = "avatar mava"; card.appendChild(mav);
+      m.appendChild(card);
+      function paintCard() {
+        if (tempBanner && tempBanner.charAt(0) === "#") { mb.style.backgroundImage = ""; mb.style.background = tempBanner; }
+        else if (tempBanner) { mb.style.backgroundColor = "#000"; mb.style.backgroundImage = 'url("' + tempBanner + '")'; mb.style.backgroundSize = "cover"; mb.style.backgroundPosition = "center"; }
+        else { mb.style.backgroundImage = ""; mb.style.background = "hsl(" + hue(myName) + ",52%,46%)"; }
+        mav.style.width = mav.style.height = "72px";
+        if (tempPfp) { mav.textContent = ""; mav.style.backgroundColor = "#000"; mav.style.backgroundImage = 'url("' + tempPfp + '")'; mav.style.backgroundSize = "cover"; mav.style.backgroundPosition = "center"; }
+        else { mav.style.backgroundImage = ""; mav.style.background = "hsl(" + hue(myName) + ",52%,46%)"; mav.style.fontSize = "30px"; mav.textContent = (myName[0] || "?"); }
       }
-      paintPv();
-      var row = document.createElement("div"); row.className = "mrow";
-      var up = document.createElement("label"); up.className = "btn ghost"; up.textContent = "Upload image";
-      var fi = document.createElement("input"); fi.type = "file"; fi.accept = "image/*"; fi.style.display = "none";
-      fi.onchange = function () { if (fi.files && fi.files[0]) downscale(fi.files[0], function (d) { if (d && d.length <= 30000) { tempPfp = d; paintPv(); } else if (d) alert("That image is too large after processing — try another."); else alert("Couldn't read that image."); }); };
-      up.appendChild(fi);
-      var rm = document.createElement("button"); rm.className = "btn ghost"; rm.textContent = "Remove"; rm.onclick = function () { tempPfp = ""; paintPv(); };
-      row.appendChild(up); row.appendChild(rm); m.appendChild(row);
+      paintCard();
+
+      var l1 = document.createElement("label"); l1.className = "mlabel"; l1.textContent = "Profile picture"; m.appendChild(l1);
+      var r1 = document.createElement("div"); r1.className = "mrow";
+      var up1 = document.createElement("label"); up1.className = "btn ghost"; up1.textContent = "Upload";
+      var fi1 = document.createElement("input"); fi1.type = "file"; fi1.accept = "image/*"; fi1.style.display = "none";
+      fi1.onchange = function () { if (fi1.files && fi1.files[0]) downscaleTo(fi1.files[0], 96, 96, function (d) { if (d && d.length <= 30000) { tempPfp = d; paintCard(); } else if (d) alert("That image is too large after processing — try another."); else alert("Couldn't read that image."); }); };
+      up1.appendChild(fi1);
+      var rm1 = document.createElement("button"); rm1.className = "btn ghost"; rm1.textContent = "Remove"; rm1.onclick = function () { tempPfp = ""; paintCard(); };
+      r1.appendChild(up1); r1.appendChild(rm1); m.appendChild(r1);
+
+      var l2 = document.createElement("label"); l2.className = "mlabel"; l2.textContent = "Profile banner"; m.appendChild(l2);
+      var r2 = document.createElement("div"); r2.className = "mrow";
+      var cp = document.createElement("input"); cp.type = "color"; cp.className = "mcolor"; cp.value = (tempBanner && tempBanner.charAt(0) === "#") ? tempBanner : "#5865f2"; cp.title = "Banner color";
+      cp.oninput = function () { tempBanner = cp.value; paintCard(); };
+      var up2 = document.createElement("label"); up2.className = "btn ghost"; up2.textContent = "Upload";
+      var fi2 = document.createElement("input"); fi2.type = "file"; fi2.accept = "image/*"; fi2.style.display = "none";
+      fi2.onchange = function () { if (fi2.files && fi2.files[0]) downscaleTo(fi2.files[0], 300, 120, function (d) { if (d && d.length <= 60000) { tempBanner = d; paintCard(); } else if (d) alert("That banner is too large after processing — try another."); else alert("Couldn't read that image."); }); };
+      up2.appendChild(fi2);
+      var rm2 = document.createElement("button"); rm2.className = "btn ghost"; rm2.textContent = "Remove"; rm2.onclick = function () { tempBanner = ""; paintCard(); };
+      r2.appendChild(cp); r2.appendChild(up2); r2.appendChild(rm2); m.appendChild(r2);
+
       var bl = document.createElement("label"); bl.className = "mlabel"; bl.textContent = "About me"; m.appendChild(bl);
       var ta = document.createElement("textarea"); ta.className = "fld mta"; ta.maxLength = 200; ta.value = myBio; ta.placeholder = "Tell people about yourself"; m.appendChild(ta);
+
       var act = document.createElement("div"); act.className = "mact";
       var cancel = document.createElement("button"); cancel.className = "btn ghost"; cancel.textContent = "Cancel"; cancel.onclick = closeEdit;
       var saveb = document.createElement("button"); saveb.className = "btn"; saveb.textContent = "Save";
-      saveb.onclick = function () { if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: "setprofile", bio: ta.value, pfp: tempPfp })); closeEdit(); };
+      saveb.onclick = function () { if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: "setprofile", bio: ta.value, pfp: tempPfp, banner: tempBanner })); closeEdit(); };
       act.appendChild(cancel); act.appendChild(saveb); m.appendChild(act);
       document.body.appendChild(m); ta.focus();
     }
@@ -583,14 +612,14 @@
         } else if (data.type === "profile") {
           var lcp = data.user.toLowerCase();
           profKnown[lcp] = 1; pfpCache[lcp] = data.pfp || ""; bioCache[lcp] = data.bio || "";
-          if (lcp === myName.toLowerCase()) { myBio = data.bio || ""; myPfp = data.pfp || ""; }
+          if (lcp === myName.toLowerCase()) { myBio = data.bio || ""; myPfp = data.pfp || ""; myBanner = data.banner || ""; }
           refreshAvatars(data.user);
           if (view.kind === "dm" && lcp === view.user.toLowerCase()) presEl.classList.toggle("on", !!data.online);
           renderProfile(data);
         } else if (data.type === "profileupdate") {
           var lcu = data.user.toLowerCase();
           pfpCache[lcu] = data.pfp || ""; bioCache[lcu] = data.bio || ""; profKnown[lcu] = 1;
-          if (lcu === myName.toLowerCase()) { myBio = data.bio || ""; myPfp = data.pfp || ""; updateWhoBar(); }
+          if (lcu === myName.toLowerCase()) { myBio = data.bio || ""; myPfp = data.pfp || ""; myBanner = data.banner || ""; updateWhoBar(); }
           refreshAvatars(data.user);
         } else if (data.type === "system") {
           addSystem(data.text);

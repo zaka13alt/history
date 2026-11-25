@@ -8,6 +8,7 @@ const HISTORY_MAX = 50;
 const DM_MAX = 60;
 const BIO_MAX = 200;
 const PFP_MAX = 30000;
+const BANNER_MAX = 60000;
 // Anti-spam (per user, shared across all their tabs/sockets).
 const RATE_WINDOW_MS = 5000; // at most RATE_MAX messages per window
 const RATE_MAX = 5;
@@ -273,7 +274,7 @@ export function createChat(auth) {
 
   try {
     const pr = JSON.parse(readFileSync(PROFILE_FILE, "utf8"));
-    if (pr && typeof pr === "object") for (const [k, v] of Object.entries(pr)) if (v && typeof v === "object") profiles.set(String(k).toLowerCase(), { bio: String(v.bio || "").slice(0, BIO_MAX), pfp: String(v.pfp || "").slice(0, PFP_MAX) });
+    if (pr && typeof pr === "object") for (const [k, v] of Object.entries(pr)) if (v && typeof v === "object") profiles.set(String(k).toLowerCase(), { bio: String(v.bio || "").slice(0, BIO_MAX), pfp: String(v.pfp || "").slice(0, PFP_MAX), banner: String(v.banner || "").slice(0, BANNER_MAX) });
   } catch {
     /* none yet */
   }
@@ -290,7 +291,7 @@ export function createChat(auth) {
     }, 500);
     profTimer.unref?.();
   };
-  const profOf = (u) => profiles.get(String(u).toLowerCase()) || { bio: "", pfp: "" };
+  const profOf = (u) => profiles.get(String(u).toLowerCase()) || { bio: "", pfp: "", banner: "" };
   const broadcastAll = (obj) => {
     const m = JSON.stringify(obj);
     for (const c of wss.clients) if (c.readyState === c.OPEN) c.send(m);
@@ -703,7 +704,7 @@ export function createChat(auth) {
         let online = false;
         for (const c of wss.clients) if (c.username && c.username.toLowerCase() === ul && c.readyState === c.OPEN) { online = true; break; }
         const pr = profOf(u);
-        sendTo(ws, { type: "profile", user: u, role: roleOf(u), messages: counts.get(u) || 0, online, since: firstSeen.get(ul) || 0, bio: pr.bio, pfp: pr.pfp });
+        sendTo(ws, { type: "profile", user: u, role: roleOf(u), messages: counts.get(u) || 0, online, since: firstSeen.get(ul) || 0, bio: pr.bio, pfp: pr.pfp, banner: pr.banner });
         return;
       }
 
@@ -711,9 +712,11 @@ export function createChat(auth) {
         const bio = maskWords(clean(data.bio, BIO_MAX));
         let pfp = typeof data.pfp === "string" ? data.pfp : "";
         if (pfp && !(pfp.startsWith("data:image/") && pfp.length <= PFP_MAX)) pfp = "";
-        profiles.set(ws.username.toLowerCase(), { bio, pfp });
+        let banner = typeof data.banner === "string" ? data.banner : "";
+        if (banner && !(/^#[0-9a-fA-F]{6}$/.test(banner) || (banner.startsWith("data:image/") && banner.length <= BANNER_MAX))) banner = "";
+        profiles.set(ws.username.toLowerCase(), { bio, pfp, banner });
         persistProfile();
-        broadcastAll({ type: "profileupdate", user: ws.username, bio, pfp });
+        broadcastAll({ type: "profileupdate", user: ws.username, bio, pfp, banner });
         return;
       }
 
