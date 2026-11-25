@@ -14,6 +14,8 @@
 	}
 }
 
+import /etc/caddy/eagler-fwd.conf
+
 # FlareSolverr. It only serves /v1 (no trailing slash), so drop one if present.
 (flaresolverr) {
 	handle_path /flaresolverr/* {
@@ -176,7 +178,9 @@
 
 	@eagler path /eg /eg/*
 	handle @eagler {
-		reverse_proxy localhost:25565
+		reverse_proxy localhost:25565 {
+			import eagler_fwd
+		}
 	}
 
 	# Let static.html discover config (w.json / base.json) from any origin.
