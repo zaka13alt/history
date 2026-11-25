@@ -54,6 +54,7 @@
     .badge.owner { background: rgba(255,196,0,.15); color: #ffce45; border: 1px solid rgba(255,196,0,.35); }
     .badge.admin { background: rgba(77,173,255,.15); color: var(--accent); border: 1px solid rgba(77,173,255,.35); }
     .badge.coowner { background: rgba(255,215,0,.18); color: #ffd700; border: 1px solid rgba(255,215,0,.45); }
+    .badge.rank { background: rgba(160,120,255,.15); color: #c3a6ff; border: 1px solid rgba(160,120,255,.35); }
     .msg.ping { background: rgba(255,215,0,.09); box-shadow: inset 2px 0 0 #ffd700; }
 
     @media (max-width: 640px) {
@@ -205,8 +206,9 @@
       if (m.name !== myName) {
         var meta = document.createElement("div"); meta.className = "meta";
         meta.appendChild(document.createTextNode(m.name));
-        if (m.role === "owner" || m.role === "admin" || m.role === "coowner") {
-          var b = document.createElement("span"); b.className = "badge " + m.role; b.textContent = m.role === "coowner" ? "co owner" : m.role; meta.appendChild(b);
+        if (m.role && m.role !== "member") {
+          var bKnown = (m.role === "owner" || m.role === "admin" || m.role === "coowner");
+          var b = document.createElement("span"); b.className = "badge " + (bKnown ? m.role : "rank"); b.textContent = m.role === "coowner" ? "co owner" : m.role; meta.appendChild(b);
         }
         el.appendChild(meta);
       }
@@ -322,7 +324,7 @@
           }
           whoEl.innerHTML = "";
           whoEl.appendChild(document.createTextNode("@" + myName));
-          if (myRole === "owner" || myRole === "admin" || myRole === "coowner") { var bb = document.createElement("span"); bb.className = "badge " + myRole; bb.textContent = myRole === "coowner" ? "co owner" : myRole; whoEl.appendChild(bb); }
+          if (myRole && myRole !== "member") { var bbKnown = (myRole === "owner" || myRole === "admin" || myRole === "coowner"); var bb = document.createElement("span"); bb.className = "badge " + (bbKnown ? myRole : "rank"); bb.textContent = myRole === "coowner" ? "co owner" : myRole; whoEl.appendChild(bb); }
           hintEl.textContent = (myRole === "owner" || myRole === "admin" || myRole === "coowner") ? "/help for mod commands" : "";
         } else if (data.type === "history") {
           if (data.channel && data.channel !== channel) return;

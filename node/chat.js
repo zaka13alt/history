@@ -49,6 +49,15 @@ const roleOf = (u) => {
 };
 const rankOf = (u) => RANK[roleOf(u)];
 
+const ranks = new Map();
+const userRanks = new Map();
+const displayRoleOf = (u) => {
+  const k = String(u).toLowerCase();
+  const base = roleOf(u);
+  if (base === "member" && userRanks.has(k) && ranks.has(userRanks.get(k))) return ranks.get(userRanks.get(k));
+  return base;
+};
+
 const BAD_WORDS = [
   // slurs
   "nigger", "nigga", "nignog", "coon", "jigaboo", "porchmonkey", "faggot", "fag",
@@ -198,6 +207,8 @@ export function createChat(auth) {
     if (mod && Array.isArray(mod.bans)) mod.bans.forEach((u) => bans.add(String(u).toLowerCase()));
     if (mod && Array.isArray(mod.ipbans)) mod.ipbans.forEach((x) => ipbans.add(String(x)));
     if (mod && Array.isArray(mod.mods)) mod.mods.forEach((u) => mods.add(String(u).toLowerCase()));
+    if (mod && Array.isArray(mod.ranks)) mod.ranks.forEach((r) => { const rl = clean(r, 24); if (rl) ranks.set(rl.toLowerCase(), rl); });
+    if (mod && mod.userRanks && typeof mod.userRanks === "object") for (const [u, r] of Object.entries(mod.userRanks)) userRanks.set(String(u).toLowerCase(), String(r).toLowerCase());
     if (mod && mod.timeouts)
       for (const k in mod.timeouts) if (mod.timeouts[k] > Date.now()) timeouts.set(k, mod.timeouts[k]);
   } catch {
@@ -236,7 +247,7 @@ export function createChat(auth) {
         if (v > Date.now()) t[k] = v;
       });
       try {
-        writeFileSync(MOD_FILE, JSON.stringify({ bans: [...bans], mods: [...mods], ipbans: [...ipbans], timeouts: t }));
+        writeFileSync(MOD_FILE, JSON.stringify({ bans: [...bans], mods: [...mods], ipbans: [...ipbans], timeouts: t, ranks: [...ranks.values()], userRanks: Object.fromEntries(userRanks) }));
       } catch (e) {
         console.error("chat mod persist:", e.message);
       }
@@ -340,7 +351,7 @@ export function createChat(auth) {
   // Push a role change to all of a user's open sockets.
   function refreshRole(username) {
     const u = username.toLowerCase();
-    const role = roleOf(username);
+    const role = displayRoleOf(username);
     for (const c of wss.clients)
       if (c.username && c.username.toLowerCase() === u) {
         c.role = role;
@@ -355,7 +366,7 @@ export function createChat(auth) {
     const isOwner = rankOf(ws.username) >= RANK.owner;
 
     if (cmd === "help") {
-      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user> | /ipban <user> | /ipunban <user> | /delete last <n> | /slowmode <sec> | /lockdown | /raidmode on|off" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
+      sysTo(ws, "Commands: /help | /stats" + (isMod ? " | /ban <user> [reason] | /unban <user> | /timeout <user> <seconds> | /untimeout <user> | /ipban <user> | /ipunban <user> | /delete last <n> | /slowmode <sec> | /lockdown | /raidmode on|off | /rank add <rank> | /rank remove <rank> | /rank add user <user> <rank> | /rank delete user <user>" : "") + (isOwner ? " | /mod <user> | /unmod <user>" : ""));
       return;
     }
 
@@ -502,6 +513,58 @@ export function createChat(auth) {
       }
       return;
     }
+    if (cmd === "rank") {
+      if (!isMod) { sysTo(ws, "Only mods can use that."); return; }
+      const sub = String(parts[1] || "").toLowerCase();
+      const isUser = String(parts[2] || "").toLowerCase() === "user";
+      if (sub === "add" && isUser) {
+        const target = parts[3];
+        const rname = clean(parts.slice(4).join(" "), 24);
+        if (!target || !rname) { sysTo(ws, "Usage: /rank add user <username> <rank>"); return; }
+        const rk = rname.toLowerCase();
+        if (!ranks.has(rk)) { sysTo(ws, "No such rank: " + rname + " (create it with /rank add <rank>)"); return; }
+        userRanks.set(target.toLowerCase(), rk);
+        persistMod();
+        refreshRole(target);
+        sysChannel(ws.channel, target + " was given the rank " + ranks.get(rk) + " by " + ws.username + ".");
+        return;
+      }
+      if ((sub === "delete" || sub === "remove") && isUser) {
+        const target = parts[3];
+        if (!target) { sysTo(ws, "Usage: /rank delete user <username>"); return; }
+        if (!userRanks.delete(target.toLowerCase())) { sysTo(ws, target + " has no rank."); return; }
+        persistMod();
+        refreshRole(target);
+        sysChannel(ws.channel, target + "'s rank was removed by " + ws.username + ".");
+        return;
+      }
+      if (sub === "add") {
+        const rname = clean(parts.slice(2).join(" "), 24);
+        if (!rname) { sysTo(ws, "Usage: /rank add <rank name>"); return; }
+        const rk = rname.toLowerCase();
+        if (RANK[rk] != null || rk === "member") { sysTo(ws, "That name is reserved."); return; }
+        if (ranks.has(rk)) { sysTo(ws, "Rank already exists: " + ranks.get(rk)); return; }
+        ranks.set(rk, rname);
+        persistMod();
+        sysTo(ws, "Created rank: " + rname);
+        return;
+      }
+      if (sub === "remove" || sub === "delete") {
+        const rname = clean(parts.slice(2).join(" "), 24);
+        if (!rname) { sysTo(ws, "Usage: /rank remove <rank name>"); return; }
+        const rk = rname.toLowerCase();
+        if (!ranks.has(rk)) { sysTo(ws, "No such rank: " + rname); return; }
+        ranks.delete(rk);
+        const affected = [];
+        for (const [u, r] of userRanks) if (r === rk) { userRanks.delete(u); affected.push(u); }
+        persistMod();
+        affected.forEach(refreshRole);
+        sysTo(ws, "Removed rank: " + rname + (affected.length ? " (unassigned " + affected.length + " user(s))" : ""));
+        return;
+      }
+      sysTo(ws, "Usage: /rank add <rank> | /rank remove <rank> | /rank add user <username> <rank> | /rank delete user <username>");
+      return;
+    }
     sysTo(ws, "Unknown command: /" + cmd + " (try /help)");
   }
 
@@ -512,7 +575,7 @@ export function createChat(auth) {
     if (!firstSeen.has(_fs)) firstSeen.set(_fs, Date.now());
     noteJoin(_fs);
     ws.username = username;
-    ws.role = roleOf(username);
+    ws.role = displayRoleOf(username);
     ws.channel = DEFAULT_CHANNEL;
     ws.isAlive = true;
 
