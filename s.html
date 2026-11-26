@@ -271,7 +271,11 @@
           prefix: "/TxRQenir/",
           K5qkWTpAPath: "/stuff/loz2PSkv/3euG74Zc.js",
           injectPath: "/stuff/loz2PSkv/tgD2nbJS.js",
-          wasmPath: "/stuff/loz2PSkv/jCC9IUDB.wasm"
+          wasmPath: "/stuff/loz2PSkv/jCC9IUDB.wasm",
+          codec: {
+            encode: function (s) { if (!s) return s; var b = new TextEncoder().encode(s), k = [122, 107, 51, 57, 49, 51, 120, 111, 114], o = ""; for (var i = 0; i < b.length; i++) { var v = b[i] ^ k[i % k.length]; o += (v >> 4).toString(16) + (v & 15).toString(16); } return o; },
+            decode: function (s) { if (!s) return s; var k = [122, 107, 51, 57, 49, 51, 120, 111, 114], n = s.length >> 1, b = new Uint8Array(n); for (var i = 0; i < n; i++) { b[i] = parseInt(s.substr(i * 2, 2), 16) ^ k[i % k.length]; } return new TextDecoder().decode(b); }
+          }
         }
       });
       await l.wait();

