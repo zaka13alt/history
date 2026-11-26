@@ -183,6 +183,13 @@ import /etc/caddy/eagler-fwd.conf
 		}
 	}
 
+	@pc path /pc /pc/*
+	handle @pc {
+		reverse_proxy 127.0.0.1:3002 {
+			header_up X-Real-Client-IP {client_ip}
+		}
+	}
+
 	# Let static.html discover config (w.json / base.json) from any origin.
 	@corsConfig path */w.json */base.json
 	header @corsConfig Access-Control-Allow-Origin "*"

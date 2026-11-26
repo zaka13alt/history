@@ -268,9 +268,18 @@ http.createServer(async (req, res) => {
   let ip = (req.headers["x-real-client-ip"] || "").trim();
   if (!ip) ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim();
   if (!ip) ip = (u.searchParams.get("ip") || "").trim();
-  if (isLocal(ip)) { res.writeHead(204); res.end(); return; }
+  const isPc = u.pathname === "/pc" || u.pathname.startsWith("/pc/");
+  if (isLocal(ip)) {
+    if (isPc) { res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" }); res.end('{"h":0}'); return; }
+    res.writeHead(204); res.end(); return;
+  }
   let hosting = false;
   try { hosting = await classify(ip); } catch (e) { hosting = false; }
+  if (isPc) {
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" });
+    res.end(JSON.stringify({ h: hosting ? 1 : 0 }));
+    return;
+  }
   if (hosting) { res.writeHead(204, { "X-Zk-Decoy": "1" }); res.end(); }
   else { res.writeHead(204); res.end(); }
 }).listen(PORT, HOST, () => console.log("ipgate listening on " + HOST + ":" + PORT));
