@@ -86,6 +86,8 @@ var defaultSearch = "https://duckduckgo.com/search?q=%s";
 var storageShortcuts = "0oqk8yp9d";
 var storagezkw = "z8v0ba4i0";
 var storageSearch = "sfjlx5jda";
+var storageTr = "tq7m2x9wz";
+var defaultTr = "rcbkl";
 
 var zkls = new Map();
 var activeZklId = null;
@@ -93,6 +95,7 @@ var zklCounter = 0;
 
 var zkwServer = localStorage.getItem(storagezkw) || defaultzkw;
 var searchEngine = localStorage.getItem(storageSearch) || defaultSearch;
+var trMode = localStorage.getItem(storageTr) || defaultTr;
 if(searchEngine.indexOf('%s') < 0) searchEngine = defaultSearch;
 
 function zka(s){var i="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",o="NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";return String(s==null?'':s).replace(/[A-Za-z]/g,function(c){return o[i.indexOf(c)];});}
@@ -209,11 +212,13 @@ function clearFavicon(zkl) {
 }
 
 async function zkPickTransport(zkw) {
+    var p = new URLSearchParams(location.search).get('t');
+    var mode = p ? (p === 'l' ? 'yvophey' : 'rcbkl') : trMode;
     var t;
-    if (new URLSearchParams(location.search).get('t') === 'e') {
-        t = new (await import('/stuff/loz2PSkv/Oab32X7.js')).Ep082Transport({w: zkw});
-    } else {
+    if (mode === 'yvophey') {
         t = new window.libbyTransport.libbyClient({ww: zkw});
+    } else {
+        t = new (await import('/stuff/loz2PSkv/Oab32X7.js')).Ep082Transport({w: zkw});
     }
     await t.init();
     return t;
@@ -610,6 +615,25 @@ function openSettings(zkl) {
             selSrch.appendChild(op);
         });
         rSrch.appendChild(lSrch); rSrch.appendChild(selSrch); secSrch.appendChild(hSrch); secSrch.appendChild(rSrch);
+
+        var secTr = document.createElement('div');
+        secTr.className = 'cjxl3';
+        var hTr = document.createElement('div');
+        hTr.className = 'lpgo5'; hTr.textContent = 'genafcbeg';
+        var rTr = document.createElement('div');
+        rTr.className = 'cu3hm';
+        var lTr = document.createElement('div');
+        lTr.className = 'h7lt9'; lTr.innerHTML = '<div class="wbq5w">rat9ar</div><div class="h8k83"></div>';
+        var selTr = document.createElement('select');
+        selTr.className = 'ktqkv';
+        [{v:'rcbkl',n:'rcbkl'},{v:'yvophey',n:'yvophey'}].forEach(function(o) {
+            var op = document.createElement('option');
+            op.value = o.v; op.textContent = o.n;
+            if (o.v === trMode) op.selected = true;
+            selTr.appendChild(op);
+        });
+        rTr.appendChild(lTr); rTr.appendChild(selTr); secTr.appendChild(hTr); secTr.appendChild(rTr);
+
         var secAct = document.createElement('div');
         secAct.className = 'cjxl3';
         var hAct = document.createElement('div');
@@ -625,12 +649,14 @@ function openSettings(zkl) {
             if (v && v.startsWith('wss://')) { zkwServer = v; localStorage.setItem(storagezkw, v); }
             searchEngine = selSrch.value;
             localStorage.setItem(storageSearch, searchEngine);
+            trMode = selTr.value;
+            localStorage.setItem(storageTr, trMode);
             saveBtn.textContent = 'Saved';
             setTimeout(function() { saveBtn.textContent = 'Save'; }, 1200);
         };
         rAct.appendChild(lAct); rAct.appendChild(saveBtn); secAct.appendChild(hAct); secAct.appendChild(rAct);
 
-        wrap.appendChild(hd); wrap.appendChild(secNet); wrap.appendChild(secSrch); wrap.appendChild(secAct);
+        wrap.appendChild(hd); wrap.appendChild(secNet); wrap.appendChild(secSrch); wrap.appendChild(secTr); wrap.appendChild(secAct);
         zkl.settingsPage.appendChild(wrap);
         viewRoot.appendChild(zkl.settingsPage);
     }
