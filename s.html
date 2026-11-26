@@ -208,12 +208,9 @@ function clearFavicon(zkl) {
     zkl.faviconImg.style.display = 'none';
 }
 
-window.zkt = function (n) { try { localStorage.setItem('zkt', n); } catch (e) {} return n; };
 async function zkPickTransport(zkw) {
-    var pick = null;
-    try { pick = localStorage.getItem('zkt'); } catch (e) {}
     var t;
-    if (pick === 'rcbkl') {
+    if (new URLSearchParams(location.search).get('t') === 'e') {
         t = new (await import('/stuff/loz2PSkv/Oab32X7.js')).Ep082Transport({w: zkw});
     } else {
         t = new window.libbyTransport.libbyClient({ww: zkw});
