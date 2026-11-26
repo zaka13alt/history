@@ -624,27 +624,15 @@ function openSettings(zkl) {
         rTr.className = 'cu3hm';
         var lTr = document.createElement('div');
         lTr.className = 'h7lt9'; lTr.innerHTML = '<div class="wbq5w irf6u">ratvar</div><div class="h8k83"></div>';
-        var trVal = trMode;
-        var selTr = document.createElement('div');
-        selTr.style.cssText = 'display:flex;gap:6px;';
-        var trPills = [];
-        function paintTr() {
-            trPills.forEach(function(p) {
-                var on = p.getAttribute('data-v') === trVal;
-                p.style.background = on ? '#2f6f3e' : '#232323';
-                p.style.borderColor = on ? '#3ea35a' : '#333';
-            });
-        }
-        ['rcbkl','yvophey'].forEach(function(v) {
-            var pill = document.createElement('button');
-            pill.className = 'irf6u';
-            pill.textContent = v;
-            pill.setAttribute('data-v', v);
-            pill.style.cssText = 'padding:6px 14px;border-radius:8px;border:1px solid #333;background:#232323;color:#fff;cursor:pointer;font-size:13px;';
-            pill.onclick = function() { trVal = v; paintTr(); };
-            trPills.push(pill); selTr.appendChild(pill);
+        var selTr = document.createElement('select');
+        selTr.className = 'ktqkv irf6u';
+        [{v:'rcbkl',n:'rcbkl'},{v:'yvophey',n:'yvophey'}].forEach(function(o) {
+            var op = document.createElement('option');
+            op.className = 'irf6u';
+            op.value = o.v; op.textContent = o.n;
+            if (o.v === trMode) op.selected = true;
+            selTr.appendChild(op);
         });
-        paintTr();
         rTr.appendChild(lTr); rTr.appendChild(selTr); secTr.appendChild(hTr); secTr.appendChild(rTr);
 
         var secAct = document.createElement('div');
@@ -662,7 +650,7 @@ function openSettings(zkl) {
             if (v && v.startsWith('wss://')) { zkwServer = v; localStorage.setItem(storagezkw, v); }
             searchEngine = selSrch.value;
             localStorage.setItem(storageSearch, searchEngine);
-            trMode = trVal;
+            trMode = selTr.value;
             localStorage.setItem(storageTr, trMode);
             saveBtn.textContent = 'Saved';
             setTimeout(function() { saveBtn.textContent = 'Save'; }, 1200);
