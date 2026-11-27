@@ -77,7 +77,9 @@ import /etc/caddy/eagler-fwd.conf
 		path /study.html /s.html
 	}
 	handle @gateStudy {
-		respond "Forbidden" 403
+		rewrite * /ash-decoy.html
+		root * /usr/share/caddy
+		file_server
 	}
 
 	@gateRoot {
