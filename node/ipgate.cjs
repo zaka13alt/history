@@ -278,6 +278,32 @@ function isWhitelisted(ip) {
   return false;
 }
 
+const FORCE_DC_CIDRS = [
+  "104.222.33.0/24", "104.222.34.0/24", "104.222.35.0/24", "104.222.36.0/24", "104.222.37.0/24",
+  "104.222.38.0/24", "104.222.39.0/24", "104.222.40.0/24", "104.222.41.0/24", "104.222.42.0/24",
+  "104.222.43.0/24", "104.222.44.0/24", "104.222.45.0/24", "104.222.46.0/24", "104.222.47.0/24",
+  "158.222.112.0/24", "158.222.113.0/24", "158.222.114.0/24", "158.222.115.0/24", "158.222.116.0/24",
+  "158.222.117.0/24", "158.222.118.0/24", "158.222.119.0/24", "158.222.120.0/24", "158.222.121.0/24",
+  "158.222.122.0/24", "158.222.124.0/24", "158.222.125.0/24", "158.222.126.0/24", "158.222.127.0/24",
+  "162.223.88.0/24", "162.223.90.0/24", "162.223.91.0/24", "162.223.93.0/24", "162.223.95.0/24",
+  "162.245.80.0/24", "162.245.81.0/24", "162.245.84.0/24", "162.245.86.0/24", "162.245.87.0/24",
+  "198.23.143.0/24"
+];
+const FORCE_DC_4 = FORCE_DC_CIDRS.map(function (c) {
+  var p = c.split("/"), base = ip4ToInt(p[0]), bits = parseInt(p[1], 10);
+  if (base == null || !(bits >= 0 && bits <= 32)) return null;
+  var size = Math.pow(2, 32 - bits), start = base - (base % size);
+  return [start, start + size - 1];
+}).filter(function (r) { return r; });
+function isForcedDc(ip) {
+  var n = ip4ToInt(ip);
+  if (n == null) return false;
+  for (var i = 0; i < FORCE_DC_4.length; i++) {
+    if (n >= FORCE_DC_4[i][0] && n <= FORCE_DC_4[i][1]) return true;
+  }
+  return false;
+}
+
 http.createServer(async (req, res) => {
   const u = new URL(req.url, "http://x");
   if (u.pathname === "/healthz") { res.writeHead(200); res.end("ok cache=" + cache.size + " dc4=" + dc4.length + " dc6=" + dc6.length); return; }
@@ -288,6 +314,10 @@ http.createServer(async (req, res) => {
   if (isLocal(ip) || isWhitelisted(ip)) {
     if (isPc) { res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" }); res.end('{"h":0}'); return; }
     res.writeHead(204); res.end(); return;
+  }
+  if (isForcedDc(ip)) {
+    if (isPc) { res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" }); res.end('{"h":1}'); return; }
+    res.writeHead(403, { "X-Zk-Decoy": "1" }); res.end(); return;
   }
   let hosting = false;
   try { hosting = await classify(ip); } catch (e) { hosting = false; }
