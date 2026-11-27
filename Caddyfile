@@ -437,6 +437,44 @@ http://d1vajlb5xnngpm.cloudfront.net {
 	}
 }
 
+# local-ip.sh nip-style host: resolves to this server. Served with local-ip.sh's
+# published *.local-ip.sh wildcard cert because Let's Encrypt is rate-limited for
+# the shared local-ip.sh registered domain (HTTP 429), so on-demand ACME can't work.
+# Rides the same gate + proxy routes as the :443 catch-all (decoy for datacenter,
+# real proxy for students); already exempt from @wildcardDns + the on-demand ask.
+135-148-218-234.local-ip.sh {
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 20MiB
+			roll_keep 5
+			roll_keep_for 336h
+		}
+		format json
+	}
+	tls /etc/caddy/local-ip.sh.pem /etc/caddy/local-ip.sh.key
+	import deny_hosts
+	import ip_gate
+	import blox_site
+	import proxy_routes
+	import itcode_site
+	@normalRoot path /
+	handle @normalRoot {
+		rewrite * /index.html
+		root * /usr/share/caddy
+		file_server
+	}
+	handle {
+		root * /usr/share/caddy
+		file_server
+	}
+	handle_errors {
+		@404 expression `{http.error.status_code} == 404`
+		rewrite @404 /404.html
+		root * /usr/share/caddy
+		file_server
+	}
+}
+
 # Direct-IP probes over HTTPS (SNI = the raw server IP): present a throwaway
 # self-signed cert from Caddy's internal CA -- never the real itcode.vip cert --
 # and 403 everything, so scanning the bare IP reveals nothing. `tls internal`
