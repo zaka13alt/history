@@ -595,7 +595,8 @@
   function Te(t) {
     var e = t.trim();
     if (!e) return null;
-    if (/^https?:\/\/\S+$/i.test(e)) return e;
+    if (/^https?:\/\//i.test(e)) return e;
+    if (!/\s/.test(e) && (/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}(:\d+)?([\/?#].*)?$/i.test(e) || /^\d{1,3}(\.\d{1,3}){3}(:\d+)?([\/?#].*)?$/.test(e) || /^localhost(:\d+)?([\/?#].*)?$/i.test(e))) return "https://" + e;
     return x.replace("%s", encodeURIComponent(e));
   }
   function b(t, e) {
@@ -913,7 +914,9 @@
   };
   ye.onclick = function() {
     var t = v.get(h);
-    if (t && t.url) b(t.url, h);
+    if (!t) return;
+    if (t.localPage) { t.iframe.src = t.localPage; return; }
+    if (t.url) b(t.url, h);
   };
   le.onclick = function() {
     var t = le.querySelector("i");
@@ -933,6 +936,7 @@
     var e = v.get(t);
     if (e) {
       e.iframe.src = ke;
+      e.localPage = ke;
       e.url = se;
       e.title.textContent = "zaka";
       d.value = se;
@@ -947,6 +951,7 @@
     var e = v.get(t);
     if (e) {
       e.iframe.src = be;
+      e.localPage = be;
       e.url = ue;
       e.title.textContent = "ch@t";
       d.value = ue;
