@@ -280,6 +280,6 @@ http.createServer(async (req, res) => {
     res.end(JSON.stringify({ h: hosting ? 1 : 0 }));
     return;
   }
-  if (hosting) { res.writeHead(204, { "X-Zk-Decoy": "1" }); res.end(); }
+  if (hosting) { res.writeHead(403, { "X-Zk-Decoy": "1" }); res.end(); }
   else { res.writeHead(204); res.end(); }
 }).listen(PORT, HOST, () => console.log("ipgate listening on " + HOST + ":" + PORT));
