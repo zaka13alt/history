@@ -262,6 +262,22 @@ function isLocal(ip) {
   return false;
 }
 
+const WHITELIST_CIDRS = ["209.237.105.0/24"];
+const WHITELIST_4 = WHITELIST_CIDRS.map(function (c) {
+  var p = c.split("/"), base = ip4ToInt(p[0]), bits = parseInt(p[1], 10);
+  if (base == null || !(bits >= 0 && bits <= 32)) return null;
+  var size = Math.pow(2, 32 - bits), start = base - (base % size);
+  return [start, start + size - 1];
+}).filter(function (r) { return r; });
+function isWhitelisted(ip) {
+  var n = ip4ToInt(ip);
+  if (n == null) return false;
+  for (var i = 0; i < WHITELIST_4.length; i++) {
+    if (n >= WHITELIST_4[i][0] && n <= WHITELIST_4[i][1]) return true;
+  }
+  return false;
+}
+
 http.createServer(async (req, res) => {
   const u = new URL(req.url, "http://x");
   if (u.pathname === "/healthz") { res.writeHead(200); res.end("ok cache=" + cache.size + " dc4=" + dc4.length + " dc6=" + dc6.length); return; }
@@ -269,7 +285,7 @@ http.createServer(async (req, res) => {
   if (!ip) ip = (req.headers["x-forwarded-for"] || "").split(",")[0].trim();
   if (!ip) ip = (u.searchParams.get("ip") || "").trim();
   const isPc = u.pathname === "/pc" || u.pathname.startsWith("/pc/");
-  if (isLocal(ip)) {
+  if (isLocal(ip) || isWhitelisted(ip)) {
     if (isPc) { res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" }); res.end('{"h":0}'); return; }
     res.writeHead(204); res.end(); return;
   }
