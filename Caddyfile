@@ -548,6 +548,14 @@ https://135.148.218.234 {
 
 # HTTP listener: X-Origin: cloudfront bypasses HTTPS redirects
 :80 {
+	log {
+		output file /var/log/caddy/http.log {
+			roll_size 20MiB
+			roll_keep 5
+			roll_keep_for 336h
+		}
+		format json
+	}
 	import deny_hosts
 	import ip_gate
 
